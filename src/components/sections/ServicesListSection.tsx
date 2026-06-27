@@ -24,8 +24,6 @@ export function ServicesListSection({
       ? leftHeading.split(leftHeadingItalic)
       : null;
 
-  console.log("ttt ", label, leftHeading, leftHeadingItalic, parts);
-
   return (
     <section className="px-8 md:px-12 py-24 max-w-screen-xl mx-auto">
       {label && (
@@ -44,7 +42,9 @@ export function ServicesListSection({
               {parts ? (
                 <>
                   {parts[0]}
-                  <em className="not-italic italic">{leftHeadingItalic}</em>
+                  <em className="italic text-brand-gold">
+                    {leftHeadingItalic}
+                  </em>
                   {parts[1]}
                 </>
               ) : (

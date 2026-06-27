@@ -7,7 +7,8 @@ export const quoteSection = defineType({
   fields: [
     defineField({ name: 'largeHeadline', title: 'Large Headline', type: 'string', validation: Rule => Rule.required() }),
     defineField({ name: 'largeHeadlineItalic', title: 'Italic Accent', type: 'string', description: 'Word(s) rendered in italic within the large headline' }),
-    defineField({ name: 'quoteText', title: 'Quote / Body Text', type: 'text', rows: 4, description: 'Optional supporting quote or paragraph shown below the headline' }),
+    defineField({ name: 'quoteBoldText', title: 'Quote — Bold line', type: 'string', description: 'Rendered in Manrope ExtraBold (800)' }),
+    defineField({ name: 'quoteRegularText', title: 'Quote — Regular line', type: 'string', description: 'Rendered in Manrope Regular (400)' }),
   ],
   preview: {
     select: { title: 'largeHeadline' },

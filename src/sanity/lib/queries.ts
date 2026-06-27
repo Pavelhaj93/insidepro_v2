@@ -37,7 +37,8 @@ const blocksProjection = groq`
     // quoteSection
     largeHeadline,
     largeHeadlineItalic,
-    quoteText,
+    quoteBoldText,
+    quoteRegularText,
     // processSection
     steps[] { number, title, description },
     // twoColumnSection

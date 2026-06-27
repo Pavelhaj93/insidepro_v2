@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { urlFor } from '@/sanity/lib/image'
 
 type Props = {
@@ -25,6 +26,7 @@ const extraNavLinks = [
 
 export function Header({ logo, logoText }: Props) {
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
 
   return (
     <>
@@ -52,7 +54,11 @@ export function Header({ logo, logoText }: Props) {
             <Link
               key={link.href}
               href={link.href}
-              className="font-display font-black text-[14.74px] leading-none tracking-normal text-brand-light/80 hover:text-brand-light transition-colors uppercase"
+              className={`font-display font-black text-[14.74px] leading-none tracking-normal transition-colors uppercase ${
+                pathname === link.href
+                  ? 'text-brand-gold'
+                  : 'text-brand-light/80 hover:text-brand-light'
+              }`}
             >
               {link.label}
             </Link>
@@ -110,7 +116,11 @@ export function Header({ logo, logoText }: Props) {
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="font-display font-bold text-2xl text-brand-light/80 hover:text-brand-light transition-colors uppercase py-3 border-b border-brand-dark/50 last:border-0"
+              className={`font-display font-bold text-2xl transition-colors uppercase py-3 border-b border-brand-dark/50 last:border-0 ${
+                pathname === link.href
+                  ? 'text-brand-gold'
+                  : 'text-brand-light/80 hover:text-brand-light'
+              }`}
             >
               {link.label}
             </Link>
