@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+/* ─── Fonts ─────────────────────────────────────────────────────────────────
+   Variable fonts from public/fonts/
+   ─────────────────────────────────────────────────────────────────────────── */
+@font-face {
+  font-family: 'ZalandoSansExpanded';
+  src: url('/fonts/ZalandoSansExpanded-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ZalandoSansExpanded';
+  src: url('/fonts/ZalandoSansExpanded-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AtkinsonHyperlegibleNext';
+  src: url('/fonts/AtkinsonHyperlegibleNext-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AtkinsonHyperlegibleNext';
+  src: url('/fonts/AtkinsonHyperlegibleNext-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ─── Design Tokens ──────────────────────────────────────────────────────── */
+@theme inline {
+  /* Brand colors */
+  --color-brand-black: #010101;
+  --color-brand-dark: #323941;
+  --color-brand-bronze: #9B7350;
+  --color-brand-gold: #F5CCA2;
+  --color-brand-light: #F0F4FF;
+
+  /* Font families */
+  --font-display: 'ZalandoSansExpanded', 'Arial Black', sans-serif;
+  --font-body: 'AtkinsonHyperlegibleNext', Arial, sans-serif;
+}
+
+/* ─── Animations ─────────────────────────────────────────────────────────── */
+@keyframes scroll-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-50px); }
+}
+
+.animate-scroll-float {
+  animation: scroll-float 2.5s ease-in-out infinite;
+}
+
+/* ─── Base ───────────────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #010101;
+  color: #F0F4FF;
+  font-family: 'AtkinsonHyperlegibleNext', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
