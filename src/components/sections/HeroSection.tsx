@@ -40,18 +40,18 @@ export async function HeroSection({
             className="object-cover object-center"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-brand-black/40 via-brand-black/20 to-brand-black/70" />
+          <div className="absolute inset-0 bg-linear-to-b from-brand-black/40 via-brand-black/20 to-brand-black/70" />
         </>
       )}
       {!backgroundImage && <div className="absolute inset-0 bg-brand-black" />}
 
       {/* Content — centered */}
-      <div className="relative z-10 px-8 md:px-12 w-full text-center">
+      <div className="relative z-10 top-20 px-8 md:px-12 w-full text-center max-w-7xl">
         <h1 className="font-display font-black text-[127.34px] leading-[124.76px] tracking-normal uppercase text-brand-light">
           {headlineItalic && parts[0] !== undefined ? (
             <>
               {parts[0]}
-              <em className="not-italic italic">{headlineItalic}</em>
+              <em className="italic text-brand-gold">{headlineItalic}</em>
               {parts[1]}
             </>
           ) : (
@@ -59,7 +59,7 @@ export async function HeroSection({
           )}
         </h1>
         {subtitle && (
-          <p className="font-display font-medium text-[16.87px] leading-[16.53px] tracking-normal uppercase text-brand-light/70 mt-6">
+          <p className="font-display font-medium text-[16.87px] leading-[16.53px] tracking-normal uppercase text-brand-light/70 mt-20">
             {subtitle}
           </p>
         )}
@@ -67,7 +67,7 @@ export async function HeroSection({
 
       {/* Scroll indicator — bottom center */}
       {showScrollIndicator && (
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10">
           <ScrollIndicatorButton />
         </div>
       )}

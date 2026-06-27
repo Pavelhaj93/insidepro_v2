@@ -3,15 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "npm-run-all --parallel --print-label dev:*",
+    "dev:next": "next dev",
+    "dev:studio": "npm run dev --prefix studio",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "studio:build": "npm run build --prefix studio",
+    "studio:deploy": "npm run deploy --prefix studio"
   },
   "dependencies": {
     "@sanity/client": "^7.23.0",
     "@sanity/image-url": "^2.1.1",
     "@sanity/vision": "^6.1.0",
+    "framer-motion": "^12.42.0",
     "next": "16.2.9",
     "next-sanity": "^13.1.1",
     "react": "19.2.4",
@@ -26,6 +31,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "npm-run-all2": "^9.0.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

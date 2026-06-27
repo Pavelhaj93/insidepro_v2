@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { headers } from 'next/headers'
 import { draftMode } from 'next/headers'
 import { HeaderWrapper } from '@/components/layout/HeaderWrapper'
 import { Footer } from '@/components/layout/Footer'
@@ -17,17 +16,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const pathname = (await headers()).get('x-pathname') ?? ''
-  const isStudio = pathname.startsWith('/studio')
-
-  if (isStudio) {
-    return (
-      <html lang="cs">
-        <body style={{ height: '100vh', margin: 0 }}>{children}</body>
-      </html>
-    )
-  }
-
   const isDraftMode = (await draftMode()).isEnabled
 
   return (

@@ -57,7 +57,7 @@ export function ServicesListSection({
         {/* Right: numbered items */}
         <div className="flex flex-col">
           {items.map((item, i) => (
-            <div key={i} className="border-t border-brand-dark/60 py-8">
+            <div key={i} className="border-t border-brand-gold-light/60 py-12">
               <div className="flex gap-6">
                 {item.number && (
                   <span className="font-display font-medium text-base leading-none tracking-normal uppercase text-brand-gold w-8 shrink-0 pt-1">
@@ -79,11 +79,9 @@ export function ServicesListSection({
               </div>
             </div>
           ))}
-          {items.length > 0 && (
-            <div className="border-t border-brand-dark/60" />
-          )}
         </div>
       </div>
+      <div className="border-t mt-20 border-brand-gold-light/60 w-full" />
     </section>
   );
 }
