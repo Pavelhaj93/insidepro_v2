@@ -12,7 +12,6 @@ export default defineConfig({
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
 
   plugins: [
-    structureTool({ name: "studio" }),
     presentationTool({
       previewUrl: {
         origin: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
@@ -21,9 +20,11 @@ export default defineConfig({
         },
       },
     }),
+    structureTool(),
     visionTool(),
   ],
   basePath: "/studio",
+
   schema: {
     types: schemaTypes,
   },
