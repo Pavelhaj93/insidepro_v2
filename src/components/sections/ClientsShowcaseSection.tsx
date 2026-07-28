@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { urlFor } from "@/sanity/lib/image";
 
@@ -34,6 +35,9 @@ function resolveImageUrl(
 type Props = {
   label?: string;
   supportLabel?: string;
+  showViewAllLink?: boolean;
+  viewAllLabel?: string;
+  viewAllSlug?: string;
   clients?: ClientItem[];
 };
 
@@ -95,13 +99,13 @@ function ClientSlide({
 
   return (
     <div
-      className="sticky top-0 h-screen w-full px-4 pb-4 pt-20 md:px-10 md:pb-10 md:pt-28"
+      className={`sticky top-0 h-screen w-full px-4 md:px-10 pb-20 md:pb-10 ${index === 2 ? "md:pt-0 pt-0" : "md:pt-44 pt-28"}`}
       style={{ zIndex: index + 1 }}
     >
       {/* ── Mobile: flex column — image top, card bottom ───────────────── */}
       <div className="flex flex-col h-full w-full rounded-3xl overflow-hidden md:hidden">
         {/* Image — top 55% */}
-        <div className="relative w-full" style={{ flex: "0 0 55%" }}>
+        <div className="relative w-full bg-black" style={{ flex: "0 0 55%" }}>
           {client.backgroundImage ? (
             <motion.div
               className="absolute inset-0 scale-110"
@@ -111,6 +115,7 @@ function ClientSlide({
                 src={resolveImageUrl(client.backgroundImage, 800, 600)}
                 alt={client.name}
                 fill
+                sizes="100vw"
                 className="object-cover object-center"
                 priority={index === 0}
               />
@@ -121,9 +126,9 @@ function ClientSlide({
         </div>
 
         {/* Info card — bottom */}
-        <div className="flex-1 bg-[#0D0D0D] flex flex-col justify-between px-6 py-6">
+        <div className="flex-1 bg-black flex flex-col justify-between px-6 py-6">
           {client.quote && (
-            <p className="font-display font-normal text-[22px] leading-[28px] tracking-normal text-brand-light mb-4">
+            <p className="font-display font-normal text-2xl leading-7 tracking-normal text-brand-light mb-4">
               {client.quote}
             </p>
           )}
@@ -137,16 +142,17 @@ function ClientSlide({
                       src={resolveImageUrl(client.logo, 320, 80)}
                       alt={client.name}
                       fill
+                      sizes="128px"
                       className="object-contain object-left filter invert"
                     />
                   </div>
                 ) : (
-                  <p className="font-display font-black text-[22px] leading-[26px] tracking-normal uppercase text-brand-light mb-1">
+                  <p className="font-display font-black text-2xl leading-7 tracking-normal uppercase text-brand-light mb-1">
                     {client.name}
                   </p>
                 )}
                 {client.tagline && (
-                  <p className="font-display font-black text-[10px] leading-5.75 tracking-normal uppercase text-brand-light/50">
+                  <p className="font-display font-black text-xs leading-6 tracking-normal uppercase text-brand-light/50">
                     {client.tagline}
                   </p>
                 )}
@@ -187,6 +193,7 @@ function ClientSlide({
               src={resolveImageUrl(client.backgroundImage, 1600, 1200)}
               alt={client.name}
               fill
+              sizes="100vw"
               className="object-cover object-center"
               priority={index === 0}
             />
@@ -197,10 +204,10 @@ function ClientSlide({
         )}
 
         {/* Floating dark card — right side */}
-        <div className="absolute top-10 right-10 bottom-10 w-[38%] bg-[#0D0D0D] flex flex-col justify-between p-10 rounded-3xl">
+        <div className="absolute bottom-1/2 right-10 top-10 w-[38%] bg-[#0D0D0D] flex flex-col justify-between p-10 rounded-3xl">
           <div className="flex-1 flex items-start">
             {client.quote && (
-              <p className="font-display font-normal text-[31.28px] leading-[35.6px] tracking-normal text-brand-light">
+              <p className="font-display font-normal text-3xl leading-8 tracking-normal text-brand-light">
                 {client.quote}
               </p>
             )}
@@ -215,21 +222,23 @@ function ClientSlide({
                       src={resolveImageUrl(client.logo, 320, 80)}
                       alt={client.name}
                       fill
+                      sizes="160px"
                       className="object-contain object-left filter invert"
                     />
                   </div>
                 ) : (
-                  <p className="font-display font-black text-[31.28px] leading-[30.64px] tracking-normal uppercase text-brand-light mb-2">
+                  <p className="font-display font-black text-3xl leading-8 tracking-normal uppercase text-brand-light mb-2">
                     {client.name}
                   </p>
                 )}
                 {client.tagline && (
-                  <p className="font-display font-black text-[10px] leading-5.75 tracking-normal uppercase text-brand-light/50">
+                  <p className="font-display font-black text-xs leading-6 tracking-normal uppercase text-brand-light/50">
                     {client.tagline}
                   </p>
                 )}
               </div>
-              {client.url && (
+              {/* TODO: maybe later if client has specific page */}
+              {/* {client.url && (
                 <a
                   href={client.url}
                   target="_blank"
@@ -247,7 +256,7 @@ function ClientSlide({
                     />
                   </svg>
                 </a>
-              )}
+              )} */}
             </div>
           </div>
         </div>
@@ -256,8 +265,7 @@ function ClientSlide({
   );
 }
 
-export function ClientsShowcaseSection({ label, clients: _clients }: Props) {
-  const activeClients = MOCK_CLIENTS;
+export function ClientsShowcaseSection({ label, clients }: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -265,27 +273,24 @@ export function ClientsShowcaseSection({ label, clients: _clients }: Props) {
     offset: ["start start", "end end"],
   });
 
-  if (!activeClients.length) return null;
+  if (!clients?.length) return null;
 
   return (
-    <section
-      ref={wrapperRef}
-      style={{ height: `${activeClients.length * 100}vh` }}
-    >
+    <section ref={wrapperRef} style={{ height: `${clients.length * 100}vh` }}>
       {label && (
-        <div className="sticky top-0 z-0 px-8 md:px-12 pt-6 pointer-events-none">
-          <p className="font-body text-xs tracking-widest text-brand-light/30 uppercase">
+        <div className="sticky top-0 z-0 px-8 md:px-12 pt-20 pointer-events-none">
+          <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl lg:text-7xl leading-tight tracking-normal uppercase text-brand-light">
             {label}
-          </p>
+          </h2>
         </div>
       )}
 
-      {activeClients.map((client, i) => (
+      {clients.map((client, i) => (
         <ClientSlide
           key={`${client.name}-${i}`}
           client={client}
           index={i}
-          total={activeClients.length}
+          total={clients.length}
           scrollProgress={scrollYProgress}
         />
       ))}

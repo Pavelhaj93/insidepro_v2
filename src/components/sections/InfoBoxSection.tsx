@@ -1,0 +1,52 @@
+import { manrope } from "@/lib/fonts";
+
+type Props = {
+  headline: string;
+  headlineItalic?: string;
+  boxTitle?: string;
+  boxDescription?: string;
+};
+
+export function InfoBoxSection({
+  headline,
+  headlineItalic,
+  boxTitle,
+  boxDescription,
+}: Props) {
+  const parts = headlineItalic ? headline.split(headlineItalic) : null;
+  const hasBox = boxTitle || boxDescription;
+
+  return (
+    <section className="px-8 xl:px-0 py-24 max-w-7xl mx-auto">
+      <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl lg:text-7xl leading-tight uppercase text-brand-light text-center max-w-5xl mx-auto">
+        {parts ? (
+          <>
+            {parts[0]}
+            <em className="italic text-brand-gold">{headlineItalic}</em>
+            {parts[1]}
+          </>
+        ) : (
+          headline
+        )}
+      </h2>
+
+      {hasBox && (
+        <div className="bg-brand-grey px-6 py-8 md:px-12 md:py-10 mt-16 md:mt-24 rounded-md">
+          <div className="h-px bg-brand-gold-light w-1/2 mb-8" />
+          {boxTitle && (
+            <h3 className="font-display font-black text-xl md:text-2xl leading-snug tracking-normal uppercase text-brand-gold mb-6">
+              {boxTitle}
+            </h3>
+          )}
+          {boxDescription && (
+            <p
+              className={`${manrope.className} font-normal text-lg leading-relaxed tracking-normal text-brand-light whitespace-pre-line max-w-4xl`}
+            >
+              {boxDescription}
+            </p>
+          )}
+        </div>
+      )}
+    </section>
+  );
+}

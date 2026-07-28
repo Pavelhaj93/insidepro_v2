@@ -13,6 +13,7 @@ export const settings = defineType({
       name: 'socialLinks',
       title: 'Social Media Links',
       type: 'object',
+      description: 'Shared across the header, footer, and hero sections',
       fields: [
         defineField({ name: 'instagram', title: 'Instagram', type: 'url' }),
         defineField({ name: 'linkedin', title: 'LinkedIn', type: 'url' }),

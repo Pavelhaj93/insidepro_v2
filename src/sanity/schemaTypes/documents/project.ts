@@ -10,9 +10,25 @@ export const project = defineType({
     defineField({ name: 'slug', title: 'Slug', type: 'slug', options: { source: 'title' }, validation: Rule => Rule.required() }),
     defineField({ name: 'coverImage', title: 'Cover Image', type: 'image', options: { hotspot: true } }),
     defineField({
+      name: 'gallery',
+      title: 'Gallery',
+      type: 'array',
+      of: [{ type: 'image', options: { hotspot: true } }],
+      description: 'Extra images shown via the hover arrows on the homepage card (falls back to Cover Image if empty)',
+    }),
+    defineField({
+      name: 'categories',
+      title: 'Categories',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'category' }] }],
+      description: 'Categories used for the filter tabs on the Reference page',
+    }),
+    defineField({
       name: 'category',
-      title: 'Category',
+      title: 'Category (legacy)',
       type: 'string',
+      deprecated: { reason: 'Use the Categories references instead' },
+      readOnly: true,
       options: {
         list: [
           { title: 'Film', value: 'film' },

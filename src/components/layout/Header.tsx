@@ -3,13 +3,27 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useMotionValueEvent,
+} from "framer-motion";
 import { usePathname } from "next/navigation";
 import { urlFor } from "@/sanity/lib/image";
+import { SocialLinks } from "./SocialLinks";
+
+type SocialLinksValue = {
+  instagram?: string | null;
+  linkedin?: string | null;
+  facebook?: string | null;
+  vimeo?: string | null;
+};
 
 type Props = {
   logo: { asset: { _ref: string } } | null;
   logoText: string;
+  socialLinks: SocialLinksValue | null;
 };
 
 const mainNavLinks = [
@@ -25,13 +39,31 @@ const extraNavLinks = [
   { label: "PLACEHOLDER 2", href: "#" },
 ];
 
-export function Header({ logo, logoText }: Props) {
+export function Header({ logo, logoText, socialLinks }: Props) {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+
+  const { scrollY } = useScroll();
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setScrolled(latest > 20);
+  });
 
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 px-8 py-5 md:px-12">
+        <AnimatePresence>
+          {scrolled && (
+            <motion.div
+              key="header-bg"
+              className="absolute inset-0 -z-10 bg-black/90 backdrop-blur-md"
+              initial={{ y: "-100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "-100%" }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            />
+          )}
+        </AnimatePresence>
         <div className="max-w-7xl mx-auto flex items-center justify-between relative">
           {/* Logo */}
           <Link href="/" className="flex items-center">
@@ -56,7 +88,7 @@ export function Header({ logo, logoText }: Props) {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`font-display font-black text-[14.74px] leading-none tracking-normal transition-colors uppercase ${
+                className={`font-display font-black text-sm leading-none tracking-normal transition-colors uppercase ${
                   pathname === link.href
                     ? "text-brand-gold"
                     : "text-brand-light/80 hover:text-brand-light"
@@ -178,7 +210,7 @@ export function Header({ logo, logoText }: Props) {
           <div className="mt-8 pt-8 border-t border-brand-dark flex flex-col">
             {extraNavLinks.map((link) => (
               <Link
-                key={link.href}
+                key={link.label}
                 href={link.href}
                 onClick={() => setOpen(false)}
                 className="font-body text-sm tracking-widest text-brand-light/50 hover:text-brand-light transition-colors uppercase py-2"
@@ -190,92 +222,11 @@ export function Header({ logo, logoText }: Props) {
         </nav>
 
         {/* Social links */}
-        <div className="flex items-center gap-5 px-10 py-8">
-          <a
-            href="https://www.instagram.com/insidepro.cz/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Instagram"
-            className="text-brand-light/40 hover:text-brand-light transition-colors"
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="2" y="2" width="20" height="20" rx="5" />
-              <circle cx="12" cy="12" r="4" />
-              <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" />
-            </svg>
-          </a>
-          <a
-            href="https://www.linkedin.com/company/insidepro"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="LinkedIn"
-            className="text-brand-light/40 hover:text-brand-light transition-colors"
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z" />
-              <rect x="2" y="9" width="4" height="12" />
-              <circle cx="4" cy="4" r="2" />
-            </svg>
-          </a>
-          <a
-            href="https://www.facebook.com/insidepro.cz"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Facebook"
-            className="text-brand-light/40 hover:text-brand-light transition-colors"
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
-            </svg>
-          </a>
-          <a
-            href="https://vimeo.com/insidepro"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Vimeo"
-            className="text-brand-light/40 hover:text-brand-light transition-colors"
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M22 7.42c-.09 2.01-1.49 4.77-4.22 8.28C15 19.35 12.55 21 10.6 21c-1.2 0-2.22-1.12-3.06-3.35L6.04 12.7C5.44 10.47 4.8 9.36 4.1 9.36c-.15 0-.68.32-1.58.95L1.5 9.05c.99-.87 1.97-1.74 2.93-2.61C5.73 5.3 6.9 4.66 7.5 4.61c1.47-.14 2.38.87 2.72 3.03.37 2.32.62 3.76.77 4.33.43 1.94.9 2.91 1.41 2.91.4 0 1-.63 1.8-1.9.8-1.26 1.23-2.22 1.28-2.88.11-1.09-.31-1.64-1.28-1.64-.46 0-.93.11-1.42.32.94-3.09 2.75-4.59 5.42-4.51 1.98.06 2.91 1.34 2.8 3.83z" />
-            </svg>
-          </a>
-        </div>
+        {socialLinks && (
+          <div className="px-10 py-8">
+            <SocialLinks links={socialLinks} iconSize={18} />
+          </div>
+        )}
       </div>
     </>
   );

@@ -1,75 +1,109 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import { urlFor } from '@/sanity/lib/image'
+import Image from "next/image";
+import { urlFor } from "@/sanity/lib/image";
 
 type Film = {
-  _id: string
-  title: string
-  slug: { current: string }
-  coverImage?: { asset: { _ref: string } }
-  description?: string
-  director?: string
-  status?: string
-}
+  _id: string;
+  title: string;
+  slug: { current: string };
+  coverImage?: { asset: { _ref: string } };
+  description?: string;
+  director?: string;
+  production?: string;
+  coproducer?: string;
+  partners?: string;
+  status?: string;
+};
 
 const statusLabels: Record<string, string> = {
-  'in-development': 'In Development',
-  'in-production': 'In Production',
-  'in-post-production': 'In Post-Production',
-  'finishing': 'Finishing',
-  'released': 'Released',
-}
+  "in-development": "In Development",
+  "in-production": "In Production",
+  "in-post-production": "In Post-Production",
+  finishing: "Finishing",
+  released: "Released",
+};
 
 type Props = {
-  label?: string
-  heading?: string
-  introText?: string
-  films?: Film[]
-}
+  label?: string;
+  heading?: string;
+  introText?: string;
+  films?: Film[];
+};
 
-export function FilmShowcaseSection({ label, heading, introText, films = [] }: Props) {
+type MetaKey = "director" | "production" | "coproducer" | "partners";
+
+const metaFields: Array<{ key: MetaKey; label: string }> = [
+  { key: "director", label: "Režie" },
+  { key: "production", label: "Produkce" },
+  { key: "coproducer", label: "Koproducent" },
+  { key: "partners", label: "Partneři projektu" },
+];
+
+export function FilmShowcaseSection({
+  label,
+  heading,
+  introText,
+  films = [],
+}: Props) {
   return (
-    <section className="px-8 md:px-12 py-24 max-w-screen-xl mx-auto">
+    <section className="px-8 xl:px-0 py-24 max-w-7xl mx-auto">
       {label && (
-        <p className="font-body text-xs tracking-widest text-brand-light/40 uppercase mb-4">{label}</p>
+        <p className="font-body text-xs tracking-widest text-brand-light/40 uppercase mb-4 text-center">
+          {label}
+        </p>
       )}
       {heading && (
-        <h2 className="font-display font-bold text-4xl md:text-5xl uppercase text-brand-light mb-8">{heading}</h2>
+        <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-8xl leading-tight tracking-normal uppercase text-brand-light text-center mb-8">
+          {heading}
+        </h2>
       )}
       {introText && (
-        <p className="font-body text-sm text-brand-light/60 leading-relaxed max-w-2xl mb-14">{introText}</p>
+        <p className="font-body text-sm text-brand-light/60 leading-relaxed max-w-2xl mx-auto text-center mb-14">
+          {introText}
+        </p>
       )}
 
-      <div className="flex flex-col gap-8">
-        {films.map(film => (
-          <Link key={film._id} href={`/filmy/${film.slug.current}`} className="group grid md:grid-cols-[280px_1fr] gap-6 items-start border-t border-brand-dark/60 pt-8">
-            {film.coverImage && (
-              <div className="relative aspect-video overflow-hidden bg-brand-dark">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+        {films.map((film) => (
+          <div key={film._id} className="flex flex-col h-full">
+            <div className="relative aspect-2/3 overflow-hidden bg-brand-dark rounded-t-md">
+              {film.coverImage && (
                 <Image
-                  src={urlFor(film.coverImage).width(560).height(315).url()}
+                  src={urlFor(film.coverImage).width(600).height(900).url()}
                   alt={film.title}
                   fill
-                  className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                  sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
+                  className="object-cover object-center"
                 />
+              )}
+            </div>
+
+            <div className="bg-brand-grey p-6 flex flex-col flex-1 rounded-b-md">
+              <h3 className="font-display font-black text-2xl uppercase text-brand-light min-h-16">
+                {film.title}
+              </h3>
+              <div className="h-px bg-brand-gold-light my-4" />
+
+              <div className="font-body text-sm text-brand-gold leading-relaxed space-y-1 flex-1">
+                {metaFields.map(
+                  ({ key, label: metaLabel }) =>
+                    film[key] && (
+                      <p key={key}>
+                        {metaLabel}:{" "}
+                        <span className="font-bold">{film[key]}</span>
+                      </p>
+                    ),
+                )}
               </div>
-            )}
-            <div className="flex flex-col gap-3">
+
               {film.status && (
-                <span className="font-body text-xs tracking-widest text-brand-bronze uppercase">
+                <span className="font-body text-sm text-brand-light mt-6 pt-6 border-t border-brand-dark/60">
                   {statusLabels[film.status] ?? film.status}
                 </span>
               )}
-              <h3 className="font-display font-bold text-2xl uppercase text-brand-light">{film.title}</h3>
-              {film.director && (
-                <p className="font-body text-xs text-brand-light/40">Režie: {film.director}</p>
-              )}
-              {film.description && (
-                <p className="font-body text-sm text-brand-light/60 leading-relaxed">{film.description}</p>
-              )}
             </div>
-          </Link>
+          </div>
         ))}
       </div>
     </section>
-  )
+  );
 }

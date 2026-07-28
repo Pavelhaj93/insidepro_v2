@@ -37,6 +37,7 @@ export async function HeroSection({
             src={urlFor(backgroundImage).width(1920).height(1080).url()}
             alt=""
             fill
+            sizes="100vw"
             className="object-cover object-center"
             priority
           />
@@ -46,8 +47,8 @@ export async function HeroSection({
       {!backgroundImage && <div className="absolute inset-0 bg-brand-black" />}
 
       {/* Content — centered */}
-      <div className="relative z-10 top-20 px-8 md:px-12 w-full text-center max-w-7xl">
-        <h1 className="font-display font-black text-[127.34px] leading-[124.76px] tracking-normal uppercase text-brand-light">
+      <div className="relative z-10 top-10 px-8 md:px-12 w-full text-center max-w-7xl">
+        <h1 className="font-display font-black text-5xl leading-tight sm:text-6xl md:text-7xl lg:text-9xl tracking-normal uppercase text-brand-light">
           {headlineItalic && parts[0] !== undefined ? (
             <>
               {parts[0]}
@@ -59,7 +60,7 @@ export async function HeroSection({
           )}
         </h1>
         {subtitle && (
-          <p className="font-display font-medium text-[16.87px] leading-[16.53px] tracking-normal uppercase text-brand-light/70 mt-20">
+          <p className="font-display font-medium text-base leading-none tracking-normal uppercase text-brand-light/70 mt-20">
             {subtitle}
           </p>
         )}
@@ -67,7 +68,7 @@ export async function HeroSection({
 
       {/* Scroll indicator — bottom center */}
       {showScrollIndicator && (
-        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10">
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10">
           <ScrollIndicatorButton />
         </div>
       )}

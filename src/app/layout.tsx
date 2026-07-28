@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
 import { HeaderWrapper } from '@/components/layout/HeaderWrapper'
-import { Footer } from '@/components/layout/Footer'
+import { FooterWrapper } from '@/components/layout/FooterWrapper'
 import { SanityLive } from '@/sanity/lib/live'
 import { VisualEditing } from 'next-sanity/visual-editing'
 import './globals.css'
@@ -23,7 +23,7 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col bg-brand-black text-brand-light">
         <HeaderWrapper />
         <div className="flex-1">{children}</div>
-        <Footer />
+        <FooterWrapper />
         <SanityLive />
         {isDraftMode && <VisualEditing />}
       </body>

@@ -7,6 +7,13 @@ export const settingsQuery = groq`*[_type == "settings"][0] {
   socialLinks { instagram, linkedin, facebook, vimeo }
 }`;
 
+// ─── Footer ──────────────────────────────────────────────────────────────────
+
+export const footerQuery = groq`*[_type == "footer"][0] {
+  headingLine1, headingLine2, headingHighlight, backgroundImage,
+  email, phone, copyrightText, legalText
+}`;
+
 // ─── Pages ───────────────────────────────────────────────────────────────────
 
 const blocksProjection = groq`
@@ -24,13 +31,24 @@ const blocksProjection = groq`
     label,
     leftHeading,
     leftHeadingItalic,
-    items[] { number, title, description },
+    items[] { number, title, description, linkLabel, link },
     // featuredWorksSection
     heading,
     showViewAllLink,
     viewAllLabel,
     viewAllSlug,
-    projects[]-> { _id, title, client, slug, coverImage, category, excerpt },
+    projects[]-> { _id, title, client, slug, coverImage, gallery, category, excerpt },
+    // referenceWorksSection
+    allLabel,
+    _type == "referenceWorksSection" => {
+      "allProjects": *[_type == "project"] | order(publishedAt desc) {
+        _id, title, client, slug, coverImage, gallery, excerpt,
+        "categories": categories[]-> { _id, title, "slug": slug.current }
+      },
+      "allCategories": *[_type == "category"] | order(coalesce(order, 999) asc, title asc) {
+        _id, title, "slug": slug.current
+      },
+    },
     // ctaSection
     buttonLabel,
     buttonLink,
@@ -40,17 +58,45 @@ const blocksProjection = groq`
     quoteBoldText,
     quoteRegularText,
     // processSection
-    steps[] { number, title, description },
+    steps[] { number, title, description, descriptionHighlight },
     // twoColumnSection
     rightBodyText,
     // teamSection
     teamMembers[]-> { _id, name, role, email, phone, photo },
+    outroText,
+    outroHighlight,
+    ctaLabel,
+    ctaLink,
     // filmShowcaseSection
     introText,
-    films[]-> { _id, title, slug, coverImage, description, director, status },
+    films[]-> { _id, title, slug, coverImage, description, director, production, coproducer, partners, status },
     // clientsSection
     supportLabel,
-    clients[] { name, logo, url, backgroundImage, quote, tagline },
+    clients[] {
+      _type != "reference" => { name, logo, url, backgroundImage, quote, tagline },
+      _type == "reference" => @-> {
+        "name": coalesce(client, title),
+        "backgroundImage": coverImage,
+        "quote": excerpt,
+        "tagline": category,
+      },
+    },
+    // imageSection
+    image { asset->{ url, metadata { dimensions { width, height } } }, alt, hotspot },
+    // infoBoxSection
+    boxTitle,
+    boxDescription,
+    // featureCardsSection
+    cards[] { _key, title, bullets },
+    // richTextSection
+    title,
+    body,
+    // textBlock
+    number,
+    // logoWallSection
+    logos[]-> { _id, name, image, url },
+    // separator
+    width,
   }
 `;
 

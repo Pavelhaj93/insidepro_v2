@@ -1,52 +1,111 @@
-import Link from 'next/link'
+import Image from "next/image";
+import { urlFor } from "@/sanity/lib/image";
+import { SocialLinks } from "./SocialLinks";
 
-export function Footer() {
+type FooterContent = {
+  headingLine1?: string | null;
+  headingLine2?: string | null;
+  headingHighlight?: string | null;
+  backgroundImage?: { asset: { _ref: string } } | null;
+  email?: string | null;
+  phone?: string | null;
+  copyrightText?: string | null;
+  legalText?: string | null;
+};
+
+type SocialLinksValue = {
+  instagram?: string | null;
+  linkedin?: string | null;
+  facebook?: string | null;
+  vimeo?: string | null;
+};
+
+type Props = {
+  content: FooterContent | null;
+  socialLinks: SocialLinksValue | null;
+};
+
+export function Footer({ content, socialLinks }: Props) {
+  const headingLine1 = content?.headingLine1 ?? "Máte projekt?";
+  const headingLine2 = content?.headingLine2 ?? "Pojďme na to";
+  const headingHighlight = content?.headingHighlight ?? "Pojďme";
+  const backgroundImage = content?.backgroundImage ?? null;
+  const email = content?.email;
+  const phone = content?.phone;
+  const copyrightText =
+    content?.copyrightText ?? "R&T Production s.r.o. - All rights reserved.";
+  const legalText = content?.legalText;
+
+  const line2Parts = headingLine2.split(headingHighlight);
+
   return (
-    <footer className="border-t border-brand-dark px-8 py-10 md:px-12">
-      <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        {/* Logo + legal */}
-        <div>
-          <Link href="/" className="font-display font-bold text-lg tracking-widest text-brand-light block mb-3">
-            IN
-          </Link>
-          <p className="text-xs text-brand-light/40 leading-relaxed max-w-sm">
-            © {new Date().getFullYear()} R&amp;T Production s.r.o. — All rights reserved.
-          </p>
-          <p className="text-xs text-brand-light/30 leading-relaxed max-w-sm mt-1">
-            Společnost je zapsána v obchodním rejstříku vedeném Krajským soudem v Hradci Králové, oddíl C, vložka 35789 / IČ: 02146142.
-          </p>
-        </div>
+    <footer className="relative overflow-hidden">
+      {/* Background image */}
+      {/* {backgroundImage ? (
+        <>
+          <Image
+            src={urlFor(backgroundImage).width(1920).height(1080).url()}
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-linear-to-r from-brand-black/80 via-brand-black/60 to-brand-black/90" />
+          <div className="absolute inset-0 bg-linear-to-t from-brand-black via-brand-black/20 to-transparent" />
+        </>
+      ) : (
+        <div className="absolute inset-0 bg-brand-black" />
+      )} */}
 
-        {/* Contact + socials */}
-        <div className="flex flex-col items-start md:items-end gap-3">
-          <a href="mailto:produkce@insidepro.cz" className="text-sm text-brand-light/70 hover:text-brand-gold transition-colors">
-            produkce@insidepro.cz
-          </a>
-          <a href="tel:+420731727306" className="text-sm text-brand-light/70 hover:text-brand-gold transition-colors">
-            +420 731 727 306
-          </a>
+      <div className="relative z-10 px-8 py-16 md:px-12 md:py-24">
+        <div className="max-w-7xl mx-auto">
+          {/* CTA heading */}
+          {/* <h2 className="text-center font-display font-black text-4xl md:text-6xl lg:text-7xl leading-tight tracking-normal uppercase text-brand-light">
+            {headingLine1}
+            <br />
+            {line2Parts[0]}
+            <em className="italic text-brand-gold">{headingHighlight}</em>
+            {line2Parts[1]}
+          </h2> */}
 
-          {/* Social icons */}
-          <div className="flex items-center gap-4 mt-1">
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
-              className="text-brand-light/50 hover:text-brand-light transition-colors text-xs tracking-widest">
-              IG
-            </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
-              className="text-brand-light/50 hover:text-brand-light transition-colors text-xs tracking-widest">
-              LI
-            </a>
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook"
-              className="text-brand-light/50 hover:text-brand-light transition-colors text-xs tracking-widest">
-              FB
-            </a>
-            <a href="https://vimeo.com" target="_blank" rel="noopener noreferrer" aria-label="Vimeo"
-              className="text-brand-light/50 hover:text-brand-light transition-colors text-xs tracking-widest">
-              VI
-            </a>
+          <div className="border-t border-brand-bronze/30 mt-10 pt-6 px-10 flex flex-col md:flex-row items-center justify-between gap-4">
+            {email ? (
+              <a
+                href={`mailto:${email}`}
+                className="font-display font-bold text-sm md:text-base uppercase tracking-wide text-brand-light hover:text-brand-gold transition-colors"
+              >
+                {email}
+              </a>
+            ) : (
+              <span />
+            )}
+
+            {socialLinks && <SocialLinks links={socialLinks} iconSize={18} />}
+
+            {phone ? (
+              <a
+                href={`tel:${phone.replace(/\s+/g, "")}`}
+                className="font-display font-bold text-sm md:text-base uppercase tracking-wide text-brand-light hover:text-brand-gold transition-colors"
+              >
+                {phone}
+              </a>
+            ) : (
+              <span />
+            )}
+          </div>
+
+          <div className="border-t border-brand-bronze/30 mt-6 pt-6 text-center">
+            <p className="font-display font-bold text-sm text-brand-light">
+              © {new Date().getFullYear()} {copyrightText}
+            </p>
+            {legalText && (
+              <p className="text-xs text-brand-light/40 leading-relaxed mt-2 mx-auto">
+                {legalText}
+              </p>
+            )}
           </div>
         </div>
       </div>
     </footer>
-  )
+  );
 }
