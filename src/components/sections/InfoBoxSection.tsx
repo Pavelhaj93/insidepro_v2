@@ -1,4 +1,5 @@
 import { manrope } from "@/lib/fonts";
+import { Reveal } from "@/components/motion/Reveal";
 
 type Props = {
   headline: string;
@@ -18,20 +19,25 @@ export function InfoBoxSection({
 
   return (
     <section className="px-8 xl:px-0 py-24 max-w-7xl mx-auto">
-      <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl lg:text-7xl leading-tight uppercase text-brand-light text-center max-w-5xl mx-auto">
-        {parts ? (
-          <>
-            {parts[0]}
-            <em className="italic text-brand-gold">{headlineItalic}</em>
-            {parts[1]}
-          </>
-        ) : (
-          headline
-        )}
-      </h2>
+      <Reveal>
+        <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl lg:text-7xl leading-tight uppercase text-brand-light text-center max-w-5xl mx-auto">
+          {parts ? (
+            <>
+              {parts[0]}
+              <em className="italic text-brand-gold">{headlineItalic}</em>
+              {parts[1]}
+            </>
+          ) : (
+            headline
+          )}
+        </h2>
+      </Reveal>
 
       {hasBox && (
-        <div className="bg-brand-grey px-6 py-8 md:px-12 md:py-10 mt-16 md:mt-24 rounded-md">
+        <Reveal
+          delay={0.15}
+          className="bg-brand-grey px-6 py-8 md:px-12 md:py-10 mt-16 md:mt-24 rounded-md"
+        >
           <div className="h-px bg-brand-gold-light w-1/2 mb-8" />
           {boxTitle && (
             <h3 className="font-display font-black text-xl md:text-2xl leading-snug tracking-normal uppercase text-brand-gold mb-6">
@@ -45,7 +51,7 @@ export function InfoBoxSection({
               {boxDescription}
             </p>
           )}
-        </div>
+        </Reveal>
       )}
     </section>
   );

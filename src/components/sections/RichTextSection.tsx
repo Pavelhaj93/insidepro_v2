@@ -4,6 +4,7 @@ import {
   type PortableTextComponents,
 } from "next-sanity";
 import { manrope } from "@/lib/fonts";
+import { Reveal } from "@/components/motion/Reveal";
 
 type Props = {
   title?: string;
@@ -34,7 +35,7 @@ export function RichTextSection({ title, body }: Props) {
 
   return (
     <section className="px-8 md:px-0 py-8 max-w-7xl mx-auto">
-      <div className="bg-black px-6 py-10 md:px-12 md:py-12 text-center">
+      <Reveal className="bg-black px-6 py-10 md:px-12 md:py-12 text-center">
         {title && (
           <h2 className="font-display font-black text-xl md:text-2xl leading-snug tracking-normal uppercase text-brand-gold mb-8">
             {title}
@@ -43,7 +44,7 @@ export function RichTextSection({ title, body }: Props) {
         {body && body.length > 0 && (
           <PortableText value={body} components={components} />
         )}
-      </div>
+      </Reveal>
     </section>
   );
 }

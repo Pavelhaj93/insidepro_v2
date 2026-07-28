@@ -3,6 +3,7 @@ import Link from "next/link";
 import { manrope } from "@/lib/fonts";
 import { ArrowRightIcon } from "@/components/icons/ArrowRight";
 import { urlFor } from "@/sanity/lib/image";
+import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 
 type TeamMember = {
   _id: string;
@@ -38,9 +39,9 @@ export function TeamSection({
         </p>
       )} */}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+      <RevealStagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {teamMembers.map((member) => (
-          <div key={member._id} className="group h-full flex flex-col">
+          <RevealItem key={member._id} className="group h-full flex flex-col">
             <div className="relative aspect-3/4 rounded-t-md overflow-hidden bg-brand-dark mb-0 grayscale group-hover:grayscale-0 transition-all duration-500">
               {member.photo && (
                 <Image
@@ -83,22 +84,24 @@ export function TeamSection({
                 )}
               </div>
             </div>
-          </div>
+          </RevealItem>
         ))}
-      </div>
+      </RevealStagger>
 
       {(outroText || outroHighlight) && (
-        <p
-          className={`${manrope.className} font-normal text-lg leading-relaxed tracking-normal text-brand-light text-center max-w-3xl mx-auto mt-20`}
-        >
-          {outroText}
-          {outroHighlight && (
-            <>
-              {" "}
-              <span className="text-brand-gold">{outroHighlight}</span>
-            </>
-          )}
-        </p>
+        <Reveal className="max-w-3xl mx-auto mt-20">
+          <p
+            className={`${manrope.className} font-normal text-lg leading-relaxed tracking-normal text-brand-light text-center`}
+          >
+            {outroText}
+            {outroHighlight && (
+              <>
+                {" "}
+                <span className="text-brand-gold">{outroHighlight}</span>
+              </>
+            )}
+          </p>
+        </Reveal>
       )}
 
       {ctaLabel && ctaLink && (

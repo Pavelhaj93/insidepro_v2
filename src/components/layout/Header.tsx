@@ -44,13 +44,17 @@ export function Header({ logo, logoText, socialLinks }: Props) {
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
 
-  const { scrollY } = useScroll();
+  const { scrollY, scrollYProgress } = useScroll();
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 20);
   });
 
   return (
     <>
+      <motion.div
+        className="fixed top-0 left-0 right-0 z-60 h-0.5 bg-brand-gold origin-left"
+        style={{ scaleX: scrollYProgress }}
+      />
       <header className="fixed top-0 left-0 right-0 z-50 px-8 py-5 md:px-12">
         <AnimatePresence>
           {scrolled && (
@@ -88,13 +92,20 @@ export function Header({ logo, logoText, socialLinks }: Props) {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`font-display font-black text-sm leading-none tracking-normal transition-colors uppercase ${
+                className={`group relative font-display font-black text-sm leading-none tracking-normal transition-colors uppercase ${
                   pathname === link.href
                     ? "text-brand-gold"
                     : "text-brand-light/80 hover:text-brand-light"
                 }`}
               >
                 {link.label}
+                <span
+                  className={`absolute left-0 -bottom-1 h-px w-full bg-brand-gold origin-left transition-transform duration-300 ${
+                    pathname === link.href
+                      ? "scale-x-100"
+                      : "scale-x-0 group-hover:scale-x-100"
+                  }`}
+                />
               </Link>
             ))}
           </nav>

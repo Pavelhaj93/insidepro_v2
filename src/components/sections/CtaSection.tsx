@@ -1,6 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { urlFor } from "@/sanity/lib/image";
+import { ParallaxLayer } from "@/components/motion/ParallaxLayer";
+import { Reveal } from "@/components/motion/Reveal";
+import { MagneticButton } from "@/components/motion/MagneticButton";
 
 type Props = {
   headline: string;
@@ -19,29 +22,37 @@ export function CtaSection({
     <section className="relative overflow-hidden py-32 md:py-48 px-8 md:px-12">
       {backgroundImage && (
         <>
-          <Image
-            src={urlFor(backgroundImage).width(1920).height(800).url()}
-            alt=""
-            fill
-            sizes="100vw"
-            className="object-cover object-center"
-          />
+          <ParallaxLayer intensity={10}>
+            <Image
+              src={urlFor(backgroundImage).width(1920).height(800).url()}
+              alt=""
+              fill
+              sizes="100vw"
+              className="object-cover object-center"
+            />
+          </ParallaxLayer>
           <div className="absolute inset-0 bg-brand-black/60" />
         </>
       )}
       {!backgroundImage && <div className="absolute inset-0 bg-brand-dark" />}
 
       <div className="relative z-10 max-w-7xl mx-auto text-center">
-        <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-8xl uppercase leading-none text-brand-light mb-10">
-          {headline}
-        </h2>
+        <Reveal>
+          <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-8xl uppercase leading-none text-brand-light mb-10">
+            {headline}
+          </h2>
+        </Reveal>
         {buttonLabel && buttonLink && (
-          <Link
-            href={buttonLink}
-            className="inline-block font-body text-sm tracking-widest uppercase px-8 py-4 border border-brand-light text-brand-light hover:bg-brand-light hover:text-brand-black transition-colors"
-          >
-            {buttonLabel}
-          </Link>
+          <Reveal delay={0.15} className="inline-block">
+            <MagneticButton>
+              <Link
+                href={buttonLink}
+                className="inline-block font-body text-sm tracking-widest uppercase px-8 py-4 border border-brand-light text-brand-light hover:bg-brand-light hover:text-brand-black transition-colors"
+              >
+                {buttonLabel}
+              </Link>
+            </MagneticButton>
+          </Reveal>
         )}
       </div>
     </section>

@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { ProjectCard } from "./ProjectCard";
+import { Reveal } from "@/components/motion/Reveal";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { EASE_OUT_EXPO } from "@/lib/motion";
 
 type SanityImage = { asset: { _ref: string } };
 
@@ -36,6 +40,7 @@ export function ReferenceWorksSection({
   allCategories = [],
 }: Props) {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const reduceMotion = useReducedMotion();
 
   const usedCategories = allCategories.filter((category) =>
     allProjects.some((project) =>
@@ -58,11 +63,16 @@ export function ReferenceWorksSection({
 
   return (
     <section className="px-8 md:px-0 py-24 max-w-7xl mx-auto">
-      <h2 className="font-display font-black text-4xl md:text-6xl lg:text-[75.04px] leading-tight lg:leading-[76.5px] tracking-normal uppercase text-brand-light mb-12">
-        {heading}
-      </h2>
+      <Reveal>
+        <h2 className="font-display font-black text-4xl md:text-6xl lg:text-[75.04px] leading-tight lg:leading-[76.5px] tracking-normal uppercase text-brand-light mb-12">
+          {heading}
+        </h2>
+      </Reveal>
 
-      <div className="flex flex-wrap items-center gap-x-8 gap-y-3 mb-12">
+      <Reveal
+        delay={0.1}
+        className="flex flex-wrap items-center gap-x-8 gap-y-3 mb-12"
+      >
         <button
           type="button"
           onClick={() => setActiveId(null)}
@@ -82,13 +92,32 @@ export function ReferenceWorksSection({
             {category.title}
           </button>
         ))}
-      </div>
+      </Reveal>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {visibleProjects.map((project) => (
-          <ProjectCard key={project._id} project={project} />
-        ))}
-      </div>
+      {reduceMotion ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {visibleProjects.map((project) => (
+            <ProjectCard key={project._id} project={project} />
+          ))}
+        </div>
+      ) : (
+        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <AnimatePresence mode="popLayout">
+            {visibleProjects.map((project) => (
+              <motion.div
+                key={project._id}
+                layout
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
+              >
+                <ProjectCard project={project} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
+      )}
 
       {visibleProjects.length === 0 && (
         <p className="font-body text-brand-light/60">

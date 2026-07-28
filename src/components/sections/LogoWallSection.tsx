@@ -1,9 +1,9 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import Image from "next/image";
 import AutoScroll from "embla-carousel-auto-scroll";
 import { urlFor } from "@/sanity/lib/image";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import {
   Carousel,
   CarouselContent,
@@ -25,24 +25,8 @@ type Props = {
 // Ensures the loop never shows a visible gap/jump when there are few logos.
 const MIN_SLIDES_FOR_SEAMLESS_LOOP = 8;
 
-const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
-
-function subscribeReducedMotion(callback: () => void) {
-  const query = window.matchMedia(REDUCED_MOTION_QUERY);
-  query.addEventListener("change", callback);
-  return () => query.removeEventListener("change", callback);
-}
-
-function getReducedMotionSnapshot() {
-  return window.matchMedia(REDUCED_MOTION_QUERY).matches;
-}
-
 export function LogoWallSection({ title, logos = [] }: Props) {
-  const reduceMotion = useSyncExternalStore(
-    subscribeReducedMotion,
-    getReducedMotionSnapshot,
-    () => false,
-  );
+  const reduceMotion = useReducedMotion();
 
   if (!logos?.length) return null;
 

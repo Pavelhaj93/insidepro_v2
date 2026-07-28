@@ -97,13 +97,20 @@ function ClientSlide({
   // Image parallax: moves from 0% to -15% of its own height as this slide scrolls
   const imageY = useTransform(scrollProgress, [start, end], ["0%", "-15%"]);
 
+  // Depth cue: the outgoing slide eases back slightly as the next one takes over.
+  const cardScale = useTransform(scrollProgress, [start, end], [1, 0.94]);
+  const cardOpacity = useTransform(scrollProgress, [start, end], [1, 0.85]);
+
   return (
     <div
       className={`sticky top-0 h-screen w-full px-4 md:px-10 pb-20 md:pb-10 ${index === 2 ? "md:pt-0 pt-0" : "md:pt-44 pt-28"}`}
       style={{ zIndex: index + 1 }}
     >
       {/* ── Mobile: flex column — image top, card bottom ───────────────── */}
-      <div className="flex flex-col h-full w-full rounded-3xl overflow-hidden md:hidden">
+      <motion.div
+        className="flex flex-col h-full w-full rounded-3xl overflow-hidden md:hidden"
+        style={{ scale: cardScale, opacity: cardOpacity }}
+      >
         {/* Image — top 55% */}
         <div className="relative w-full bg-black" style={{ flex: "0 0 55%" }}>
           {client.backgroundImage ? (
@@ -179,10 +186,13 @@ function ClientSlide({
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* ── Desktop: full-bleed image with floating card overlay ────────── */}
-      <div className="relative h-full w-full rounded-3xl overflow-hidden hidden md:block">
+      <motion.div
+        className="relative h-full w-full rounded-3xl overflow-hidden hidden md:block"
+        style={{ scale: cardScale, opacity: cardOpacity }}
+      >
         {/* Background image with parallax */}
         {client.backgroundImage ? (
           <motion.div
@@ -260,7 +270,7 @@ function ClientSlide({
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ProjectCard } from "./ProjectCard";
 import { ArrowRightIcon } from "@/components/icons/ArrowRight";
+import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 
 type Project = {
   _id: string;
@@ -30,7 +31,7 @@ export function FeaturedWorksSection({
 }: Props) {
   return (
     <section className="px-8 xl:px-0 py-24 max-w-7xl mx-auto">
-      <div className="flex items-end justify-between mb-12">
+      <Reveal className="flex items-end justify-between mb-12">
         <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl lg:text-7xl leading-tight tracking-normal uppercase text-brand-light">
           {heading}
         </h2>
@@ -42,13 +43,15 @@ export function FeaturedWorksSection({
             {viewAllLabel} <ArrowRightIcon />
           </Link>
         )}
-      </div>
+      </Reveal>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <RevealStagger className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {projects.map((project) => (
-          <ProjectCard key={project._id} project={project} />
+          <RevealItem key={project._id}>
+            <ProjectCard project={project} />
+          </RevealItem>
         ))}
-      </div>
+      </RevealStagger>
 
       {projects.length === 0 && (
         <p className="font-body text-sm text-brand-light/30 text-center py-12">

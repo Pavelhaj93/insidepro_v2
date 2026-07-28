@@ -4,6 +4,7 @@ import {
   type PortableTextComponents,
 } from "next-sanity";
 import { manrope } from "@/lib/fonts";
+import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 
 type FeatureBullet = {
   _key: string;
@@ -42,14 +43,16 @@ export function FeatureCardsSection({ heading, cards = [] }: Props) {
   return (
     <section className="px-8 xl:px-0 py-24 max-w-7xl mx-auto">
       {heading && (
-        <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl lg:text-7xl leading-tight tracking-normal uppercase text-brand-light mb-12">
-          {heading}
-        </h2>
+        <Reveal>
+          <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl lg:text-7xl leading-tight tracking-normal uppercase text-brand-light mb-12">
+            {heading}
+          </h2>
+        </Reveal>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+      <RevealStagger className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
         {cards.map((card) => (
-          <div
+          <RevealItem
             key={card._key}
             className="bg-brand-grey px-8 py-10 flex flex-col rounded-md"
           >
@@ -76,9 +79,9 @@ export function FeatureCardsSection({ heading, cards = [] }: Props) {
                 ))}
               </ul>
             )}
-          </div>
+          </RevealItem>
         ))}
-      </div>
+      </RevealStagger>
     </section>
   );
 }

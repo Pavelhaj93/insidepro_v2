@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { manrope } from "@/lib/fonts";
 import { ArrowRightIcon } from "@/components/icons/ArrowRight";
+import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 
 type ServiceItem = {
   number?: string;
@@ -41,7 +42,7 @@ export function ServicesListSection({
       >
         {/* Left: big heading */}
         {leftHeading && (
-          <div>
+          <Reveal>
             <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-7xl leading-none tracking-normal uppercase text-brand-light">
               {parts ? (
                 <>
@@ -55,16 +56,19 @@ export function ServicesListSection({
                 leftHeading
               )}
             </h2>
-          </div>
+          </Reveal>
         )}
 
         {/* Right: numbered items */}
-        <div className="flex flex-col">
+        <RevealStagger className="flex flex-col">
           {items.map((item, i) => (
-            <div key={i} className="border-t border-brand-gold-light py-12">
+            <RevealItem
+              key={i}
+              className="group border-t border-brand-gold-light py-12"
+            >
               <div className="flex gap-6">
                 {item.number && (
-                  <span className="font-display font-medium text-base leading-none tracking-normal uppercase text-brand-gold w-8 shrink-0 pt-1">
+                  <span className="font-display font-medium text-base leading-none tracking-normal uppercase text-brand-gold w-8 shrink-0 pt-1 transition-transform duration-300 group-hover:scale-125 group-hover:text-brand-light">
                     {item.number}
                   </span>
                 )}
@@ -91,9 +95,9 @@ export function ServicesListSection({
                   )}
                 </div>
               </div>
-            </div>
+            </RevealItem>
           ))}
-        </div>
+        </RevealStagger>
       </div>
     </section>
   );

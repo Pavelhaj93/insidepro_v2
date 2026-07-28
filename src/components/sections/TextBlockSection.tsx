@@ -4,6 +4,7 @@ import {
   type PortableTextComponents,
 } from "next-sanity";
 import { manrope } from "@/lib/fonts";
+import { Reveal } from "@/components/motion/Reveal";
 
 type Props = {
   number?: string;
@@ -35,7 +36,7 @@ export function TextBlockSection({ number, title, body }: Props) {
 
   return (
     <section className="bg-black px-8 xl:px-0 py-16">
-      <div className="max-w-7xl mx-auto">
+      <Reveal className="max-w-7xl mx-auto">
         <div className="grid grid-cols-[3rem_1fr] md:grid-cols-[6rem_1fr] gap-x-4 md:gap-x-8">
           <span className="font-display font-bold text-base leading-8 text-brand-gold">
             {number}
@@ -51,7 +52,7 @@ export function TextBlockSection({ number, title, body }: Props) {
             )}
           </div>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

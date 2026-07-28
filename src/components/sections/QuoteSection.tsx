@@ -1,5 +1,6 @@
 import QuoteMarkIcon from "../../../public/svg/quote_marks.svg";
 import { manrope } from "@/lib/fonts";
+import { Reveal } from "@/components/motion/Reveal";
 
 type Props = {
   largeHeadline: string;
@@ -21,20 +22,25 @@ export function QuoteSection({
 
   return (
     <section className="px-8 xl:px-0 py-24 max-w-7xl mx-auto text-center">
-      <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl lg:text-7xl leading-tight uppercase text-brand-light mb-16">
-        {parts ? (
-          <>
-            {parts[0]}
-            <em className="italic text-brand-gold">{largeHeadlineItalic}</em>
-            {parts[1]}
-          </>
-        ) : (
-          largeHeadline
-        )}
-      </h2>
+      <Reveal>
+        <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl lg:text-7xl leading-tight uppercase text-brand-light mb-16">
+          {parts ? (
+            <>
+              {parts[0]}
+              <em className="italic text-brand-gold">{largeHeadlineItalic}</em>
+              {parts[1]}
+            </>
+          ) : (
+            largeHeadline
+          )}
+        </h2>
+      </Reveal>
 
       {hasQuote && (
-        <div className="max-w-md mx-auto bg-white rounded-md p-8 text-left flex items-start gap-5">
+        <Reveal
+          delay={0.15}
+          className="max-w-md mx-auto bg-white rounded-md p-8 text-left flex items-start gap-5"
+        >
           <QuoteMarkIcon className="shrink-0" />
           <div>
             {quoteBoldText && (
@@ -52,7 +58,7 @@ export function QuoteSection({
               </p>
             )}
           </div>
-        </div>
+        </Reveal>
       )}
     </section>
   );

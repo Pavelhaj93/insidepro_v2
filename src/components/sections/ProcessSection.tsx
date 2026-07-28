@@ -1,4 +1,5 @@
 import { manrope } from "@/lib/fonts";
+import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 
 type ProcessStep = {
   number?: string;
@@ -17,24 +18,27 @@ export function ProcessSection({ label, steps = [] }: Props) {
     <section className="px-8 xl:px-0 pt-24 bg-black">
       <div className="max-w-7xl mx-auto pb-24">
         {label && (
-          <p className="font-body text-lg text-brand-gold tracking-widest  uppercase mb-12 font-medium">
-            {label}
-          </p>
+          <Reveal>
+            <p className="font-body text-lg text-brand-gold tracking-widest  uppercase mb-12 font-medium">
+              {label}
+            </p>
+          </Reveal>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+        <RevealStagger className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
           {steps.map((step, i) => (
-            <div
+            <RevealItem
               key={i}
-              className="border border-brand-dark/60 p-6 bg-brand-grey rounded-md"
+              className="group border border-brand-dark/60 p-6 bg-brand-grey rounded-md"
             >
               {step.number && (
-                <span className="font-display font-bold text-4xl sm:text-5xl lg:text-7xl text-brand-gold-light block mb-20">
+                <span className="font-display font-bold text-4xl sm:text-5xl lg:text-7xl text-brand-gold-light block mb-20 transition-colors duration-300 group-hover:text-brand-gold">
                   {step.number}
                 </span>
               )}
-              <h3 className="font-display font-black leading-8 text-2xl uppercase text-brand-light mb-3 border-b-brand-gold-light border-b pb-8">
+              <h3 className="relative font-display font-black leading-8 text-2xl uppercase text-brand-light mb-3 pb-8">
                 {step.title}
+                <span className="absolute bottom-0 left-0 h-px w-full bg-brand-gold-light origin-left scale-x-100 transition-transform duration-500 group-hover:scale-x-75 group-hover:bg-brand-gold" />
               </h3>
               {step.description && (
                 <p
@@ -60,9 +64,9 @@ export function ProcessSection({ label, steps = [] }: Props) {
                     : step.description}
                 </p>
               )}
-            </div>
+            </RevealItem>
           ))}
-        </div>
+        </RevealStagger>
       </div>
     </section>
   );

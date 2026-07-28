@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
+import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 
 type Film = {
   _id: string;
@@ -46,25 +47,27 @@ export function FilmShowcaseSection({
 }: Props) {
   return (
     <section className="px-8 xl:px-0 py-24 max-w-7xl mx-auto">
-      {label && (
-        <p className="font-body text-xs tracking-widest text-brand-light/40 uppercase mb-4 text-center">
-          {label}
-        </p>
-      )}
-      {heading && (
-        <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-8xl leading-tight tracking-normal uppercase text-brand-light text-center mb-8">
-          {heading}
-        </h2>
-      )}
-      {introText && (
-        <p className="font-body text-sm text-brand-light/60 leading-relaxed max-w-2xl mx-auto text-center mb-14">
-          {introText}
-        </p>
-      )}
+      <Reveal>
+        {label && (
+          <p className="font-body text-xs tracking-widest text-brand-light/40 uppercase mb-4 text-center">
+            {label}
+          </p>
+        )}
+        {heading && (
+          <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-8xl leading-tight tracking-normal uppercase text-brand-light text-center mb-8">
+            {heading}
+          </h2>
+        )}
+        {introText && (
+          <p className="font-body text-sm text-brand-light/60 leading-relaxed max-w-2xl mx-auto text-center mb-14">
+            {introText}
+          </p>
+        )}
+      </Reveal>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+      <RevealStagger className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         {films.map((film) => (
-          <div key={film._id} className="flex flex-col h-full">
+          <RevealItem key={film._id} className="flex flex-col h-full">
             <div className="relative aspect-2/3 overflow-hidden bg-brand-dark rounded-t-md">
               {film.coverImage && (
                 <Image
@@ -101,9 +104,9 @@ export function FilmShowcaseSection({
                 </span>
               )}
             </div>
-          </div>
+          </RevealItem>
         ))}
-      </div>
+      </RevealStagger>
     </section>
   );
 }

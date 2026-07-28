@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ViewTransition } from "react";
 import { client } from "@/sanity/lib/client";
 import { homepageQuery } from "@/sanity/lib/queries";
 import { SectionRenderer } from "@/components/SectionRenderer";
@@ -31,8 +32,10 @@ export default async function HomePage() {
   }
 
   return (
-    <main>
-      <SectionRenderer blocks={page.blocks} />
-    </main>
+    <ViewTransition enter="page-fade-in" exit="page-fade-out" default="none">
+      <main>
+        <SectionRenderer blocks={page.blocks} />
+      </main>
+    </ViewTransition>
   );
 }

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 import { SocialLinks } from "./SocialLinks";
+import { Reveal } from "@/components/motion/Reveal";
 
 type FooterContent = {
   headingLine1?: string | null;
@@ -68,7 +69,7 @@ export function Footer({ content, socialLinks }: Props) {
             {line2Parts[1]}
           </h2> */}
 
-          <div className="border-t border-brand-bronze/30 mt-10 pt-6 px-10 flex flex-col md:flex-row items-center justify-between gap-4">
+          <Reveal className="border-t border-brand-bronze/30 mt-10 pt-6 px-10 flex flex-col md:flex-row items-center justify-between gap-4">
             {email ? (
               <a
                 href={`mailto:${email}`}
@@ -92,7 +93,7 @@ export function Footer({ content, socialLinks }: Props) {
             ) : (
               <span />
             )}
-          </div>
+          </Reveal>
 
           <div className="border-t border-brand-bronze/30 mt-6 pt-6 text-center">
             <p className="font-display font-bold text-sm text-brand-light">
