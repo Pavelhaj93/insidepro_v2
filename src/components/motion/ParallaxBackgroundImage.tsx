@@ -6,6 +6,7 @@ import { ParallaxLayer } from "./ParallaxLayer";
 
 type Props = {
   src: string;
+  mobileSrc?: string;
   alt?: string;
   sizes: string;
   quality?: number;
@@ -23,6 +24,7 @@ type Props = {
  */
 export function ParallaxBackgroundImage({
   src,
+  mobileSrc,
   alt = "",
   sizes,
   quality,
@@ -32,16 +34,41 @@ export function ParallaxBackgroundImage({
 }: Props) {
   return (
     <ParallaxLayer intensity={intensity}>
-      <Image
-        src={src}
-        loader={sanityImageLoader}
-        alt={alt}
-        fill
-        sizes={sizes}
-        quality={quality}
-        className={className}
-        priority={priority}
-      />
+      {mobileSrc ? (
+        <>
+          <Image
+            src={mobileSrc}
+            loader={sanityImageLoader}
+            alt={alt}
+            fill
+            sizes={sizes}
+            quality={quality}
+            className={`${className} block md:hidden`}
+            priority={priority}
+          />
+          <Image
+            src={src}
+            loader={sanityImageLoader}
+            alt={alt}
+            fill
+            sizes={sizes}
+            quality={quality}
+            className={`${className} hidden md:block`}
+            priority={priority}
+          />
+        </>
+      ) : (
+        <Image
+          src={src}
+          loader={sanityImageLoader}
+          alt={alt}
+          fill
+          sizes={sizes}
+          quality={quality}
+          className={className}
+          priority={priority}
+        />
+      )}
     </ParallaxLayer>
   );
 }

@@ -9,6 +9,7 @@ import { settingsQuery } from "@/sanity/lib/queries";
 
 type Props = {
   backgroundImage?: { asset: { _ref: string } };
+  backgroundImageMobile?: { asset: { _ref: string } };
   backgroundVideo?: { asset?: { url?: string; mimeType?: string } };
   backgroundVideoMobile?: { asset?: { url?: string; mimeType?: string } };
   headline: string;
@@ -20,6 +21,7 @@ type Props = {
 
 export async function HeroSection({
   backgroundImage,
+  backgroundImageMobile,
   backgroundVideo,
   backgroundVideoMobile,
   headline,
@@ -40,6 +42,11 @@ export async function HeroSection({
       {backgroundImage && (
         <ParallaxBackgroundImage
           src={urlFor(backgroundImage).url()}
+          mobileSrc={
+            backgroundImageMobile
+              ? urlFor(backgroundImageMobile).url()
+              : undefined
+          }
           intensity={12}
           sizes="110vw"
           quality={90}

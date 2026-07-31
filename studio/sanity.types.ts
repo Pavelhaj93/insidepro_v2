@@ -326,6 +326,13 @@ export type HeroSection = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  backgroundImageMobile?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
   backgroundVideo?: {
     asset?: SanityFileAssetReference;
     media?: unknown;

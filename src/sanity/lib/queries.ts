@@ -22,6 +22,7 @@ const blocksProjection = groq`
     _key,
     // heroSection
     backgroundImage,
+    backgroundImageMobile,
     backgroundVideo { asset->{ url, mimeType } },
     backgroundVideoMobile { asset->{ url, mimeType } },
     headline,
@@ -79,8 +80,8 @@ const blocksProjection = groq`
       _type == "reference" => @-> {
         "name": coalesce(client, title),
         "backgroundImage": coverImage,
-        "quote": excerpt,
-        "tagline": category,
+        body,
+        "tagline": excerpt,
       },
     },
     // imageSection

@@ -4,6 +4,11 @@ import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
+import {
+  PortableText,
+  type PortableTextBlock,
+  type PortableTextComponents,
+} from "next-sanity";
 import { urlFor, sanityImageLoader } from "@/sanity/lib/image";
 
 type SanityImage = { asset: { _ref: string } };
@@ -13,10 +18,38 @@ type ClientItem = {
   name: string;
   tagline?: string;
   quote?: string;
+  body?: PortableTextBlock[];
   url?: string;
   logo?: SanityImage;
   backgroundImage?: MockImage;
 };
+
+/**
+ * Referenced Project documents carry the quote in `body` (rich text);
+ * inline client entries only ever have the plain `quote` string. Renders
+ * whichever is present, in the given text style.
+ */
+function QuoteText({
+  client,
+  className,
+}: {
+  client: ClientItem;
+  className: string;
+}) {
+  const content = client.body?.length ? client.body : client.quote;
+  if (!content) return null;
+
+  if (typeof content === "string") {
+    return <p className={className}>{content}</p>;
+  }
+
+  const components: PortableTextComponents = {
+    block: {
+      normal: ({ children }) => <p className={className}>{children}</p>,
+    },
+  };
+  return <PortableText value={content} components={components} />;
+}
 
 /**
  * Resolves either a Sanity image ref or a plain URL (used in mock data) to a
@@ -41,44 +74,6 @@ type Props = {
   viewAllSlug?: string;
   clients?: ClientItem[];
 };
-
-// ─── Mock data — replace with real Sanity data when available ────────────────
-const MOCK_CLIENTS: ClientItem[] = [
-  {
-    name: "Kingspan",
-    tagline: "Globální lídr ve svém oboru",
-    quote: "Důvěřují nám značky, které nemají prostor pro kompromisy.",
-    url: "https://www.kingspan.com",
-    backgroundImage: {
-      asset: {
-        _ref: "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=1600&h=1200&fit=crop&auto=format",
-      },
-    },
-  },
-  {
-    name: "Iscare",
-    tagline: "Prestižní soukromá klinika",
-    quote:
-      "Jedna značka. Jeden tým. Nemusíte koordinovat agenturu, produkci a správu kampaní.",
-    url: "https://www.iscare.cz",
-    backgroundImage: {
-      asset: {
-        _ref: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1600&h=1200&fit=crop&auto=format",
-      },
-    },
-  },
-  {
-    name: "Feri",
-    tagline: "Významná česká stavební firma",
-    quote: "Navrhujeme identity. Natáčíme filmy. Spravujeme komunikaci.",
-    url: "https://www.feri.cz",
-    backgroundImage: {
-      asset: {
-        _ref: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1600&h=1200&fit=crop&auto=format",
-      },
-    },
-  },
-];
 
 function ClientSlide({
   client,
@@ -136,11 +131,10 @@ function ClientSlide({
 
         {/* Info card — bottom */}
         <div className="flex-1 bg-black flex flex-col justify-between px-6 py-6">
-          {client.quote && (
-            <p className="font-display font-normal text-2xl leading-7 tracking-normal text-brand-light mb-4">
-              {client.quote}
-            </p>
-          )}
+          <QuoteText
+            client={client}
+            className="font-display font-normal text-2xl leading-7 tracking-normal text-brand-light mb-4"
+          />
           <div>
             <div className="h-px bg-brand-gold mb-5" />
             <div className="flex items-end justify-between gap-4">
@@ -221,11 +215,10 @@ function ClientSlide({
         {/* Floating dark card — right side */}
         <div className="absolute bottom-1/2 right-10 top-10 w-[38%] bg-[#0D0D0D] flex flex-col justify-between p-10 rounded-3xl">
           <div className="flex-1 flex items-start">
-            {client.quote && (
-              <p className="font-display font-normal text-3xl leading-8 tracking-normal text-brand-light">
-                {client.quote}
-              </p>
-            )}
+            <QuoteText
+              client={client}
+              className="font-display font-normal text-3xl leading-8 tracking-normal text-brand-light"
+            />
           </div>
           <div>
             <div className="h-px bg-brand-gold mb-8" />
@@ -290,6 +283,8 @@ export function ClientsShowcaseSection({ label, clients }: Props) {
   });
 
   if (!clients?.length) return null;
+
+  console.log("ttt clients", clients);
 
   return (
     <section ref={wrapperRef} style={{ height: `${clients.length * 100}vh` }}>

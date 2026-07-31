@@ -14,6 +14,14 @@ export const heroSection = defineType({
         "Always required as the poster frame — shown instantly while the background video (if any) loads in behind it.",
     }),
     defineField({
+      name: "backgroundImageMobile",
+      title: "Background Image — Mobile (optional)",
+      type: "image",
+      options: { hotspot: true },
+      description:
+        "Optional portrait-framed poster used on narrow screens instead of cropping the desktop image. Falls back to the image above if left empty.",
+    }),
+    defineField({
       name: "backgroundVideo",
       title: "Background Video (optional)",
       type: "file",

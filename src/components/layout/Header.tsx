@@ -12,6 +12,7 @@ import {
 import { usePathname } from "next/navigation";
 import { urlFor } from "@/sanity/lib/image";
 import { SocialLinks } from "./SocialLinks";
+import link from "next/link";
 
 type SocialLinksValue = {
   instagram?: string | null;
@@ -35,8 +36,8 @@ const mainNavLinks = [
 ];
 
 const extraNavLinks = [
-  { label: "PLACEHOLDER 1", href: "#" },
-  { label: "PLACEHOLDER 2", href: "#" },
+  { label: "REFERENCE", href: "/reference" },
+  { label: "KARIÉRA", href: "/kariera" },
 ];
 
 export function Header({ logo, logoText, socialLinks }: Props) {
@@ -224,7 +225,11 @@ export function Header({ logo, logoText, socialLinks }: Props) {
                 key={link.label}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="font-body text-sm tracking-widest text-brand-light/50 hover:text-brand-light transition-colors uppercase py-2"
+                className={`font-body text-lg tracking-widest transition-colors uppercase py-2 ${
+                  pathname === link.href
+                    ? "text-brand-gold"
+                    : "text-brand-light/80 hover:text-brand-light"
+                }`}
               >
                 {link.label}
               </Link>
