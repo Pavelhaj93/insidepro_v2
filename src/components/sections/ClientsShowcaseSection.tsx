@@ -4,7 +4,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { urlFor } from "@/sanity/lib/image";
+import { urlFor, sanityImageLoader } from "@/sanity/lib/image";
 
 type SanityImage = { asset: { _ref: string } };
 type MockImage = { asset: { _ref: string } }; // _ref may also be a plain https:// URL for mocks
@@ -18,18 +18,19 @@ type ClientItem = {
   backgroundImage?: MockImage;
 };
 
-/** Resolves either a Sanity image ref or a plain URL (used in mock data). */
-function resolveImageUrl(
-  img: MockImage,
-  width: number,
-  height: number,
-): string {
+/**
+ * Resolves either a Sanity image ref or a plain URL (used in mock data) to a
+ * base URL with no baked-in size — `sanityImageLoader` appends the exact
+ * width/quality/format needed per breakpoint.
+ */
+function resolveImageUrl(img: MockImage): string {
   const ref = img.asset._ref;
-  if (ref.startsWith("http")) return ref;
-  return urlFor(img as SanityImage)
-    .width(width)
-    .height(height)
-    .url();
+  if (ref.startsWith("http")) {
+    const url = new URL(ref);
+    url.search = "";
+    return url.toString();
+  }
+  return urlFor(img as SanityImage).url();
 }
 
 type Props = {
@@ -99,7 +100,6 @@ function ClientSlide({
 
   // Depth cue: the outgoing slide eases back slightly as the next one takes over.
   const cardScale = useTransform(scrollProgress, [start, end], [1, 0.94]);
-  const cardOpacity = useTransform(scrollProgress, [start, end], [1, 0.85]);
 
   return (
     <div
@@ -109,7 +109,7 @@ function ClientSlide({
       {/* ── Mobile: flex column — image top, card bottom ───────────────── */}
       <motion.div
         className="flex flex-col h-full w-full rounded-3xl overflow-hidden md:hidden"
-        style={{ scale: cardScale, opacity: cardOpacity }}
+        style={{ scale: cardScale }}
       >
         {/* Image — top 55% */}
         <div className="relative w-full bg-black" style={{ flex: "0 0 55%" }}>
@@ -119,10 +119,12 @@ function ClientSlide({
               style={{ y: imageY }}
             >
               <Image
-                src={resolveImageUrl(client.backgroundImage, 800, 600)}
+                src={resolveImageUrl(client.backgroundImage)}
+                loader={sanityImageLoader}
                 alt={client.name}
                 fill
-                sizes="100vw"
+                sizes="110vw"
+                quality={85}
                 className="object-cover object-center"
                 priority={index === 0}
               />
@@ -146,7 +148,8 @@ function ClientSlide({
                 {client.logo ? (
                   <div className="relative h-8 w-32 mb-2">
                     <Image
-                      src={resolveImageUrl(client.logo, 320, 80)}
+                      src={resolveImageUrl(client.logo)}
+                      loader={sanityImageLoader}
                       alt={client.name}
                       fill
                       sizes="128px"
@@ -191,7 +194,7 @@ function ClientSlide({
       {/* ── Desktop: full-bleed image with floating card overlay ────────── */}
       <motion.div
         className="relative h-full w-full rounded-3xl overflow-hidden hidden md:block"
-        style={{ scale: cardScale, opacity: cardOpacity }}
+        style={{ scale: cardScale }}
       >
         {/* Background image with parallax */}
         {client.backgroundImage ? (
@@ -200,10 +203,12 @@ function ClientSlide({
             style={{ y: imageY }}
           >
             <Image
-              src={resolveImageUrl(client.backgroundImage, 1600, 1200)}
+              src={resolveImageUrl(client.backgroundImage)}
+              loader={sanityImageLoader}
               alt={client.name}
               fill
-              sizes="100vw"
+              sizes="110vw"
+              quality={85}
               className="object-cover object-center"
               priority={index === 0}
             />
@@ -229,7 +234,8 @@ function ClientSlide({
                 {client.logo ? (
                   <div className="relative h-10 w-40 mb-3">
                     <Image
-                      src={resolveImageUrl(client.logo, 320, 80)}
+                      src={resolveImageUrl(client.logo)}
+                      loader={sanityImageLoader}
                       alt={client.name}
                       fill
                       sizes="160px"

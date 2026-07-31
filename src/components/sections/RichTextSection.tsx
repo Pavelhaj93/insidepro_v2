@@ -35,7 +35,7 @@ export function RichTextSection({ title, body }: Props) {
 
   return (
     <section className="px-8 md:px-0 py-8 max-w-7xl mx-auto">
-      <Reveal className="bg-black px-6 py-10 md:px-12 md:py-12 text-center">
+      <Reveal className="bg-brand-black px-6 py-10 md:px-12 md:py-12 text-center">
         {title && (
           <h2 className="font-display font-black text-xl md:text-2xl leading-snug tracking-normal uppercase text-brand-gold mb-8">
             {title}

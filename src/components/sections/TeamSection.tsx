@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { manrope } from "@/lib/fonts";
 import { ArrowRightIcon } from "@/components/icons/ArrowRight";
 import { urlFor } from "@/sanity/lib/image";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
+import { SanityImage } from "@/components/ui/SanityImage";
 
 type TeamMember = {
   _id: string;
@@ -32,28 +32,28 @@ export function TeamSection({
   ctaLink,
 }: Props) {
   return (
-    <section className="px-8 xl:px-0 py-24 max-w-7xl mx-auto">
+    <section className="px-8 xl:px-0 py-24 max-w-5xl mx-auto">
       {/* {heading && (
         <p className="font-body text-xs tracking-widest text-brand-light/40 uppercase mb-12">
           {heading}
         </p>
       )} */}
 
-      <RevealStagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+      <RevealStagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
         {teamMembers.map((member) => (
           <RevealItem key={member._id} className="group h-full flex flex-col">
-            <div className="relative aspect-3/4 rounded-t-md overflow-hidden bg-brand-dark mb-0 grayscale group-hover:grayscale-0 transition-all duration-500">
+            <div className="relative aspect-109/123 rounded-t-md overflow-hidden bg-brand-dark mb-0 grayscale group-hover:grayscale-0 transition-all duration-500">
               {member.photo && (
-                <Image
-                  src={urlFor(member.photo).width(600).height(800).url()}
+                <SanityImage
+                  src={urlFor(member.photo).url()}
                   alt={member.name}
-                  fill
                   sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                  quality={85}
                   className="object-cover object-center"
                 />
               )}
             </div>
-            <div className="bg-brand-grey px-6 py-5 flex flex-col flex-1 rounded-b-md">
+            <div className="bg-brand-grey px-6 py-8 flex flex-col flex-1 rounded-b-md">
               <h3 className="font-display font-black text-2xl leading-none md:text-3xl tracking-normal uppercase text-brand-light">
                 {member.name}
               </h3>

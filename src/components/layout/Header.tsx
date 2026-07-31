@@ -235,7 +235,7 @@ export function Header({ logo, logoText, socialLinks }: Props) {
         {/* Social links */}
         {socialLinks && (
           <div className="px-10 py-8">
-            <SocialLinks links={socialLinks} iconSize={18} />
+            <SocialLinks links={socialLinks} iconSize={24} />
           </div>
         )}
       </div>

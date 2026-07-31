@@ -81,7 +81,7 @@ export function Footer({ content, socialLinks }: Props) {
               <span />
             )}
 
-            {socialLinks && <SocialLinks links={socialLinks} iconSize={18} />}
+            {socialLinks && <SocialLinks links={socialLinks} iconSize={24} />}
 
             {phone ? (
               <a

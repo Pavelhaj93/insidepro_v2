@@ -310,6 +310,13 @@ export type ServicesListSection = {
   >;
 };
 
+export type SanityFileAssetReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
+};
+
 export type HeroSection = {
   _type: "heroSection";
   backgroundImage?: {
@@ -318,6 +325,16 @@ export type HeroSection = {
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
     _type: "image";
+  };
+  backgroundVideo?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: "file";
+  };
+  backgroundVideoMobile?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: "file";
   };
   headline?: string;
   headlineItalic?: string;
@@ -789,6 +806,7 @@ export type AllSanitySchemaTypes =
   | ReferenceWorksSection
   | FeaturedWorksSection
   | ServicesListSection
+  | SanityFileAssetReference
   | HeroSection
   | Category
   | Slug

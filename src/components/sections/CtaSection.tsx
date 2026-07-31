@@ -1,7 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import { urlFor } from "@/sanity/lib/image";
-import { ParallaxLayer } from "@/components/motion/ParallaxLayer";
+import { ParallaxBackgroundImage } from "@/components/motion/ParallaxBackgroundImage";
 import { Reveal } from "@/components/motion/Reveal";
 import { MagneticButton } from "@/components/motion/MagneticButton";
 
@@ -22,15 +21,12 @@ export function CtaSection({
     <section className="relative overflow-hidden py-32 md:py-48 px-8 md:px-12">
       {backgroundImage && (
         <>
-          <ParallaxLayer intensity={10}>
-            <Image
-              src={urlFor(backgroundImage).width(1920).height(800).url()}
-              alt=""
-              fill
-              sizes="100vw"
-              className="object-cover object-center"
-            />
-          </ParallaxLayer>
+          <ParallaxBackgroundImage
+            src={urlFor(backgroundImage).url()}
+            intensity={10}
+            sizes="110vw"
+            quality={85}
+          />
           <div className="absolute inset-0 bg-brand-black/60" />
         </>
       )}

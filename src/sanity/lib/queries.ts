@@ -22,6 +22,8 @@ const blocksProjection = groq`
     _key,
     // heroSection
     backgroundImage,
+    backgroundVideo { asset->{ url, mimeType } },
+    backgroundVideoMobile { asset->{ url, mimeType } },
     headline,
     headlineItalic,
     subtitle,

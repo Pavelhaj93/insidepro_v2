@@ -35,10 +35,15 @@ function ArrowIcon({ direction }: { direction: "left" | "right" }) {
   );
 }
 
+function hasAsset(image?: SanityImage): image is SanityImage & { asset: { _ref: string } } {
+  return Boolean(image?.asset?._ref);
+}
+
 export function ProjectCard({ project }: Props) {
-  const images = project.gallery?.length
-    ? project.gallery
-    : project.coverImage
+  const gallery = project.gallery?.filter(hasAsset) ?? [];
+  const images = gallery.length
+    ? gallery
+    : hasAsset(project.coverImage)
       ? [project.coverImage]
       : [];
 

@@ -67,15 +67,15 @@ export function FilmShowcaseSection({
 
       <RevealStagger className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         {films.map((film) => (
-          <RevealItem key={film._id} className="flex flex-col h-full">
-            <div className="relative aspect-2/3 overflow-hidden bg-brand-dark rounded-t-md">
+          <RevealItem key={film._id} className="flex flex-col h-full group">
+            <div className="relative aspect-3/4 overflow-hidden bg-brand-dark rounded-t-md">
               {film.coverImage && (
                 <Image
-                  src={urlFor(film.coverImage).width(600).height(900).url()}
+                  src={urlFor(film.coverImage).width(600).height(800).url()}
                   alt={film.title}
                   fill
                   sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
-                  className="object-cover object-center"
+                  className="object-cover object-center grayscale transition-all duration-700 ease-out group-hover:grayscale-0 motion-safe:group-hover:scale-105"
                 />
               )}
             </div>

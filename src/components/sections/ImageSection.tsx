@@ -1,6 +1,5 @@
-import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
-import { ParallaxLayer } from "@/components/motion/ParallaxLayer";
+import { ParallaxBackgroundImage } from "@/components/motion/ParallaxBackgroundImage";
 import { Reveal } from "@/components/motion/Reveal";
 import { fadeIn } from "@/lib/motion";
 
@@ -26,15 +25,13 @@ export function ImageSection({ image }: Props) {
         className="relative w-full overflow-hidden"
         style={{ aspectRatio: `${width} / ${height}` }}
       >
-        <ParallaxLayer intensity={8}>
-          <Image
-            src={urlFor(image).width(2000).url()}
-            alt={image.alt ?? ""}
-            fill
-            sizes="100vw"
-            className="object-cover object-center"
-          />
-        </ParallaxLayer>
+        <ParallaxBackgroundImage
+          src={urlFor(image).url()}
+          alt={image.alt ?? ""}
+          intensity={8}
+          sizes="110vw"
+          quality={85}
+        />
       </Reveal>
     </section>
   );
