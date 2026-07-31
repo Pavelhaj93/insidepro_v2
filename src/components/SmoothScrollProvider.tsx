@@ -2,6 +2,7 @@
 
 import { ReactLenis } from "lenis/react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { ScrollResetOnNavigate } from "./ScrollResetOnNavigate";
 
 /**
  * Wires up Lenis smooth-scroll physics for the whole document (`root`, no wrapper
@@ -21,6 +22,7 @@ export function SmoothScrollProvider({
 
   return (
     <ReactLenis root options={{ lerp: 0.1, duration: 1.2 }}>
+      <ScrollResetOnNavigate />
       {children}
     </ReactLenis>
   );

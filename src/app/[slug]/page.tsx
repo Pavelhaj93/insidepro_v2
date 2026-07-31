@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { ViewTransition } from 'react'
 import { client } from '@/sanity/lib/client'
 import { pageBySlugQuery, pagesQuery } from '@/sanity/lib/queries'
 import { SectionRenderer } from '@/components/SectionRenderer'
@@ -35,10 +34,8 @@ export default async function DynamicPage({ params }: Props) {
   if (!page) notFound()
 
   return (
-    <ViewTransition enter="page-fade-in" exit="page-fade-out" default="none">
-      <main>
-        <SectionRenderer blocks={page.blocks} />
-      </main>
-    </ViewTransition>
+    <main>
+      <SectionRenderer blocks={page.blocks} />
+    </main>
   )
 }

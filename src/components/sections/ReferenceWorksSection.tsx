@@ -62,7 +62,7 @@ export function ReferenceWorksSection({
     }`;
 
   return (
-    <section className="px-8 md:px-0 py-24 max-w-7xl mx-auto">
+    <section className="px-8 md:px-0 pt-36 md:pt-44 pb-24 max-w-7xl mx-auto">
       <Reveal>
         <h2 className="font-display font-black text-4xl md:text-6xl lg:text-[75.04px] leading-tight lg:leading-[76.5px] tracking-normal uppercase text-brand-light mb-12">
           {heading}
