@@ -73,7 +73,7 @@ export async function HeroSection({
       {/* Content — centered */}
       <div className="relative z-10 top-10 px-8 md:px-12 w-full text-center">
         <Reveal duration={0.9}>
-          <h1 className="font-display font-black text-5xl leading-tight sm:text-6xl md:text-7xl lg:text-9xl tracking-normal uppercase text-brand-light">
+          <h1 className="font-display font-black text-5xl leading-tight sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl tracking-normal uppercase text-brand-light">
             {headlineItalic && parts[0] !== undefined ? (
               <>
                 {parts[0]}

@@ -62,8 +62,14 @@ function LogoWallRow({
   // `opts`/`plugins` get a new reference, so these must stay stable across
   // re-renders — otherwise AutoScroll's position/timer keeps resetting,
   // which is what caused the jumpy/stuttering autoplay.
+  //
+  // This is a passive marquee with zero user interruption by design:
+  // `watchDrag: false` disables embla's pointer/drag handling entirely (no
+  // click-drag pause), and the AutoScroll options below turn off every other
+  // built-in "stop" trigger (hover, focus-in, generic interaction) so it just
+  // plays continuously no matter what the user does on the page.
   const opts = useMemo(
-    () => ({ loop: true, align: "start" as const, dragFree: true }),
+    () => ({ loop: true, align: "start" as const, watchDrag: false }),
     [],
   );
 
@@ -75,7 +81,8 @@ function LogoWallRow({
             AutoScroll({
               direction,
               stopOnInteraction: false,
-              stopOnMouseEnter: true,
+              stopOnMouseEnter: false,
+              stopOnFocusIn: false,
               speed: 0.9,
             }),
           ],
