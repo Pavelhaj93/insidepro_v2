@@ -31,13 +31,20 @@ export async function HeroSection({
   showSocialIcons = false,
 }: Props) {
   const parts = headlineItalic ? headline.split(headlineItalic) : [headline];
+  const hasVideo = Boolean(backgroundVideo?.asset?.url);
 
   const socialLinks = showSocialIcons
     ? ((await client.fetch(settingsQuery))?.socialLinks ?? null)
     : null;
 
   return (
-    <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden">
+    <section
+      className={`relative flex flex-col items-center justify-center overflow-hidden ${
+        hasVideo
+          ? "aspect-9/16 h-auto mt-22 md:aspect-auto md:h-[calc(100dvh-88px)]"
+          : "h-screen"
+      }`}
+    >
       {/* Background image — always the poster/base layer, loads instantly */}
       {backgroundImage && (
         <ParallaxBackgroundImage
