@@ -28,10 +28,10 @@ type Props = {
 };
 
 const mainNavLinks = [
-  { label: "FILMY", href: "/filmy" },
   { label: "PRODUKCE", href: "/produkce" },
   { label: "BRANDING", href: "/branding" },
   { label: "MARKETING", href: "/marketing" },
+  { label: "FILMY", href: "/filmy" },
   { label: "KONTAKT", href: "/kontakt" },
 ];
 

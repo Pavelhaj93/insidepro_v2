@@ -79,7 +79,20 @@ export type ServiceItem = {
   _type: "serviceItem";
   number?: string;
   title?: string;
-  description?: string;
+  description?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
   linkLabel?: string;
   link?: string;
 };

@@ -1,4 +1,9 @@
 import Link from "next/link";
+import {
+  PortableText,
+  type PortableTextBlock,
+  type PortableTextComponents,
+} from "next-sanity";
 import { manrope } from "@/lib/fonts";
 import { ArrowRightIcon } from "@/components/icons/ArrowRight";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
@@ -6,9 +11,28 @@ import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 type ServiceItem = {
   number?: string;
   title: string;
-  description?: string;
+  description?: PortableTextBlock[];
   linkLabel?: string;
   link?: string;
+};
+
+const descriptionComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children }) => (
+      <p
+        className={`${manrope.className} font-normal text-xl leading-snug tracking-normal text-white mb-4 last:mb-0`}
+      >
+        {children}
+      </p>
+    ),
+  },
+  marks: {
+    gold: ({ children }) => <span className="text-brand-gold">{children}</span>,
+    strong: ({ children }) => (
+      <strong className="font-extrabold">{children}</strong>
+    ),
+    em: ({ children }) => <em className="italic">{children}</em>,
+  },
 };
 
 type Props = {
@@ -76,12 +100,11 @@ export function ServicesListSection({
                   <h3 className="font-display font-black text-xl sm:text-2xl md:text-3xl leading-none tracking-normal uppercase text-brand-light mb-4">
                     {item.title}
                   </h3>
-                  {item.description && (
-                    <p
-                      className={`${manrope.className} font-normal text-xl leading-snug tracking-normal text-white whitespace-pre-line`}
-                    >
-                      {item.description}
-                    </p>
+                  {item.description && item.description.length > 0 && (
+                    <PortableText
+                      value={item.description}
+                      components={descriptionComponents}
+                    />
                   )}
                   {item.linkLabel && item.link && (
                     <div className="flex justify-end mt-6">
