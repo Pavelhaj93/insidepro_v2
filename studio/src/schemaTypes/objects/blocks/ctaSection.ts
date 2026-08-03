@@ -1,4 +1,18 @@
-import { defineField, defineType } from 'sanity'
+import {
+  defineField,
+  defineType,
+  isPortableTextSpan,
+  isPortableTextTextBlock,
+  type PortableTextBlock,
+} from 'sanity'
+
+const blockToPlainText = (block: PortableTextBlock): string =>
+  isPortableTextTextBlock(block)
+    ? block.children
+        .filter(isPortableTextSpan)
+        .map(child => child.text)
+        .join('')
+    : ''
 
 export const ctaSection = defineType({
   name: 'ctaSection',
@@ -34,11 +48,8 @@ export const ctaSection = defineType({
   preview: {
     select: { title: 'headline', media: 'backgroundImage' },
     prepare({ title, media }) {
-      const headlineText = Array.isArray(title)
-        ? title
-            .map(block => block.children?.map(child => child.text).join('') ?? '')
-            .join(' ')
-        : title
+      const blocks = (title ?? []) as PortableTextBlock[]
+      const headlineText = blocks.map(blockToPlainText).join(' ')
       return { title: `CTA: ${headlineText}`, media }
     },
   },
