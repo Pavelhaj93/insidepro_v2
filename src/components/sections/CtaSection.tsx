@@ -1,14 +1,32 @@
 import Link from "next/link";
+import {
+  PortableText,
+  type PortableTextBlock,
+  type PortableTextComponents,
+} from "next-sanity";
 import { urlFor } from "@/sanity/lib/image";
 import { ParallaxBackgroundImage } from "@/components/motion/ParallaxBackgroundImage";
 import { Reveal } from "@/components/motion/Reveal";
 import { MagneticButton } from "@/components/motion/MagneticButton";
 
 type Props = {
-  headline: string;
+  headline: PortableTextBlock[];
   backgroundImage?: { asset: { _ref: string } };
   buttonLabel?: string;
   buttonLink?: string;
+};
+
+const headlineComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children }) => <>{children}</>,
+  },
+  marks: {
+    gold: ({ children }) => <span className="text-brand-gold">{children}</span>,
+    strong: ({ children }) => (
+      <strong className="font-extrabold">{children}</strong>
+    ),
+    em: ({ children }) => <em className="italic">{children}</em>,
+  },
 };
 
 export function CtaSection({
@@ -32,10 +50,10 @@ export function CtaSection({
       )}
       {!backgroundImage && <div className="absolute inset-0 bg-brand-dark" />}
 
-      <div className="relative z-10 max-w-7xl mx-auto text-center">
+      <div className="relative z-10 max-w-5xl mx-auto text-center">
         <Reveal>
-          <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-8xl uppercase leading-none text-brand-light mb-10">
-            {headline}
+          <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-7xl 2xl:text-7xl uppercase leading-none text-brand-light mb-10">
+            <PortableText value={headline} components={headlineComponents} />
           </h2>
         </Reveal>
         {buttonLabel && buttonLink && (
