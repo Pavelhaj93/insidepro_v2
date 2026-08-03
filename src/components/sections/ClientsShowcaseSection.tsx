@@ -213,11 +213,11 @@ function ClientSlide({
         )}
 
         {/* Floating dark card — right side */}
-        <div className="absolute bottom-1/2 right-10 top-10 w-[38%] bg-[#0D0D0D] flex flex-col justify-between p-10 rounded-3xl">
+        <div className="absolute top-1/2 right-10 -translate-y-1/2 w-[38%] bg-[#0D0D0D] flex flex-col justify-between p-10 rounded-3xl">
           <div className="flex-1 flex items-start">
             <QuoteText
               client={client}
-              className="font-display font-normal text-3xl leading-8 tracking-normal text-brand-light"
+              className="font-display font-normal text-3xl leading-8 tracking-normal text-brand-light mb-8"
             />
           </div>
           <div>
@@ -282,6 +282,16 @@ export function ClientsShowcaseSection({ label, clients }: Props) {
     offset: ["start start", "end end"],
   });
 
+  // Stays fully visible through the first two slides, then fades out once
+  // during the 3rd slide's own scroll window instead of the whole range.
+  const total = clients?.length ?? 0;
+  const headlineFadeStart = total > 2 ? 2 / total : 0;
+  const headlineOpacity = useTransform(
+    scrollYProgress,
+    [headlineFadeStart, 1],
+    [1, 0],
+  );
+
   if (!clients?.length) return null;
 
   console.log("ttt clients", clients);
@@ -289,11 +299,14 @@ export function ClientsShowcaseSection({ label, clients }: Props) {
   return (
     <section ref={wrapperRef} style={{ height: `${clients.length * 100}vh` }}>
       {label && (
-        <div className="sticky top-0 z-0 px-8 md:px-12 pt-20 pointer-events-none">
+        <motion.div
+          className="sticky top-0 z-0 px-8 md:px-12 pt-20 pointer-events-none"
+          style={{ opacity: headlineOpacity }}
+        >
           <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl lg:text-7xl leading-tight tracking-normal uppercase text-brand-light">
             {label}
           </h2>
-        </div>
+        </motion.div>
       )}
 
       {clients.map((client, i) => (
