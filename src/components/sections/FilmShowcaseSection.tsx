@@ -54,7 +54,7 @@ export function FilmShowcaseSection({
           </p>
         )}
         {heading && (
-          <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-8xl leading-tight tracking-normal uppercase text-brand-light text-center mb-8">
+          <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-7xl leading-none tracking-normal uppercase text-brand-light text-center mb-8">
             {heading}
           </h2>
         )}
