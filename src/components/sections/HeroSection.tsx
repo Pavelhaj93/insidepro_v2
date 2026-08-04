@@ -36,9 +36,7 @@ const headlineComponents: PortableTextComponents = {
       ),
   },
   marks: {
-    gold: ({ children }) => (
-      <span className="text-brand-gold">{children}</span>
-    ),
+    gold: ({ children }) => <span className="text-brand-gold">{children}</span>,
     strong: ({ children }) => (
       <strong className="font-extrabold">{children}</strong>
     ),
@@ -103,10 +101,10 @@ export async function HeroSection({
       )}
 
       {/* Content — centered */}
-      <div className="relative z-10 top-10 px-8 md:px-12 w-full text-center">
+      <div className="relative z-10 px-8 md:px-12 w-full text-center">
         {headline && (
           <Reveal duration={0.9}>
-            <h1 className="font-display font-black text-5xl leading-tight sm:text-6xl md:text-7xl lg:text-8xl 2xl:text-9xl tracking-normal uppercase text-brand-light">
+            <h1 className="font-display font-black text-5xl leading-24 sm:text-6xl md:text-7xl lg:text-8xl 2xl:text-9xl tracking-normal uppercase text-brand-light">
               <PortableText value={headline} components={headlineComponents} />
             </h1>
           </Reveal>
