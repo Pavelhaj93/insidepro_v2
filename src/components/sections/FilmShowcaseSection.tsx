@@ -54,7 +54,7 @@ export function FilmShowcaseSection({
           </p>
         )}
         {heading && (
-          <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-7xl leading-none tracking-normal uppercase text-brand-light text-center mb-8">
+          <h2 className="font-display font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-none tracking-normal uppercase text-brand-light text-center mb-12">
             {heading}
           </h2>
         )}
@@ -68,7 +68,7 @@ export function FilmShowcaseSection({
       <RevealStagger className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         {films.map((film) => (
           <RevealItem key={film._id} className="flex flex-col h-full group">
-            <div className="relative aspect-3/4 overflow-hidden bg-brand-dark rounded-t-md">
+            <div className="relative aspect-4/5 overflow-hidden bg-brand-dark rounded-t-md">
               {film.coverImage && (
                 <Image
                   src={urlFor(film.coverImage).width(600).height(800).url()}
@@ -80,11 +80,11 @@ export function FilmShowcaseSection({
               )}
             </div>
 
-            <div className="bg-brand-grey p-6 flex flex-col flex-1 rounded-b-md">
-              <h3 className="font-display font-black text-2xl uppercase text-brand-light min-h-16">
+            <div className="bg-brand-grey p-5 flex flex-col flex-1 rounded-b-md">
+              <h3 className="font-display font-black text-3xl uppercase text-brand-light leading-9 h-18 line-clamp-2">
                 {film.title}
               </h3>
-              <div className="h-px bg-brand-gold-light my-4" />
+              <div className="h-px bg-brand-gold-light my-3" />
 
               <div className="font-body text-sm text-brand-gold leading-relaxed space-y-1 flex-1">
                 {metaFields.map(
@@ -99,7 +99,7 @@ export function FilmShowcaseSection({
               </div>
 
               {film.status && (
-                <span className="font-body text-sm text-brand-light mt-6 pt-6 border-t border-brand-dark/60">
+                <span className="font-body text-sm text-brand-light mt-4 pt-4 border-t border-brand-dark/60">
                   {statusLabels[film.status] ?? film.status}
                 </span>
               )}
