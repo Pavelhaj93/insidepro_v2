@@ -1,35 +1,48 @@
+import {
+  PortableText,
+  type PortableTextBlock,
+  type PortableTextComponents,
+} from "next-sanity";
 import { manrope } from "@/lib/fonts";
 import { Reveal } from "@/components/motion/Reveal";
 
 type Props = {
-  headline: string;
-  headlineItalic?: string;
+  headline: PortableTextBlock[];
   boxTitle?: string;
   boxDescription?: string;
 };
 
-export function InfoBoxSection({
-  headline,
-  headlineItalic,
-  boxTitle,
-  boxDescription,
-}: Props) {
-  const parts = headlineItalic ? headline.split(headlineItalic) : null;
+const headlineComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children, index }) =>
+      index > 0 ? (
+        <>
+          <br />
+          {children}
+        </>
+      ) : (
+        <>{children}</>
+      ),
+  },
+  marks: {
+    gold: ({ children }) => (
+      <span className="text-brand-gold">{children}</span>
+    ),
+    strong: ({ children }) => (
+      <strong className="font-extrabold">{children}</strong>
+    ),
+    em: ({ children }) => <em className="italic">{children}</em>,
+  },
+};
+
+export function InfoBoxSection({ headline, boxTitle, boxDescription }: Props) {
   const hasBox = boxTitle || boxDescription;
 
   return (
     <section className="px-8 xl:px-0 py-24 max-w-7xl mx-auto">
       <Reveal>
         <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl lg:text-7xl leading-tight uppercase text-brand-light text-center max-w-5xl mx-auto">
-          {parts ? (
-            <>
-              {parts[0]}
-              <em className="italic text-brand-gold">{headlineItalic}</em>
-              {parts[1]}
-            </>
-          ) : (
-            headline
-          )}
+          <PortableText value={headline} components={headlineComponents} />
         </h2>
       </Reveal>
 

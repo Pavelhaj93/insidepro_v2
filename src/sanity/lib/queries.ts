@@ -26,7 +26,6 @@ const blocksProjection = groq`
     backgroundVideo { asset->{ url, mimeType } },
     backgroundVideoMobile { asset->{ url, mimeType } },
     headline,
-    headlineItalic,
     subtitle,
     showScrollIndicator,
     showSocialIcons,

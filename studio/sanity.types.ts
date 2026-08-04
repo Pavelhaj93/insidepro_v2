@@ -170,8 +170,20 @@ export type FeatureCardsSection = {
 
 export type InfoBoxSection = {
   _type: "infoBoxSection";
-  headline?: string;
-  headlineItalic?: string;
+  headline?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
   boxTitle?: string;
   boxDescription?: string;
 };
