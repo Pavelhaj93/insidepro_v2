@@ -280,7 +280,20 @@ export type QuoteSection = {
 
 export type CtaSection = {
   _type: "ctaSection";
-  headline?: string;
+  headline?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
   backgroundImage?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -356,8 +369,20 @@ export type HeroSection = {
     media?: unknown;
     _type: "file";
   };
-  headline?: string;
-  headlineItalic?: string;
+  headline?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
   subtitle?: string;
   showScrollIndicator?: boolean;
   showSocialIcons?: boolean;

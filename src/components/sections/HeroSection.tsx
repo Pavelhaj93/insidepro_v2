@@ -1,3 +1,8 @@
+import {
+  PortableText,
+  type PortableTextBlock,
+  type PortableTextComponents,
+} from "next-sanity";
 import { urlFor } from "@/sanity/lib/image";
 import { ScrollIndicatorButton } from "./ScrollIndicatorButton";
 import { SocialLinks } from "@/components/layout/SocialLinks";
@@ -12,11 +17,33 @@ type Props = {
   backgroundImageMobile?: { asset: { _ref: string } };
   backgroundVideo?: { asset?: { url?: string; mimeType?: string } };
   backgroundVideoMobile?: { asset?: { url?: string; mimeType?: string } };
-  headline: string;
-  headlineItalic?: string;
+  headline: PortableTextBlock[];
   subtitle?: string;
   showScrollIndicator?: boolean;
   showSocialIcons?: boolean;
+};
+
+const headlineComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children, index }) =>
+      index > 0 ? (
+        <>
+          <br />
+          {children}
+        </>
+      ) : (
+        <>{children}</>
+      ),
+  },
+  marks: {
+    gold: ({ children }) => (
+      <span className="text-brand-gold">{children}</span>
+    ),
+    strong: ({ children }) => (
+      <strong className="font-extrabold">{children}</strong>
+    ),
+    em: ({ children }) => <em className="italic">{children}</em>,
+  },
 };
 
 export async function HeroSection({
@@ -25,12 +52,10 @@ export async function HeroSection({
   backgroundVideo,
   backgroundVideoMobile,
   headline,
-  headlineItalic,
   subtitle,
   showScrollIndicator = true,
   showSocialIcons = false,
 }: Props) {
-  const parts = headlineItalic ? headline.split(headlineItalic) : [headline];
   const hasVideo = Boolean(backgroundVideo?.asset?.url);
 
   const socialLinks = showSocialIcons
@@ -81,15 +106,7 @@ export async function HeroSection({
       <div className="relative z-10 top-10 px-8 md:px-12 w-full text-center">
         <Reveal duration={0.9}>
           <h1 className="font-display font-black text-5xl leading-tight sm:text-6xl md:text-7xl lg:text-8xl 2xl:text-9xl tracking-normal uppercase text-brand-light">
-            {headlineItalic && parts[0] !== undefined ? (
-              <>
-                {parts[0]}
-                <em className="italic text-brand-gold">{headlineItalic}</em>
-                {parts[1]}
-              </>
-            ) : (
-              headline
-            )}
+            <PortableText value={headline} components={headlineComponents} />
           </h1>
         </Reveal>
         {subtitle && (

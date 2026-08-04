@@ -1,4 +1,18 @@
-import { defineField, defineType } from "sanity";
+import {
+  defineField,
+  defineType,
+  isPortableTextSpan,
+  isPortableTextTextBlock,
+  type PortableTextBlock,
+} from "sanity";
+
+const blockToPlainText = (block: PortableTextBlock): string =>
+  isPortableTextTextBlock(block)
+    ? block.children
+        .filter(isPortableTextSpan)
+        .map((child) => child.text)
+        .join("")
+    : "";
 
 export const heroSection = defineType({
   name: "heroSection",
@@ -37,13 +51,28 @@ export const heroSection = defineType({
       description:
         "Optional portrait-framed clip (e.g. 9:16), swapped in automatically on narrow screens instead of cropping the desktop video. Falls back to the video above if left empty.",
     }),
-    defineField({ name: "headline", title: "Headline", type: "string" }),
     defineField({
-      name: "headlineItalic",
-      title: "Headline Italic Accent",
-      type: "string",
+      name: "headline",
+      title: "Headline",
+      type: "array",
+      of: [
+        {
+          type: "block",
+          styles: [{ title: "Normal", value: "normal" }],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: "Strong", value: "strong" },
+              { title: "Emphasis", value: "em" },
+              { title: "Gold", value: "gold" },
+            ],
+            annotations: [],
+          },
+        },
+      ],
+      validation: (Rule) => Rule.required(),
       description:
-        "Optional word/phrase rendered in italic within the headline",
+        'Use "Gold" to color text gold, and start a new paragraph (Enter) to break onto the next line.',
     }),
     defineField({ name: "subtitle", title: "Subtitle", type: "string" }),
     defineField({
@@ -63,7 +92,9 @@ export const heroSection = defineType({
   preview: {
     select: { title: "headline", media: "backgroundImage" },
     prepare({ title, media }) {
-      return { title: `Hero: ${title}`, media };
+      const blocks = (title ?? []) as PortableTextBlock[];
+      const headlineText = blocks.map(blockToPlainText).join(" ");
+      return { title: `Hero: ${headlineText}`, media };
     },
   },
 });
