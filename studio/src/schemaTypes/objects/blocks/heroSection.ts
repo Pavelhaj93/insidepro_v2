@@ -70,7 +70,6 @@ export const heroSection = defineType({
           },
         },
       ],
-      validation: (Rule) => Rule.required(),
       description:
         'Use "Gold" to color text gold, and start a new paragraph (Enter) to break onto the next line.',
     }),

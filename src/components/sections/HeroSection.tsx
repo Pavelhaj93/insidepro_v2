@@ -17,7 +17,7 @@ type Props = {
   backgroundImageMobile?: { asset: { _ref: string } };
   backgroundVideo?: { asset?: { url?: string; mimeType?: string } };
   backgroundVideoMobile?: { asset?: { url?: string; mimeType?: string } };
-  headline: PortableTextBlock[];
+  headline?: PortableTextBlock[];
   subtitle?: string;
   showScrollIndicator?: boolean;
   showSocialIcons?: boolean;
@@ -104,11 +104,13 @@ export async function HeroSection({
 
       {/* Content — centered */}
       <div className="relative z-10 top-10 px-8 md:px-12 w-full text-center">
-        <Reveal duration={0.9}>
-          <h1 className="font-display font-black text-5xl leading-tight sm:text-6xl md:text-7xl lg:text-8xl 2xl:text-9xl tracking-normal uppercase text-brand-light">
-            <PortableText value={headline} components={headlineComponents} />
-          </h1>
-        </Reveal>
+        {headline && (
+          <Reveal duration={0.9}>
+            <h1 className="font-display font-black text-5xl leading-tight sm:text-6xl md:text-7xl lg:text-8xl 2xl:text-9xl tracking-normal uppercase text-brand-light">
+              <PortableText value={headline} components={headlineComponents} />
+            </h1>
+          </Reveal>
+        )}
         {subtitle && (
           <Reveal delay={0.2}>
             <p className="font-display font-medium text-base leading-none tracking-normal uppercase text-brand-light/70 mt-20">
