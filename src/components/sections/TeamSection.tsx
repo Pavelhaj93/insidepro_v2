@@ -65,7 +65,7 @@ export function TeamSection({
                   {member.role}
                 </p>
               )}
-              <div className="mt-auto pt-4">
+              {/* <div className="mt-auto pt-4">
                 {member.email && (
                   <a
                     href={`mailto:${member.email}`}
@@ -82,7 +82,7 @@ export function TeamSection({
                     {member.phone}
                   </a>
                 )}
-              </div>
+              </div> */}
             </div>
           </RevealItem>
         ))}

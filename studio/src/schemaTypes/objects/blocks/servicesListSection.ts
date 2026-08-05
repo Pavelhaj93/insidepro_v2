@@ -6,8 +6,27 @@ export const servicesListSection = defineType({
   type: 'object',
   fields: [
     defineField({ name: 'label', title: 'Section Label', type: 'string', description: 'Small label above the section, e.g. "CO DĚLÁME"' }),
-    defineField({ name: 'leftHeading', title: 'Left Heading', type: 'string' }),
-    defineField({ name: 'leftHeadingItalic', title: 'Left Heading Italic Part', type: 'string', description: 'The word(s) rendered in italic within the left heading' }),
+    defineField({
+      name: 'leftHeading',
+      title: 'Left Heading',
+      type: 'array',
+      of: [
+        {
+          type: 'block',
+          styles: [{ title: 'Normal', value: 'normal' }],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: 'Strong', value: 'strong' },
+              { title: 'Emphasis', value: 'em' },
+              { title: 'Gold', value: 'gold' },
+            ],
+            annotations: [],
+          },
+        },
+      ],
+      description: 'Select text and use the "Gold" mark to color it gold, or "Emphasis" for italic',
+    }),
     defineField({
       name: 'items',
       title: 'Service Items',

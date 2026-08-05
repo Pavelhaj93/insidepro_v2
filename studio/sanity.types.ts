@@ -339,8 +339,20 @@ export type FeaturedWorksSection = {
 export type ServicesListSection = {
   _type: "servicesListSection";
   label?: string;
-  leftHeading?: string;
-  leftHeadingItalic?: string;
+  leftHeading?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
   items?: Array<
     {
       _key: string;

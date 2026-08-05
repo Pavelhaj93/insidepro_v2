@@ -32,7 +32,6 @@ const blocksProjection = groq`
     // servicesListSection
     label,
     leftHeading,
-    leftHeadingItalic,
     items[] { number, title, description, linkLabel, link },
     // featuredWorksSection
     heading,

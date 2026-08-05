@@ -16,6 +16,27 @@ type ServiceItem = {
   link?: string;
 };
 
+const headingComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children, index }) =>
+      index > 0 ? (
+        <>
+          <br />
+          {children}
+        </>
+      ) : (
+        <>{children}</>
+      ),
+  },
+  marks: {
+    gold: ({ children }) => <span className="text-brand-gold">{children}</span>,
+    strong: ({ children }) => (
+      <strong className="font-extrabold">{children}</strong>
+    ),
+    em: ({ children }) => <em className="italic">{children}</em>,
+  },
+};
+
 const descriptionComponents: PortableTextComponents = {
   block: {
     normal: ({ children }) => (
@@ -37,22 +58,15 @@ const descriptionComponents: PortableTextComponents = {
 
 type Props = {
   label?: string;
-  leftHeading?: string;
-  leftHeadingItalic?: string;
+  leftHeading?: PortableTextBlock[];
   items?: ServiceItem[];
 };
 
 export function ServicesListSection({
   label,
   leftHeading,
-  leftHeadingItalic,
   items = [],
 }: Props) {
-  const parts =
-    leftHeadingItalic && leftHeading
-      ? leftHeading.split(leftHeadingItalic)
-      : null;
-
   return (
     <section className="px-8 xl:px-0 pt-24 pb-12 max-w-7xl mx-auto">
       {label && (
@@ -67,18 +81,8 @@ export function ServicesListSection({
         {/* Left: big heading */}
         {leftHeading && (
           <Reveal>
-            <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-7xl leading-none tracking-normal uppercase text-brand-light">
-              {parts ? (
-                <>
-                  {parts[0]}
-                  <em className="italic text-brand-gold">
-                    {leftHeadingItalic}
-                  </em>
-                  {parts[1]}
-                </>
-              ) : (
-                leftHeading
-              )}
+            <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-[64px] leading-none tracking-normal uppercase text-brand-light">
+              <PortableText value={leftHeading} components={headingComponents} />
             </h2>
           </Reveal>
         )}
