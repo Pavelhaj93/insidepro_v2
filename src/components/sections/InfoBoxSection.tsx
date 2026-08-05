@@ -25,9 +25,7 @@ const headlineComponents: PortableTextComponents = {
       ),
   },
   marks: {
-    gold: ({ children }) => (
-      <span className="text-brand-gold">{children}</span>
-    ),
+    gold: ({ children }) => <span className="text-brand-gold">{children}</span>,
     strong: ({ children }) => (
       <strong className="font-extrabold">{children}</strong>
     ),
@@ -41,7 +39,7 @@ export function InfoBoxSection({ headline, boxTitle, boxDescription }: Props) {
   return (
     <section className="px-8 xl:px-0 py-24 max-w-7xl mx-auto">
       <Reveal>
-        <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl lg:text-7xl leading-tight uppercase text-brand-light text-center max-w-5xl mx-auto">
+        <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl lg:text-6xl leading-tight uppercase text-brand-light text-center max-w-5xl mx-auto">
           <PortableText value={headline} components={headlineComponents} />
         </h2>
       </Reveal>

@@ -317,10 +317,22 @@ export type CtaSection = {
   buttonLink?: string;
 };
 
+export type CategoryReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "category";
+};
+
 export type ReferenceWorksSection = {
   _type: "referenceWorksSection";
   heading?: string;
   allLabel?: string;
+  categories?: Array<
+    {
+      _key: string;
+    } & CategoryReference
+  >;
 };
 
 export type FeaturedWorksSection = {
@@ -531,13 +543,6 @@ export type TeamMember = {
     _type: "image";
   };
   order?: number;
-};
-
-export type CategoryReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "category";
 };
 
 export type Project = {
@@ -872,6 +877,7 @@ export type AllSanitySchemaTypes =
   | ProcessSection
   | QuoteSection
   | CtaSection
+  | CategoryReference
   | ReferenceWorksSection
   | FeaturedWorksSection
   | ServicesListSection
@@ -885,7 +891,6 @@ export type AllSanitySchemaTypes =
   | Footer
   | Film
   | TeamMember
-  | CategoryReference
   | Project
   | Settings
   | Post

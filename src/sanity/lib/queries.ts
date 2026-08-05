@@ -42,12 +42,10 @@ const blocksProjection = groq`
     // referenceWorksSection
     allLabel,
     _type == "referenceWorksSection" => {
-      "allProjects": *[_type == "project"] | order(publishedAt desc) {
+      "categories": categories[]-> { _id, title, "slug": slug.current },
+      "projects": *[_type == "project" && references(^.categories[]._ref)] | order(publishedAt desc) {
         _id, title, client, slug, coverImage, gallery, excerpt,
         "categories": categories[]-> { _id, title, "slug": slug.current }
-      },
-      "allCategories": *[_type == "category"] | order(coalesce(order, 999) asc, title asc) {
-        _id, title, "slug": slug.current
       },
     },
     // ctaSection

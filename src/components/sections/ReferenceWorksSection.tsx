@@ -29,30 +29,30 @@ type Project = {
 type Props = {
   heading?: string;
   allLabel?: string;
-  allProjects?: Project[];
-  allCategories?: Category[];
+  projects?: Project[];
+  categories?: Category[];
 };
 
 export function ReferenceWorksSection({
   heading = "REFERENCE",
   allLabel = "Vše",
-  allProjects = [],
-  allCategories = [],
+  projects = [],
+  categories = [],
 }: Props) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
 
-  const usedCategories = allCategories.filter((category) =>
-    allProjects.some((project) =>
+  const usedCategories = categories.filter((category) =>
+    projects.some((project) =>
       project.categories?.some((c) => c._id === category._id)
     )
   );
 
   const visibleProjects = activeId
-    ? allProjects.filter((project) =>
+    ? projects.filter((project) =>
         project.categories?.some((c) => c._id === activeId)
       )
-    : allProjects;
+    : projects;
 
   const tabClasses = (isActive: boolean) =>
     `font-display font-medium text-[18px] uppercase tracking-wide pb-1 border-b-2 transition-colors ${
