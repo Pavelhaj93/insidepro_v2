@@ -104,7 +104,7 @@ export async function HeroSection({
       <div className="relative z-10 px-8 md:px-12 w-full text-center">
         {headline && (
           <Reveal duration={0.9}>
-            <h1 className="font-display font-black text-5xl leading-[1.05] sm:text-6xl md:text-7xl lg:text-8xl 2xl:text-9xl tracking-normal uppercase text-brand-light">
+            <h1 className="font-display font-black text-[2.5rem] leading-[1.05] sm:text-6xl md:text-7xl lg:text-8xl 2xl:text-9xl tracking-normal uppercase text-brand-light">
               <PortableText value={headline} components={headlineComponents} />
             </h1>
           </Reveal>
