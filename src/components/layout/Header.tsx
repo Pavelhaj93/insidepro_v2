@@ -56,7 +56,7 @@ export function Header({ logo, logoText, socialLinks }: Props) {
         className="fixed top-0 left-0 right-0 z-60 h-0.5 bg-brand-gold origin-left"
         style={{ scaleX: scrollYProgress }}
       />
-      <header className="fixed top-0 left-0 right-0 z-50 px-8 py-5 md:px-12">
+      <header className="fixed top-0 left-0 right-0 z-50 px-8 py-3 md:py-5 md:px-12">
         <AnimatePresence>
           {scrolled && (
             <motion.div

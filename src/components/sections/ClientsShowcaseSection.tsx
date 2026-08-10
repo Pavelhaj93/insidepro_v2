@@ -303,7 +303,7 @@ export function ClientsShowcaseSection({ label, clients }: Props) {
           className="sticky top-0 z-0 px-8 md:px-12 pt-20 pointer-events-none"
           style={{ opacity: headlineOpacity }}
         >
-          <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl lg:text-7xl leading-tight tracking-normal uppercase text-brand-light">
+          <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl lg:text-7xl leading-tight tracking-normal uppercase text-brand-light mt-2">
             {label}
           </h2>
         </motion.div>
