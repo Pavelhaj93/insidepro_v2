@@ -64,7 +64,7 @@ export async function HeroSection({
     <section
       className={`relative flex flex-col items-center justify-center overflow-hidden ${
         hasVideo
-          ? "aspect-9/16 h-auto mt-22 md:aspect-auto md:h-[calc(100dvh-88px)]"
+          ? "aspect-9/16 h-auto md:aspect-auto md:h-[calc(100dvh-88px)]"
           : "h-screen"
       }`}
     >
