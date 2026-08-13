@@ -50,8 +50,6 @@ export function Header({ logo, logoText, socialLinks }: Props) {
     setScrolled(latest > 20);
   });
 
-  const allLinks = [...mainNavLinks, ...extraNavLinks];
-
   return (
     <>
       <motion.div
@@ -206,20 +204,37 @@ export function Header({ logo, logoText, socialLinks }: Props) {
 
         {/* Nav links */}
         <nav className="flex flex-col px-10 flex-1">
-          {allLinks.map((link, index) => (
+          {mainNavLinks.map((link, index) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className={`font-display font-bold text-2xl transition-colors uppercase py-3  border-brand-dark/50 last:border-0 ${
+              className={`font-display font-bold text-2xl transition-colors uppercase py-3 border-brand-dark/50 ${
                 pathname === link.href
                   ? "text-brand-gold"
                   : "text-brand-light/80 hover:text-brand-light"
-              } ${index === allLinks.length - 1 ? "" : "border-b"}`}
+              } ${index === mainNavLinks.length - 1 ? "" : "border-b"}`}
             >
               {link.label}
             </Link>
           ))}
+
+          <div className="pt-8 border-t border-brand-dark flex flex-col">
+            {extraNavLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className={`font-body text-lg tracking-widest transition-colors uppercase py-2 ${
+                  pathname === link.href
+                    ? "text-brand-gold"
+                    : "text-brand-light/80 hover:text-brand-light"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
         </nav>
 
         {/* Social links */}
