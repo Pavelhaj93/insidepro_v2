@@ -83,7 +83,7 @@ function LogoWallRow({
               stopOnInteraction: false,
               stopOnMouseEnter: false,
               stopOnFocusIn: false,
-              speed: 0.9,
+              speed: 0.5,
             }),
           ],
     [reduceMotion, direction],
