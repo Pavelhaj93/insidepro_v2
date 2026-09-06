@@ -70,6 +70,37 @@
   animation: scroll-float 2.5s ease-in-out infinite;
 }
 
+/* Continuous right-to-left logo marquee (see LogoCarousel POC component).
+   Track content is rendered twice back-to-back, so sliding exactly 50% of
+   the track's own width loops seamlessly with no visible seam/reset. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee linear infinite;
+  animation-duration: var(--marquee-duration, 30s);
+}
+
+/* Slow continuous rotation for the circular badge on WhoWeAreSection (POC).
+   Deliberately NOT named "spin-*" — Tailwind v4 ships a built-in `animate-spin`
+   utility and silently drops any custom class/keyframes whose name starts
+   with "spin" instead of emitting them, even outside its own layer. */
+@keyframes badge-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-badge-rotate {
+  animation: badge-rotate 18s linear infinite;
+}
+
 /* ─── Base ───────────────────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;

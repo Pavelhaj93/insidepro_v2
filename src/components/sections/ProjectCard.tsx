@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 
@@ -19,6 +20,13 @@ type Project = {
 
 type Props = {
   project: Project;
+  /**
+   * Sizing classes for the image wrapper — defaults to a fixed 4:3 ratio.
+   * Override to stretch instead (e.g. "aspect-4/3 lg:aspect-auto lg:h-full")
+   * when a narrower grid-span sibling needs to match a wider one's height
+   * rather than keep the same aspect ratio at a smaller width.
+   */
+  aspectClassName?: string;
 };
 
 function ArrowIcon({ direction }: { direction: "left" | "right" }) {
@@ -35,11 +43,13 @@ function ArrowIcon({ direction }: { direction: "left" | "right" }) {
   );
 }
 
-function hasAsset(image?: SanityImage): image is SanityImage & { asset: { _ref: string } } {
+function hasAsset(
+  image?: SanityImage,
+): image is SanityImage & { asset: { _ref: string } } {
   return Boolean(image?.asset?._ref);
 }
 
-export function ProjectCard({ project }: Props) {
+export function ProjectCard({ project, aspectClassName = "aspect-4/3" }: Props) {
   const gallery = project.gallery?.filter(hasAsset) ?? [];
   const images = gallery.length
     ? gallery
@@ -62,7 +72,10 @@ export function ProjectCard({ project }: Props) {
   };
 
   return (
-    <div className="group relative overflow-hidden aspect-4/3 bg-brand-dark rounded-md">
+    <Link
+      href={`/reference/${project.slug.current}`}
+      className={`group relative block overflow-hidden ${aspectClassName} bg-brand-dark rounded-4xl`}
+    >
       {images[currentIndex] && (
         <Image
           src={urlFor(images[currentIndex]).width(1200).height(900).url()}
@@ -73,11 +86,13 @@ export function ProjectCard({ project }: Props) {
         />
       )}
 
-      <div className="absolute inset-0 bg-linear-to-t from-brand-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      {/* Always-on scrim (not hover-gated) so the title stays readable over
+          any cover image, not just on hover. */}
+      <div className="absolute inset-0 bg-linear-to-t from-brand-black/80 to-transparent" />
 
-      <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+      <div className="absolute bottom-0 left-0 right-0 p-5">
         {project.client && (
-          <p className="font-body text-xs tracking-widest text-brand-gold uppercase mb-1">
+          <p className="font-body text-xs tracking-widest text-brand-gold uppercase mb-1 -translate-y-1 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
             {project.client}
           </p>
         )}
@@ -85,7 +100,7 @@ export function ProjectCard({ project }: Props) {
           {project.title}
         </h3>
         {project.excerpt && (
-          <p className="font-body text-sm text-brand-light/60 leading-relaxed mt-1">
+          <p className="font-body text-sm text-brand-light/60 leading-relaxed mt-1 translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
             {project.excerpt}
           </p>
         )}
@@ -114,6 +129,6 @@ export function ProjectCard({ project }: Props) {
           </span>
         </>
       )}
-    </div>
+    </Link>
   );
 }

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   PortableText,
   type PortableTextBlock,
@@ -8,6 +7,7 @@ import { urlFor } from "@/sanity/lib/image";
 import { ParallaxBackgroundImage } from "@/components/motion/ParallaxBackgroundImage";
 import { Reveal } from "@/components/motion/Reveal";
 import { MagneticButton } from "@/components/motion/MagneticButton";
+import { BrandButton } from "@/components/ui/BrandButton";
 
 type Props = {
   headline: PortableTextBlock[];
@@ -52,19 +52,16 @@ export function CtaSection({
 
       <div className="relative z-10 max-w-5xl mx-auto text-center">
         <Reveal>
-          <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-7xl 2xl:text-7xl uppercase leading-none text-brand-light mb-10">
+          <h2 className="font-display font-bold text-xl sm:text-2xl md:text-3xl lg:text-4xl uppercase leading-none text-brand-light mb-10">
             <PortableText value={headline} components={headlineComponents} />
           </h2>
         </Reveal>
         {buttonLabel && buttonLink && (
           <Reveal delay={0.15} className="inline-block">
             <MagneticButton>
-              <Link
-                href={buttonLink}
-                className="inline-block font-body text-sm tracking-widest uppercase px-8 py-4 border border-brand-light text-brand-light hover:bg-brand-light hover:text-brand-black transition-colors"
-              >
+              <BrandButton href={buttonLink} variant="gold">
                 {buttonLabel}
-              </Link>
+              </BrandButton>
             </MagneticButton>
           </Reveal>
         )}
