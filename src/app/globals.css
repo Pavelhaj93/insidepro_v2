@@ -101,6 +101,65 @@
   animation: badge-rotate 18s linear infinite;
 }
 
+/* Gradient Flow hover effect for the fullscreen nav links (MenuNavLinkGradient).
+   Applied only via the .is-active class, toggled from JS state (isActive) in
+   MenuNavLink — never a bare CSS :hover/:focus-visible selector, so mouse and
+   keyboard behave identically. */
+@keyframes gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.menu-link-gradient {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-brand-gold),
+    var(--color-brand-bronze),
+    var(--color-brand-light),
+    var(--color-brand-gold)
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.menu-link-gradient.is-active {
+  animation: gradient-flow 3s linear infinite;
+}
+
+/* Fill Wipe hover effect for the fullscreen nav links (MenuNavLinkWipe).
+   Rests as an outlined/transparent word; a hard-edged gold/transparent
+   background clipped to the text sweeps across it in one continuous motion
+   (not per-letter, not per-frame) via a single background-position transition,
+   toggled by the .is-active class from JS state — mouse and keyboard alike. */
+.menu-link-wipe {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--color-brand-light);
+  background-image: linear-gradient(
+    90deg,
+    var(--color-brand-gold) 50%,
+    transparent 50%
+  );
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  transition: background-position 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.menu-link-wipe.is-active {
+  background-position: 0% 0;
+}
+
+.menu-link-wipe.reduce-motion {
+  transition: none;
+}
+
 /* ─── Base ───────────────────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;

@@ -2,11 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
-import { urlFor } from "@/sanity/lib/image";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { motion } from "framer-motion";
 import { SocialLinks } from "@/components/layout/SocialLinks";
+import { FullscreenMenu } from "./FullscreenMenu";
 
 // Showcase nav — just the pages this hardcoded demo actually has.
 const navLinks = [
@@ -15,16 +13,6 @@ const navLinks = [
   { label: "Kariéra", href: "/kariera" },
   { label: "Kontakt", href: "/kontakt" },
 ];
-
-const navListVariants = {
-  open: { transition: { staggerChildren: 0.06, delayChildren: 0.15 } },
-  closed: { transition: { staggerChildren: 0.03, staggerDirection: -1 } },
-};
-
-const navItemVariants = {
-  open: { opacity: 1, x: 0 },
-  closed: { opacity: 0, x: -16 },
-};
 
 type SocialLinksValue = {
   instagram?: string | null;
@@ -50,7 +38,6 @@ type Props = {
  */
 export function VerticalSidebar({ socialLinks, logo }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const reduceMotion = useReducedMotion();
 
   return (
     <>
@@ -104,55 +91,11 @@ export function VerticalSidebar({ socialLinks, logo }: Props) {
         )}
       </header>
 
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            <motion.button
-              type="button"
-              aria-label="Zavřít menu"
-              onClick={() => setIsOpen(false)}
-              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: reduceMotion ? 0 : 0.2 }}
-            />
-
-            <motion.nav
-              aria-label="Hlavní navigace"
-              className="fixed inset-y-0 left-20 z-40 flex w-80 max-w-[80vw] flex-col justify-center gap-8 bg-brand-black px-10 py-24"
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={
-                reduceMotion
-                  ? { duration: 0 }
-                  : { type: "spring", stiffness: 320, damping: 32 }
-              }
-            >
-              <motion.ul
-                initial="closed"
-                animate="open"
-                exit="closed"
-                variants={navListVariants}
-                className="flex flex-col gap-2"
-              >
-                {navLinks.map((link) => (
-                  <motion.li key={link.href} variants={navItemVariants}>
-                    <Link
-                      href={link.href}
-                      onClick={() => setIsOpen(false)}
-                      className="font-display font-black uppercase text-2xl leading-tight text-brand-light transition-colors hover:text-brand-gold"
-                    >
-                      {link.label}
-                    </Link>
-                  </motion.li>
-                ))}
-              </motion.ul>
-            </motion.nav>
-          </>
-        )}
-      </AnimatePresence>
+      <FullscreenMenu
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        navLinks={navLinks}
+      />
     </>
   );
 }
