@@ -50,30 +50,32 @@ export function LogoCarousel({ logos }: Props) {
           Spolupracujeme s nadnárodními i lokálními společnostmi
         </p>
 
-        <div
-          className={`flex items-center gap-16 ${
-            reduceMotion ? "flex-wrap" : "w-max animate-marquee"
-          }`}
-          style={
-            reduceMotion
-              ? undefined
-              : ({ "--marquee-duration": `${duration}s` } as CSSProperties)
-          }
-        >
-          {track.map((logo, index) => (
-            <div
-              key={`${logo._id}-${index}`}
-              className="relative h-12 w-32 shrink-0 opacity-60 grayscale transition-opacity duration-300 hover:opacity-100 hover:grayscale-0 md:h-14 md:w-40"
-            >
-              <Image
-                src={urlFor(logo.image).height(200).url()}
-                alt={logo.name}
-                fill
-                sizes="160px"
-                className="object-contain object-center brightness-0 invert"
-              />
-            </div>
-          ))}
+        <div className="mask-[linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+          <div
+            className={`flex items-center gap-16 ${
+              reduceMotion ? "flex-wrap" : "w-max animate-marquee"
+            }`}
+            style={
+              reduceMotion
+                ? undefined
+                : ({ "--marquee-duration": `${duration}s` } as CSSProperties)
+            }
+          >
+            {track.map((logo, index) => (
+              <div
+                key={`${logo._id}-${index}`}
+                className="relative h-12 w-32 shrink-0 opacity-60 grayscale transition-opacity duration-300 hover:opacity-100 hover:grayscale-0 md:h-14 md:w-40"
+              >
+                <Image
+                  src={urlFor(logo.image).height(200).url()}
+                  alt={logo.name}
+                  fill
+                  sizes="160px"
+                  className="object-contain object-center brightness-0 invert"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
