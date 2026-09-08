@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { InvertedCorner } from "../icons/InvertedCorner";
 
 type BadgeLogo = { asset: { _ref: string } };
 
@@ -117,19 +118,8 @@ export function WhoWeAreSection({ logo }: Props) {
               priority
             />
           </div>
-          {/*
-              Reverse/"flush" corner, same technique as SplitVideoReveal's
-              panel — a normal `rounded-bl-*` would cut a notch OUT of the
-              image at this corner (concave from the image's own side).
-              This instead bulges the backdrop box's black OUTWARD into the
-              image via radial-gradient (filled solid up to its radius,
-              transparent beyond), so the box reads as flowing smoothly out
-              of the image's corner rather than just overlapping it.
-            */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute bottom-0 left-0 z-10 h-8 w-8 bg-[radial-gradient(circle_at_top_right,transparent_32px,black_33px)] sm:h-10 sm:w-10 sm:bg-[radial-gradient(circle_at_top_right,transparent_40px,black_41px)]"
-          />
+          <InvertedCorner className="absolute rotate-90 left-50 bottom-0 w-8 h-8 text-brand-black" />
+          <InvertedCorner className="absolute rotate-90 left-0 bottom-50 w-8 h-8 text-brand-black" />
           {/* Backdrop matching the section background, so the badge
                 reads as sitting on a cut-out of the photo rather than just
                 floating over it — same idea as the reference's white box. */}

@@ -2,11 +2,12 @@ import { groq } from "next-sanity";
 import { SplitVideoReveal } from "@/components/motion/SplitVideoReveal";
 import { CtaSection } from "@/components/sections/CtaSection";
 import { client } from "@/sanity/lib/client";
-import { settingsQuery } from "@/sanity/lib/queries";
+import { settingsQuery, teamMembersQuery } from "@/sanity/lib/queries";
 import { ServicesAccordion } from "@/components/home/ServicesAccordion";
 import { WhoWeAreSection } from "@/components/home/WhoWeAreSection";
 import { ClientShowcaseHorizontal } from "@/components/home/ClientShowcaseHorizontal";
 import { LogoCarousel } from "@/components/home/LogoCarousel";
+import { TeamShowcaseSection } from "@/components/home/TeamShowcaseSection";
 
 // Same clients data the previous homepage's `ClientsShowcaseSection` used
 // (see `blocksProjection` in src/sanity/lib/queries.ts) — pulled directly
@@ -42,11 +43,12 @@ const HERO_VIDEO_SRC =
   "https://cdn.sanity.io/files/4mvdpq34/production/bf7a1ec8045d083288c54c2fda0ac1a90c39b733.mp4";
 
 export default async function HomePage() {
-  const [settings, clientsBlock, logos, cta] = await Promise.all([
+  const [settings, clientsBlock, logos, cta, teamMembers] = await Promise.all([
     client.fetch(settingsQuery),
     client.fetch(CLIENTS_QUERY),
     client.fetch(LOGOS_QUERY),
     client.fetch(CTA_QUERY),
+    client.fetch(teamMembersQuery),
   ]);
 
   return (
@@ -82,6 +84,8 @@ export default async function HomePage() {
       <LogoCarousel logos={logos} />
 
       <ClientShowcaseHorizontal clients={clientsBlock?.clients} />
+
+      <TeamShowcaseSection teamMembers={teamMembers} />
 
       {cta && <CtaSection {...cta} />}
     </main>
