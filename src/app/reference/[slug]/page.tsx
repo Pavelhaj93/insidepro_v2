@@ -5,6 +5,7 @@ import { groq } from "next-sanity";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import { Badge } from "@/components/ui/Badge";
+import { CaseStudyExtendedNarrative } from "@/components/sections/CaseStudyExtendedNarrative";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -81,7 +82,7 @@ export default async function CaseStudyPage({ params }: Props) {
             alt={project.title}
             fill
             sizes="100vw"
-            className="object-cover object-center"
+            className="object-cover object-center lg:object-[center_30%]"
             priority
           />
         )}
@@ -112,13 +113,21 @@ export default async function CaseStudyPage({ params }: Props) {
       </section>
 
       <section className="pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 py-16 md:py-24">
-        <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-12">
-          <p className="font-body text-lg sm:text-xl leading-8 text-brand-light/80 max-w-2xl">
-            {details?.synopsis ?? project.excerpt}
-          </p>
+        <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-12 items-start">
+          <div className="flex flex-col gap-12 md:gap-16 max-w-2xl">
+            <p className="font-body text-lg sm:text-xl leading-8 text-brand-light/80">
+              {details?.synopsis ?? project.excerpt}
+            </p>
+
+            {/* Gated on the same hardcoded `details` lookup as the meta panel
+                to the right (design POC, yachak only). Swap for a real
+                per-project CMS field once actual case-study content exists
+                to replace these placeholders. */}
+            {details && <CaseStudyExtendedNarrative />}
+          </div>
 
           {details && (
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-6 lg:sticky lg:top-32">
               <dl className="grid grid-cols-2 gap-x-6 gap-y-6">
                 {details.meta.map((item) => (
                   <div key={item.label}>

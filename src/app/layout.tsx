@@ -8,6 +8,7 @@ import { client } from "@/sanity/lib/client";
 import { settingsQuery } from "@/sanity/lib/queries";
 import { SanityLive } from "@/sanity/lib/live";
 import { VisualEditing } from "next-sanity/visual-editing";
+import { CustomCursor } from "@/components/motion/CustomCursor";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -43,6 +44,7 @@ export default async function RootLayout({
         </SmoothScrollProvider>
         <SanityLive />
         {isDraftMode && <VisualEditing />}
+        <CustomCursor />
       </body>
     </html>
   );

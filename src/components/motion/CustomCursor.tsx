@@ -3,6 +3,7 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { EyeIcon } from "@/components/icons/Eye";
 
 const POINTER_FINE_QUERY = "(pointer: fine)";
 
@@ -21,12 +22,13 @@ function usePointerFine() {
 }
 
 /**
- * Ring + dot that replaces the native cursor on desktop fine-pointer devices.
- * Reads `data-cursor` off whatever's under the pointer (event delegation, one
- * listener) to swap its label — e.g. `data-cursor="view"` on ProjectCard,
- * `data-cursor="link"` on nav items. Fully inert on touch/coarse pointers and
- * under reduced motion; toggles a class on <html> so globals.css can hide the
- * native cursor only while this is actually active.
+ * Filled circular label that replaces the native cursor only while hovering
+ * an element carrying `data-cursor` (event delegation, one listener) — e.g.
+ * `data-cursor="case-study"` on the Yachak ProjectCard. It does NOT take over
+ * the cursor site-wide: outside of a `data-cursor` target it renders nothing
+ * and the OS cursor stays put. Fully inert on touch/coarse pointers and under
+ * reduced motion; toggles a class on <html> so globals.css can hide the
+ * native cursor only for the moments this is actually visible.
  */
 export function CustomCursor() {
   const pointerFine = usePointerFine();
@@ -34,7 +36,6 @@ export function CustomCursor() {
   const active = pointerFine && !reduceMotion;
 
   const [label, setLabel] = useState<string | null>(null);
-  const [visible, setVisible] = useState(false);
 
   const x = useMotionValue(-100);
   const y = useMotionValue(-100);
@@ -44,33 +45,26 @@ export function CustomCursor() {
   useEffect(() => {
     if (!active) return;
 
-    document.documentElement.classList.add("no-native-cursor");
-
     function handlePointerMove(e: PointerEvent) {
       x.set(e.clientX);
       y.set(e.clientY);
-      if (!visible) setVisible(true);
     }
 
     function handlePointerOver(e: PointerEvent) {
       const target = e.target as Element | null;
       const cursorEl = target?.closest<HTMLElement>("[data-cursor]");
-      setLabel(cursorEl?.dataset.cursor ?? null);
-    }
-
-    function handlePointerLeaveWindow() {
-      setVisible(false);
+      const nextLabel = cursorEl?.dataset.cursor ?? null;
+      setLabel(nextLabel);
+      document.documentElement.classList.toggle("no-native-cursor", Boolean(nextLabel));
     }
 
     window.addEventListener("pointermove", handlePointerMove);
     window.addEventListener("pointerover", handlePointerOver);
-    document.documentElement.addEventListener("pointerleave", handlePointerLeaveWindow);
 
     return () => {
       document.documentElement.classList.remove("no-native-cursor");
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerover", handlePointerOver);
-      document.documentElement.removeEventListener("pointerleave", handlePointerLeaveWindow);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
@@ -79,23 +73,29 @@ export function CustomCursor() {
 
   return (
     <motion.div
-      className="fixed top-0 left-0 z-200 pointer-events-none flex items-center justify-center"
+      className="fixed top-0 left-0 z-200 pointer-events-none flex items-center justify-center rounded-full bg-brand-gold"
       style={{
         x: springX,
         y: springY,
         translateX: "-50%",
         translateY: "-50%",
-        opacity: visible ? 1 : 0,
       }}
       animate={{
-        width: label ? 64 : 28,
-        height: label ? 64 : 28,
+        width: label ? 116 : 28,
+        height: label ? 116 : 28,
+        opacity: label ? 1 : 0,
       }}
       transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="absolute inset-0 rounded-full border border-brand-gold/70" />
-      {label && (
-        <span className="font-display font-black text-[10px] uppercase tracking-wide text-brand-gold">
+      {label === "case-study" ? (
+        <span className="flex flex-col items-center justify-center gap-2 text-center text-brand-black px-3">
+          <EyeIcon className="w-8 h-8" />
+          <span className="font-display font-black text-[10px] uppercase tracking-wide">
+            Case study
+          </span>
+        </span>
+      ) : (
+        <span className="font-display font-black text-[10px] uppercase tracking-wide text-brand-black text-center">
           {label}
         </span>
       )}
