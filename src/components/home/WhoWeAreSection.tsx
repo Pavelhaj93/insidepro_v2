@@ -127,18 +127,24 @@ export function WhoWeAreSection({ logo }: Props) {
           <CircularBadge reduceMotion={reduceMotion} logo={logo} />
         </div>
 
-        <div className="order-4 sm:order-3 lg:order-3 rounded-4xl bg-brand-dark p-8 md:p-10">
-          {/* The reference's two-tone strips are barely different shades
-              (#fcfcfc vs #f2f2f2) — nearly invisible, which is why the
-              seam curve reads as an elegant subtle wave there. Recreating
-              that same geometry with our much higher-contrast dark/black
-              tokens made it look like a broken notch instead, so this
-              stays one solid card/color rather than chasing an effect
-              that only works at near-zero contrast. */}
-          <p className="font-display font-bold text-xl text-brand-light tracking-tighter mb-4">
-            OUR MISSION
-          </p>
-          <p className="font-body text-lg leading-7 text-brand-light/70">
+        <div className="relative order-4 sm:order-3 lg:order-3 rounded-4xl overflow-hidden bg-brand-dark">
+          {/* "OUR MISSION" sits in a solid-black tab cut into the card's
+              top-left corner — same technique as TeamShowcaseSection's
+              name/role label: two InvertedCorner fillets smooth the two
+              seams where the tab's free edges meet the card's edges, and
+              the tab's one truly-interior corner gets a plain CSS rounding
+              (rounded-br-4xl) instead. The card's own rounded-4xl +
+              overflow-hidden clips the tab's flush top-left corner to
+              match the card's silhouette. */}
+          <div className="relative inline-flex w-fit items-center bg-brand-black px-8 py-6 rounded-br-4xl md:px-10 md:py-7">
+            <p className="font-display font-bold text-xl text-brand-light tracking-tighter">
+              OUR MISSION
+            </p>
+            <InvertedCorner className="absolute left-full top-0 h-8 w-8 rotate-180 text-brand-black" />
+            <InvertedCorner className="absolute top-full left-0 h-8 w-8 rotate-180 text-brand-black" />
+          </div>
+
+          <p className="font-body text-lg leading-7 text-brand-light/70 px-8 pt-6 pb-8 md:px-10 md:pt-7 md:pb-10">
             Pomáháme firmám růst prostřednictvím strategie, kreativity a
             kvalitního obsahu. Propojujeme produkci, branding a marketing do
             jednoho funkčního celku, který dává značkám jasný směr a podporuje
