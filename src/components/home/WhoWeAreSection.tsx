@@ -60,7 +60,7 @@ function CircularBadge({
           <textPath href="#who-we-are-badge-path">{label}</textPath>
         </text>
       </svg>
-      <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full sm:h-14 sm:w-14">
+      <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full sm:h-18 sm:w-18">
         {logo ? (
           <Image
             src={urlFor(logo).height(80).url()}
@@ -118,12 +118,12 @@ export function WhoWeAreSection({ logo }: Props) {
               priority
             />
           </div>
-          <InvertedCorner className="absolute rotate-90 left-48 bottom-0 w-8 h-8 text-brand-black" />
-          <InvertedCorner className="absolute rotate-90 left-0 bottom-48 w-8 h-8 text-brand-black" />
+          <InvertedCorner className="absolute rotate-90 left-44 bottom-0 w-8 h-8 text-brand-black" />
+          <InvertedCorner className="absolute rotate-90 left-0 bottom-44 w-8 h-8 text-brand-black" />
           {/* Backdrop matching the section background, so the badge
                 reads as sitting on a cut-out of the photo rather than just
                 floating over it — same idea as the reference's white box. */}
-          <div className="absolute bottom-0 left-0 z-10 h-32 w-32 rounded-tr-[6rem] bg-brand-black sm:h-48 sm:w-48" />
+          <div className="absolute bottom-0 left-0 z-10 h-32 w-32 rounded-tr-[5.5rem] bg-brand-black sm:h-44 sm:w-44" />
           <CircularBadge reduceMotion={reduceMotion} logo={logo} />
         </div>
 
