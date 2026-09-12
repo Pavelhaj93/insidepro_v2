@@ -72,7 +72,7 @@ export default async function HomePage() {
         }
         cornerContent={
           <h2 className="font-display font-black uppercase text-xl sm:text-2xl leading-tight text-white">
-            Tvoříme práci, která inspiruje
+            Tvoříme věci, které inspirují
           </h2>
         }
       />

@@ -36,7 +36,7 @@ function CircularBadge({
 
   return (
     <div className="absolute bottom-8 left-8 z-20 flex h-28 w-28 items-center justify-center sm:bottom-5 sm:left-5 sm:h-32 sm:w-32">
-      <div className="absolute inset-0 rounded-full border border-brand-gold/40 bg-brand-black" />
+      <div className="absolute inset-0 rounded-full border border-brand-light bg-brand-black" />
       {/* Only the text ring spins — the logo sits outside this <svg>, so it
           stays perfectly still at the center while the text rotates around it. */}
       <svg
@@ -53,14 +53,14 @@ function CircularBadge({
           />
         </defs>
         <text
-          fontSize="7.5"
+          fontSize="9"
           letterSpacing="1"
           className="fill-brand-light uppercase font-body"
         >
           <textPath href="#who-we-are-badge-path">{label}</textPath>
         </text>
       </svg>
-      <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-brand-gold sm:h-14 sm:w-14">
+      <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full sm:h-14 sm:w-14">
         {logo ? (
           <Image
             src={urlFor(logo).height(80).url()}
@@ -118,12 +118,12 @@ export function WhoWeAreSection({ logo }: Props) {
               priority
             />
           </div>
-          <InvertedCorner className="absolute rotate-90 left-50 bottom-0 w-8 h-8 text-brand-black" />
-          <InvertedCorner className="absolute rotate-90 left-0 bottom-50 w-8 h-8 text-brand-black" />
+          <InvertedCorner className="absolute rotate-90 left-48 bottom-0 w-8 h-8 text-brand-black" />
+          <InvertedCorner className="absolute rotate-90 left-0 bottom-48 w-8 h-8 text-brand-black" />
           {/* Backdrop matching the section background, so the badge
                 reads as sitting on a cut-out of the photo rather than just
                 floating over it — same idea as the reference's white box. */}
-          <div className="absolute bottom-0 left-0 z-10 h-32 w-32 rounded-tr-4xl bg-brand-black sm:h-50 sm:w-50" />
+          <div className="absolute bottom-0 left-0 z-10 h-32 w-32 rounded-tr-[6rem] bg-brand-black sm:h-48 sm:w-48" />
           <CircularBadge reduceMotion={reduceMotion} logo={logo} />
         </div>
 
@@ -139,10 +139,10 @@ export function WhoWeAreSection({ logo }: Props) {
             OUR MISSION
           </p>
           <p className="font-body text-lg leading-7 text-brand-light/70">
-            Pomáháme značkám tvořit vizuální obsah, který má sílu oslovit,
-            zaujmout a prodávat. Společně budujeme silnou brand identitu,
-            hledáme ideální způsoby komunikace a ladíme sebeprezentaci v online
-            i offline světě.
+            Pomáháme firmám růst prostřednictvím strategie, kreativity a
+            kvalitního obsahu. Propojujeme produkci, branding a marketing do
+            jednoho funkčního celku, který dává značkám jasný směr a podporuje
+            jejich dlouhodobý růst.
           </p>
         </div>
 

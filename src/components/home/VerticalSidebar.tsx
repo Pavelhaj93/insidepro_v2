@@ -74,10 +74,10 @@ export function VerticalSidebar({ socialLinks, logo }: Props) {
         >
           <div className="flex -rotate-90 flex-col items-center whitespace-nowrap">
             <span className="font-display font-black uppercase text-xl tracking-wide text-white">
-              insidePRO
+              inside<span className="text-2xl">PRO</span>
             </span>
             <span className="mt-1 font-body text-[10px] tracking-[0.3em] uppercase text-white/50">
-              Creativity
+              Creative studio
             </span>
           </div>
         </Link>

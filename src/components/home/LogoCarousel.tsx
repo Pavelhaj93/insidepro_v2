@@ -47,7 +47,7 @@ export function LogoCarousel({ logos }: Props) {
     <section className="overflow-hidden bg-brand-black py-16 pl-24 lg:pl-48 pr-6 md:py-20 md:pr-10 lg:pr-24">
       <div className="mx-auto max-w-7xl overflow-hidden">
         <p className="mb-10 font-display font-bold uppercase text-lg sm:text-xl leading-snug text-brand-light/80">
-          Spolupracujeme s nadnárodními i lokálními společnostmi
+          SPOLUPRACUJEME SE ZNAČKAMI NAPŘÍČ RŮZNÝMI OBORY
         </p>
 
         <div className="mask-[linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">

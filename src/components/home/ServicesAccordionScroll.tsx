@@ -55,7 +55,7 @@ export function ServicesAccordionScroll() {
     >
       <div className="mx-auto max-w-7xl">
         <p className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4">
-          Naše služby
+          {`{ Naše služby }`}
         </p>
         <h2 className="font-display font-black uppercase text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-tight text-brand-light mb-12 md:mb-16">
           Co pro vás můžeme udělat
