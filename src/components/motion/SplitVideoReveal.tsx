@@ -87,7 +87,7 @@ export function SplitVideoReveal({
   );
 
   const headingClassName =
-    "font-display font-black uppercase text-4xl sm:text-5xl lg:text-6xl leading-tight mb-5 whitespace-nowrap";
+    "font-display font-black uppercase text-6xl sm:text-7xl lg:text-8xl leading-tight mb-5 whitespace-nowrap";
 
   if (reduceMotion) {
     return (
@@ -99,7 +99,7 @@ export function SplitVideoReveal({
             mobileSrc={mobileVideoSrc}
           />
           <div className="absolute inset-x-0 bottom-0 z-10 bg-linear-to-t from-black/80 to-transparent p-8 md:p-12">
-            <div className="max-w-md">
+            <div className="max-w-md ml-4 sm:ml-8">
               {panelKicker}
               <h1 className={headingClassName}>{panelHeading}</h1>
               {panelSubtitle}
@@ -132,9 +132,12 @@ export function SplitVideoReveal({
           className="absolute inset-y-0 left-0 z-10 flex w-1/2 items-center bg-black pt-10 pr-10 pb-10 pl-24 text-white md:w-[52%] md:pt-14 md:pr-14 md:pb-14"
           style={{ x: panelX }}
         >
-          <div className="max-w-md">
+          <div className="max-w-md ml-4 sm:ml-8">
             {panelKicker}
-            <motion.h1 className={headingClassName} style={{ x: headingExtraX }}>
+            <motion.h1
+              className={headingClassName}
+              style={{ x: headingExtraX }}
+            >
               {panelHeading}
             </motion.h1>
             {panelSubtitle}
@@ -156,7 +159,7 @@ export function SplitVideoReveal({
         </motion.div>
 
         <motion.div
-          className="absolute h-40 bottom-8 right-8 z-10 w-[500px] rounded-tl-4xl bg-black p-6 text-right md:bottom-0 md:right-0 md:p-8"
+          className="absolute h-40 bottom-8 right-8 z-10 w-100 rounded-tl-4xl bg-black p-6 text-right md:bottom-0 md:right-0 md:p-8 md:pr-12"
           style={{ x: cornerX }}
         >
           {cornerContent}

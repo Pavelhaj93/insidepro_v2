@@ -71,7 +71,7 @@ export default async function HomePage() {
           </p>
         }
         cornerContent={
-          <h2 className="font-display font-black uppercase text-xl sm:text-2xl leading-tight text-white">
+          <h2 className="font-display font-black uppercase text-xl sm:text-3xl leading-tight text-white">
             Tvoříme věci, které inspirují
           </h2>
         }
