@@ -39,8 +39,8 @@ const SECONDS_PER_LOGO = 4;
  */
 export function LogoCarousel({ logos }: Props) {
   const reduceMotion = useReducedMotion();
-  const withImages = (logos ?? []).filter(
-    (logo): logo is LogoWithImage => Boolean(logo.image),
+  const withImages = (logos ?? []).filter((logo): logo is LogoWithImage =>
+    Boolean(logo.image),
   );
 
   if (!withImages.length) return null;
@@ -51,10 +51,15 @@ export function LogoCarousel({ logos }: Props) {
   const half = Math.ceil(withImages.length / 2);
   const rowLogos: [LogoWithImage[], LogoWithImage[]] = [
     withImages.slice(0, half),
-    withImages.length > half ? withImages.slice(half) : withImages.slice(0, half),
+    withImages.length > half
+      ? withImages.slice(half)
+      : withImages.slice(0, half),
   ];
 
-  const renderRow = (logos: LogoWithImage[], direction: "forward" | "reverse") => {
+  const renderRow = (
+    logos: LogoWithImage[],
+    direction: "forward" | "reverse",
+  ) => {
     const duration = logos.length * SECONDS_PER_LOGO;
     const track = reduceMotion ? logos : [...logos, ...logos];
 
@@ -98,8 +103,8 @@ export function LogoCarousel({ logos }: Props) {
   return (
     <section className="overflow-hidden bg-brand-black py-16 pl-24 lg:pl-48 pr-6 md:py-20 md:pr-10 lg:pr-24">
       <div className="mx-auto max-w-7xl overflow-hidden">
-        <p className="mb-10 font-display font-bold uppercase text-lg sm:text-xl leading-snug text-brand-light/80">
-          SPOLUPRACUJEME SE ZNAČKAMI NAPŘÍČ RŮZNÝMI OBORY
+        <p className="mb-10 font-display font-bold text-lg sm:text-xl leading-snug text-brand-light/80">
+          Spolupracujeme se značkami napříč různými obory
         </p>
 
         <div className="flex flex-col gap-8 md:gap-10">

@@ -201,7 +201,7 @@ export function WhoWeAreSection({ logo }: Props) {
               match the card's silhouette. */}
           <div className="relative inline-flex w-fit items-center bg-brand-black px-8 py-6 rounded-br-4xl md:px-10 md:py-7">
             <p className="font-display font-bold text-xl text-brand-light tracking-tighter">
-              OUR MISSION
+              Our mission
             </p>
             <InvertedCorner className="absolute left-full top-0 h-8 w-8 rotate-180 text-brand-black" />
             <InvertedCorner className="absolute top-full left-0 h-8 w-8 rotate-180 text-brand-black" />
