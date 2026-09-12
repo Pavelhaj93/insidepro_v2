@@ -38,7 +38,7 @@ export function TeamShowcaseSection({
         {heading}
       </h2>
 
-      <RevealStagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+      <RevealStagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-20">
         {teamMembers.map((member) => (
           <RevealItem key={member._id} className="group">
             <div className="relative aspect-3/4">

@@ -50,7 +50,7 @@ function ClientCard({
           loader={sanityImageLoader}
           alt={item.name}
           fill
-          sizes="46vw"
+          sizes="38vw"
           quality={85}
           className="object-cover object-center"
           priority={index === 0}
@@ -62,13 +62,33 @@ function ClientCard({
           </span>
         </div>
       )}
+
+      {/* Purely decorative — sits inside the same Link as the rest of the
+          image below, so it shares that click target rather than nesting
+          a second interactive element inside it. */}
+      {item.slug && (
+        <div className="absolute bottom-4 right-4 flex h-11 w-11 items-center justify-center rounded-full bg-brand-gold text-brand-black transition-transform duration-300 group-hover:scale-110">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path
+              d="M3 13L13 3M13 3H6M13 3V10"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+      )}
     </div>
   );
 
   return (
-    <motion.div style={{ scale: depthScale, opacity: depthOpacity }}>
+    <motion.div
+      className="group"
+      style={{ scale: depthScale, opacity: depthOpacity }}
+    >
       {item.slug ? (
-        <Link href={`/reference/${item.slug}`} className="block">
+        <Link href={`/reference/${item.slug}`} className="block cursor-pointer">
           {image}
         </Link>
       ) : (
@@ -77,7 +97,7 @@ function ClientCard({
 
       <div className="mt-5 flex items-end justify-between gap-4">
         <div>
-          <p className="font-display font-bold text-lg text-brand-light sm:text-xl">
+          <p className="font-display font-bold text-lg text-brand-light transition-colors duration-300 group-hover:text-brand-gold sm:text-xl">
             {item.name}
           </p>
           {item.tagline && (
@@ -124,8 +144,8 @@ export function ClientShowcaseHorizontal({ clients }: Props) {
     <HorizontalScrollCards
       items={clients}
       itemKey={(client, index) => `${client.name}-${index}`}
-      itemWidthVw={46}
-      gapVw={4}
+      itemWidthVw={38}
+      gapVw={8}
       entryVw={75}
       restVw={20}
       entryProgress={0.18}
