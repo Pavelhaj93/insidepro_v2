@@ -53,29 +53,7 @@ export default async function HomePage() {
 
   return (
     <main className="bg-brand-black text-brand-light">
-      <SplitVideoReveal
-        videoSrc={HERO_VIDEO_SRC}
-        panelKicker={
-          <p className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4">
-            {`{ Film. Brand. Emotion. }`}
-          </p>
-        }
-        panelHeading={
-          <>
-            From <em className="italic">the</em> inside
-          </>
-        }
-        panelSubtitle={
-          <p className="font-display font-bold uppercase text-lg sm:text-xl leading-snug text-brand-light/80">
-            Jsme váš dlouhodobý produkční a kreativní partner
-          </p>
-        }
-        cornerContent={
-          <h2 className="font-display font-black uppercase text-xl sm:text-3xl leading-tight text-white">
-            Tvoříme věci, které inspirují
-          </h2>
-        }
-      />
+      <SplitVideoReveal videoSrc={HERO_VIDEO_SRC} />
 
       <ServicesAccordion />
 

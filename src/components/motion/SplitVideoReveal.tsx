@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
+import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { HeroBackgroundVideo } from "@/components/motion/HeroBackgroundVideo";
@@ -9,14 +9,6 @@ type SplitVideoRevealProps = {
   videoSrc: string;
   videoMimeType?: string;
   mobileVideoSrc?: string;
-  /** Small kicker line above the heading, on the panel. */
-  panelKicker: ReactNode;
-  /** Inline content for the panel's heading (the `<h1>` itself lives here, so it can carry its own scroll speed). */
-  panelHeading: ReactNode;
-  /** Line below the heading, on the panel. */
-  panelSubtitle: ReactNode;
-  /** Small floating headline pinned to the bottom-right, over the video. */
-  cornerContent: ReactNode;
   /** Scroll distance (vh) over which the panel/corner slide apart. */
   revealVh?: number;
   /** Extra scroll (vh) to hold the fully-revealed video before the next section can start covering it. */
@@ -53,10 +45,6 @@ export function SplitVideoReveal({
   videoSrc,
   videoMimeType,
   mobileVideoSrc,
-  panelKicker,
-  panelHeading,
-  panelSubtitle,
-  cornerContent,
   revealVh = 150,
   holdVh = 20,
   className,
@@ -87,7 +75,7 @@ export function SplitVideoReveal({
   );
 
   const headingClassName =
-    "font-display font-black uppercase text-6xl sm:text-7xl lg:text-8xl leading-tight mb-5 whitespace-nowrap";
+    "font-display font-black uppercase text-6xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-7xl leading-tight mb-5 whitespace-nowrap";
 
   if (reduceMotion) {
     return (
@@ -100,13 +88,21 @@ export function SplitVideoReveal({
           />
           <div className="absolute inset-x-0 bottom-0 z-10 bg-linear-to-t from-black/80 to-transparent p-8 md:p-12">
             <div className="max-w-md ml-4 sm:ml-8">
-              {panelKicker}
-              <h1 className={headingClassName}>{panelHeading}</h1>
-              {panelSubtitle}
+              <p className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4">
+                {`{ Film. Brand. Emotion. }`}
+              </p>
+              <h1 className={headingClassName}>
+                From <em className="italic">the</em> inside
+              </h1>
+              <p className="font-display font-bold uppercase text-lg sm:text-xl leading-snug text-brand-light/80">
+                Jsme váš dlouhodobý produkční a kreativní partner
+              </p>
             </div>
           </div>
           <div className="absolute bottom-8 right-8 z-10 max-w-xs rounded-2xl bg-black/80 p-4 text-right md:bottom-12 md:right-12">
-            {cornerContent}
+            <h2 className="font-display font-black uppercase text-xl sm:text-3xl leading-tight text-white">
+              Tvoříme věci, které inspirují
+            </h2>
           </div>
           <div className="absolute inset-x-0 bottom-0 z-20 h-14 bg-black" />
         </div>
@@ -133,14 +129,18 @@ export function SplitVideoReveal({
           style={{ x: panelX }}
         >
           <div className="max-w-md ml-4 sm:ml-8">
-            {panelKicker}
+            <p className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4">
+              {`{ Film. Brand. Emotion. }`}
+            </p>
             <motion.h1
               className={headingClassName}
               style={{ x: headingExtraX }}
             >
-              {panelHeading}
+              From <em className="italic">the</em> inside
             </motion.h1>
-            {panelSubtitle}
+            <p className="font-display font-bold uppercase text-lg sm:text-xl leading-snug text-brand-light/80">
+              Jsme váš dlouhodobý produkční a kreativní partner
+            </p>
           </div>
           {/*
             Reverse/"flush" corner: a normal `rounded-br-*` on the panel
@@ -162,7 +162,9 @@ export function SplitVideoReveal({
           className="absolute h-40 bottom-8 right-8 z-10 w-100 rounded-tl-4xl bg-black p-6 text-right md:bottom-0 md:right-0 md:p-8 md:pr-12"
           style={{ x: cornerX }}
         >
-          {cornerContent}
+          <h2 className="font-display font-black uppercase text-xl sm:text-3xl leading-tight text-white">
+            Tvoříme věci, které inspirují
+          </h2>
           {/* Mirror of the panel's flush corner, attached to this box's left edge instead. */}
           <div
             aria-hidden

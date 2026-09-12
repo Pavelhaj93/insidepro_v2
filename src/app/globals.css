@@ -87,6 +87,24 @@
   animation-duration: var(--marquee-duration, 30s);
 }
 
+/* Second logo row, drifting the opposite way — a dedicated keyframe (rather
+   than `animation-direction: reverse` on `.animate-marquee`, which some
+   engines fail to actually animate when duration is set via a separate
+   `animation-duration` override) so it's guaranteed to move. */
+@keyframes marquee-reverse {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-marquee-reverse {
+  animation: marquee-reverse linear infinite;
+  animation-duration: var(--marquee-duration, 30s);
+}
+
 /* Slow continuous rotation for the circular badge on WhoWeAreSection (POC).
    Deliberately NOT named "spin-*" — Tailwind v4 ships a built-in `animate-spin`
    utility and silently drops any custom class/keyframes whose name starts
