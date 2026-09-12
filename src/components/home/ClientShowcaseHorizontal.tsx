@@ -67,7 +67,7 @@ function ClientCard({
           image below, so it shares that click target rather than nesting
           a second interactive element inside it. */}
       {item.slug && (
-        <div className="absolute bottom-4 right-4 flex h-11 w-11 items-center justify-center rounded-full bg-brand-gold text-brand-black transition-transform duration-300 group-hover:scale-110">
+        <div className="absolute bottom-4 right-4 flex h-11 w-11 translate-y-4 items-center justify-center rounded-full bg-brand-gold text-brand-black opacity-0 transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path
               d="M3 13L13 3M13 3H6M13 3V10"
