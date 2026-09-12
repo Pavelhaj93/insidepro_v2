@@ -1,11 +1,81 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { InvertedCorner } from "../icons/InvertedCorner";
 
 type BadgeLogo = { asset: { _ref: string } };
+
+// Placeholder paths — content creator still needs to drop in
+// left_image-2.png .. left_image-5.png next to the existing left_image.png.
+// Until then slides 2-5 will 404; swap this array for real filenames (or
+// wire it up to a Sanity array field) once the photos exist.
+const LEFT_PHOTOS = [
+  "/images/left_image.png",
+  "/images/left_image-2.jpg",
+  "/images/left_image-3.jpg",
+  "/images/left_image-4.jpg",
+  "/images/left_image-5.jpg",
+];
+
+const CAROUSEL_INTERVAL_MS = 3000;
+
+function PhotoCarousel({
+  images,
+  reduceMotion,
+}: {
+  images: string[];
+  reduceMotion: boolean;
+}) {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    if (reduceMotion || images.length <= 1) return;
+    const id = setInterval(() => {
+      setActiveIndex((current) => (current + 1) % images.length);
+    }, CAROUSEL_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, [images.length, reduceMotion]);
+
+  return (
+    <>
+      {images.map((src, index) => (
+        <Image
+          key={src}
+          src={src}
+          alt="Foto z produkce"
+          fill
+          sizes="(min-width: 1024px) 65vw, 100vw"
+          priority={index === 0}
+          className={`object-cover object-center transition-opacity duration-700 ease-out ${
+            index === activeIndex ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      ))}
+
+      {images.length > 1 && (
+        <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2 sm:bottom-5">
+          {images.map((src, index) => (
+            <button
+              key={src}
+              type="button"
+              aria-label={`Zobrazit fotku ${index + 1}`}
+              aria-pressed={index === activeIndex}
+              onClick={() => setActiveIndex(index)}
+              className={`h-2 rounded-full transition-all ${
+                index === activeIndex
+                  ? "w-6 bg-brand-light"
+                  : "w-2 bg-brand-light/40"
+              }`}
+            />
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
 
 // Reference design (3 screenshots: desktop/tablet/mobile) was a light-theme
 // template ("Who We Are" / "BrightEdge Studio") — recreated here in this
@@ -109,14 +179,7 @@ export function WhoWeAreSection({ logo }: Props) {
           {/* Landscape on mobile/tablet; fixed 570px on desktop, matching
               the reference's actual measured height. */}
           <div className="relative aspect-6/5 overflow-hidden rounded-tl-[3rem] rounded-tr-[3rem] rounded-br-[3rem] bg-brand-dark sm:aspect-16/11 lg:aspect-auto lg:h-142.5">
-            <Image
-              src="/images/left_image.png"
-              alt="Foto z produkce"
-              fill
-              sizes="(min-width: 1024px) 65vw, 100vw"
-              className="object-cover object-center"
-              priority
-            />
+            <PhotoCarousel images={LEFT_PHOTOS} reduceMotion={reduceMotion} />
           </div>
           <InvertedCorner className="absolute rotate-90 left-44 bottom-0 w-8 h-8 text-brand-black" />
           <InvertedCorner className="absolute rotate-90 left-0 bottom-44 w-8 h-8 text-brand-black" />
