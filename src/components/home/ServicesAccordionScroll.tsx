@@ -8,13 +8,14 @@ import { Badge } from "@/components/ui/Badge";
 import { SERVICES } from "./services-data";
 
 // A row opens once its header crosses this thin horizontal band —
-// positioned a bit above dead-center, per "middle of the page, or a bit
-// before the middle". Expressed as a rootMargin: shrinking the viewport 42%
-// from the top and 55% from the bottom leaves a band spanning 42%-45% down
-// the screen. Rows are stacked with no gaps, so at most one header's box
+// positioned a bit below mid-screen (partway between the original
+// mid-screen trigger and the too-early quarter-from-the-bottom one tried
+// after it). Expressed as a rootMargin: shrinking the viewport 57% from the
+// top and 40% from the bottom leaves a band spanning 57%-60% down the
+// screen. Rows are stacked with no gaps, so at most one header's box
 // crosses that thin band at a time — scrolling past it opens the next row
 // without affecting any row already opened earlier.
-const TRIGGER_BAND_ROOT_MARGIN = "-42% 0px -55% 0px";
+const TRIGGER_BAND_ROOT_MARGIN = "-57% 0px -40% 0px";
 
 /**
  * All-services-at-once accordion: title + one-word subtitle stay visible by
