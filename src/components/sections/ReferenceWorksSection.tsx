@@ -14,6 +14,10 @@ type Category = {
   _id: string;
   title: string;
   slug?: string;
+  /** Tab order on the Reference page (lower = first) — set in Sanity on the category document. */
+  order?: number;
+  /** Set only on categories with no projects of their own (e.g. Showreel) — see `activeCategory` below. */
+  videoUrl?: string;
 };
 
 type Project = {
@@ -33,22 +37,57 @@ type Props = {
   allLabel?: string;
   projects?: Project[];
   categories?: Category[];
+  /** Category slug to preselect on mount, e.g. from `/reference?category=branding`. */
+  initialCategorySlug?: string;
 };
+
+function PlayIcon() {
+  return (
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M8 5v14l11-7z" />
+    </svg>
+  );
+}
 
 export function ReferenceWorksSection({
   heading = "REFERENCE",
-  description = "Výběr z projektů, které jsme dovedli od prvotní myšlenky až po finální výstup — napříč reklamou, brandingem i firemní komunikací pro klienty, kteří vsadili na naši kreativitu.",
+  description = "Proměňujeme nápady ve skutečné projekty. Od prvního konceptu přes produkci, branding a marketing až po finální realizaci a dlouhodobou práci se značkou. Děkujeme všem našim klientům za důvěru v nás a naši práci.",
   allLabel = "Vše",
   projects = [],
   categories = [],
+  initialCategorySlug,
 }: Props) {
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(
+    () =>
+      categories.find((category) => category.slug === initialCategorySlug)
+        ?._id ?? null,
+  );
   const reduceMotion = useReducedMotion();
 
-  const usedCategories = categories.filter((category) =>
-    projects.some((project) =>
-      project.categories?.some((c) => c._id === category._id),
-    ),
+  // A category can be "used" either by tagging at least one project, or by
+  // carrying its own video (Showreel has no projects at all — its video
+  // lives directly on the category document).
+  const usedCategories = categories
+    .filter(
+      (category) =>
+        Boolean(category.videoUrl) ||
+        projects.some((project) =>
+          project.categories?.some((c) => c._id === category._id),
+        ),
+    )
+    .sort((a, b) => {
+      // Primary: the `order` field set in Sanity (lower = first); categories
+      // without one sort after every ordered category.
+      const orderDiff = (a.order ?? Infinity) - (b.order ?? Infinity);
+      if (orderDiff !== 0) return orderDiff;
+
+      // Tie-break: video categories (Showreel) sort last among equals —
+      // they're a special "extra" tab, not a regular project category.
+      return Number(Boolean(a.videoUrl)) - Number(Boolean(b.videoUrl));
+    });
+
+  const activeCategory = usedCategories.find(
+    (category) => category._id === activeId,
   );
 
   const visibleProjects = activeId
@@ -94,10 +133,7 @@ export function ReferenceWorksSection({
           </p>
         </Reveal>
 
-        <Reveal
-          delay={0.1}
-          className="flex flex-wrap items-center gap-3 mb-10"
-        >
+        <Reveal delay={0.1} className="flex flex-wrap items-center gap-3 mb-10">
           <button
             type="button"
             onClick={() => setActiveId(null)}
@@ -114,54 +150,73 @@ export function ReferenceWorksSection({
               aria-pressed={activeId === category._id}
               className="cursor-pointer border-0 bg-transparent p-0"
             >
-              <Badge active={activeId === category._id}>
+              <Badge
+                active={activeId === category._id}
+                accent={Boolean(category.videoUrl)}
+                className={category.videoUrl ? "gap-1.5" : undefined}
+              >
+                {category.videoUrl && <PlayIcon />}
                 {category.title}
               </Badge>
             </button>
           ))}
         </Reveal>
 
-        {reduceMotion ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {visibleProjects.map((project, index) => (
-              <div key={project._id} className={projectSpanClass(index)}>
-                <ProjectCard
-                  project={project}
-                  aspectClassName={projectAspectClass(index)}
-                />
-              </div>
-            ))}
-          </div>
+        {activeCategory?.videoUrl ? (
+          // Categories carrying their own video (e.g. Showreel) show that
+          // video full-width instead of the project grid — different
+          // content entirely, not just a different filter of the same grid.
+          <video
+            key={activeCategory._id}
+            src={activeCategory.videoUrl}
+            controls
+            className="aspect-video w-full rounded-4xl bg-brand-dark"
+          />
         ) : (
-          <motion.div
-            layout
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            <AnimatePresence mode="popLayout">
-              {visibleProjects.map((project, index) => (
-                <motion.div
-                  key={project._id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.96 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
-                  className={projectSpanClass(index)}
-                >
-                  <ProjectCard
-                    project={project}
-                    aspectClassName={projectAspectClass(index)}
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
-        )}
+          <>
+            {reduceMotion ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {visibleProjects.map((project, index) => (
+                  <div key={project._id} className={projectSpanClass(index)}>
+                    <ProjectCard
+                      project={project}
+                      aspectClassName={projectAspectClass(index)}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <motion.div
+                layout
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              >
+                <AnimatePresence mode="popLayout">
+                  {visibleProjects.map((project, index) => (
+                    <motion.div
+                      key={project._id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.96 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.96 }}
+                      transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
+                      className={projectSpanClass(index)}
+                    >
+                      <ProjectCard
+                        project={project}
+                        aspectClassName={projectAspectClass(index)}
+                      />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </motion.div>
+            )}
 
-        {visibleProjects.length === 0 && (
-          <p className="font-body text-brand-light/60">
-            Žádné projekty v této kategorii.
-          </p>
+            {visibleProjects.length === 0 && (
+              <p className="font-body text-brand-light/60">
+                Žádné projekty v této kategorii.
+              </p>
+            )}
+          </>
         )}
       </div>
     </section>

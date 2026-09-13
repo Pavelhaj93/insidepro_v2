@@ -23,21 +23,6 @@ export const project = defineType({
       of: [{ type: 'reference', to: [{ type: 'category' }] }],
       description: 'Categories used for the filter tabs on the Reference page',
     }),
-    defineField({
-      name: 'category',
-      title: 'Category (legacy)',
-      type: 'string',
-      deprecated: { reason: 'Use the Categories references instead' },
-      readOnly: true,
-      options: {
-        list: [
-          { title: 'Film', value: 'film' },
-          { title: 'Branding', value: 'branding' },
-          { title: 'Marketing', value: 'marketing' },
-          { title: 'Produkce', value: 'produkce' },
-        ],
-      },
-    }),
     defineField({ name: 'excerpt', title: 'Excerpt', type: 'text', rows: 3 }),
     defineField({
       name: 'body',

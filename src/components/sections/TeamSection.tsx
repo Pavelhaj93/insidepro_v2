@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { manrope } from "@/lib/fonts";
 import { ArrowRightIcon } from "@/components/icons/ArrowRight";
+import { InvertedCorner } from "@/components/icons/InvertedCorner";
 import { urlFor } from "@/sanity/lib/image";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 import { SanityImage } from "@/components/ui/SanityImage";
@@ -23,6 +24,9 @@ type Props = {
   ctaLink?: string;
 };
 
+// Same card treatment as the homepage's TeamShowcaseSection — the bottom-left
+// corner reads as a notch cut into the photo via one InvertedCorner fillet at
+// the inner corner where the label meets the image.
 export function TeamSection({
   heading,
   teamMembers = [],
@@ -32,57 +36,42 @@ export function TeamSection({
   ctaLink,
 }: Props) {
   return (
-    <section className="px-8 xl:px-0 py-24 max-w-5xl mx-auto">
-      {/* {heading && (
-        <p className="font-body text-xs tracking-widest text-brand-light/40 uppercase mb-12">
+    <section className="px-8 xl:px-0 py-24 max-w-6xl mx-auto">
+      {heading && (
+        <h2 className="font-display font-black uppercase text-3xl sm:text-4xl leading-tight text-brand-light mb-16">
           {heading}
-        </p>
-      )} */}
+        </h2>
+      )}
 
-      <RevealStagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+      <RevealStagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-20">
         {teamMembers.map((member) => (
-          <RevealItem key={member._id} className="group h-full flex flex-col">
-            <div className="relative aspect-109/123 rounded-t-md overflow-hidden bg-brand-dark mb-0 grayscale group-hover:grayscale-0 transition-all duration-500">
-              {member.photo && (
-                <SanityImage
-                  src={urlFor(member.photo).url()}
-                  alt={member.name}
-                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                  quality={85}
-                  className="object-cover object-center"
-                />
-              )}
-            </div>
-            <div className="bg-brand-grey px-6 py-8 flex flex-col flex-1 rounded-b-md">
-              <h3 className="font-display font-black text-2xl leading-none md:text-3xl tracking-normal uppercase text-brand-light">
-                {member.name}
-              </h3>
-              <div className="h-px bg-brand-gold my-4" />
-              {member.role && (
-                <p
-                  className={`${manrope.className} font-normal text-lg leading-relaxed tracking-normal text-brand-gold`}
-                >
-                  {member.role}
-                </p>
-              )}
-              {/* <div className="mt-auto pt-4">
-                {member.email && (
-                  <a
-                    href={`mailto:${member.email}`}
-                    className={`${manrope.className} font-normal text-lg leading-relaxed tracking-normal text-brand-light hover:text-brand-gold transition-colors block`}
-                  >
-                    {member.email}
-                  </a>
+          <RevealItem key={member._id} className="group">
+            <div className="relative aspect-3/4">
+              <div className="absolute inset-0 rounded-4xl overflow-hidden bg-brand-dark">
+                {member.photo && (
+                  <SanityImage
+                    src={urlFor(member.photo).url()}
+                    alt={member.name}
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    quality={85}
+                    className="object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-500"
+                  />
                 )}
-                {member.phone && (
-                  <a
-                    href={`tel:${member.phone.replace(/\s/g, "")}`}
-                    className={`${manrope.className} font-extrabold text-lg leading-relaxed tracking-normal text-brand-light block mt-0.5`}
-                  >
-                    {member.phone}
-                  </a>
+              </div>
+
+              <InvertedCorner className="absolute rotate-90 left-[68%] bottom-0 w-8 h-8 text-brand-black" />
+              <InvertedCorner className="absolute rotate-90 left-0 bottom-[20%] w-8 h-8 text-brand-black" />
+
+              <div className="absolute bottom-0 left-0 w-[68%] h-[20%] bg-brand-black py-1 flex flex-col justify-center rounded-tr-4xl">
+                <h3 className="font-display font-black uppercase text-lg leading-tight text-brand-light">
+                  {member.name}
+                </h3>
+                {member.role && (
+                  <p className="font-body text-xs uppercase tracking-wide text-brand-gold mt-1.5">
+                    {member.role}
+                  </p>
                 )}
-              </div> */}
+              </div>
             </div>
           </RevealItem>
         ))}

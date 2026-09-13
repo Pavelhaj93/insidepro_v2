@@ -9,6 +9,8 @@ export const film = defineType({
     defineField({ name: 'slug', title: 'Slug', type: 'slug', options: { source: 'title' }, validation: Rule => Rule.required() }),
     defineField({ name: 'coverImage', title: 'Cover Image', type: 'image', options: { hotspot: true } }),
     defineField({ name: 'description', title: 'Description', type: 'text', rows: 4 }),
+    defineField({ name: 'genre', title: 'Žánr', type: 'string' }),
+    defineField({ name: 'country', title: 'Země', type: 'string' }),
     defineField({ name: 'director', title: 'Director', type: 'string' }),
     defineField({ name: 'production', title: 'Production', type: 'string' }),
     defineField({ name: 'coproducer', title: 'Co-producer', type: 'string' }),

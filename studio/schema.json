@@ -2507,6 +2507,37 @@
           "type": "number"
         },
         "optional": true
+      },
+      "video": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "object",
+          "attributes": {
+            "asset": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "inline",
+                "name": "sanity.fileAsset.reference"
+              },
+              "optional": true
+            },
+            "media": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "unknown"
+              },
+              "optional": true
+            },
+            "_type": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string",
+                "value": "file"
+              }
+            }
+          }
+        },
+        "optional": true
       }
     }
   },
@@ -2963,6 +2994,20 @@
         },
         "optional": true
       },
+      "genre": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "country": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "director": {
         "type": "objectAttribute",
         "value": {
@@ -3332,31 +3377,6 @@
               "name": "category.reference"
             }
           }
-        },
-        "optional": true
-      },
-      "category": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "union",
-          "of": [
-            {
-              "type": "string",
-              "value": "film"
-            },
-            {
-              "type": "string",
-              "value": "branding"
-            },
-            {
-              "type": "string",
-              "value": "marketing"
-            },
-            {
-              "type": "string",
-              "value": "produkce"
-            }
-          ]
         },
         "optional": true
       },

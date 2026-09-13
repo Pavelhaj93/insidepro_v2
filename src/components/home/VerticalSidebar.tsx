@@ -6,10 +6,19 @@ import { motion } from "framer-motion";
 import { SocialLinks } from "@/components/layout/SocialLinks";
 import { FullscreenMenu } from "./FullscreenMenu";
 
-// Showcase nav — just the pages this hardcoded demo actually has.
+// Showcase nav — just the pages this hardcoded demo actually has. The
+// category links reuse the Reference page's own filter (matched by
+// category slug, see ReferenceWorksSection) instead of linking to their
+// separate (currently unused) standalone pages — only Filmy gets its own
+// page.
 const navLinks = [
   { label: "Úvod", href: "/" },
   { label: "Reference", href: "/reference" },
+  { label: "Branding", href: "/reference?category=branding" },
+  { label: "Marketing", href: "/reference?category=marketing" },
+  { label: "Filmy", href: "/filmy" },
+  { label: "Produkce", href: "/reference?category=produkce" },
+  { label: "Weby", href: "/reference?category=web" },
   { label: "Kariéra", href: "/kariera" },
   { label: "Kontakt", href: "/kontakt" },
 ];
@@ -47,10 +56,10 @@ export function VerticalSidebar({ socialLinks, logo }: Props) {
           aria-label={isOpen ? "Zavřít menu" : "Otevřít menu"}
           aria-expanded={isOpen}
           onClick={() => setIsOpen((open) => !open)}
-          className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:border-white/50"
+          className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-black/20 bg-white text-black transition-colors hover:border-black/50"
         >
           <motion.span
-            className="absolute h-px w-4 bg-white"
+            className="absolute h-px w-4 bg-black"
             animate={{
               rotate: isOpen ? 45 : 0,
               y: isOpen ? 0 : -3,
@@ -58,7 +67,7 @@ export function VerticalSidebar({ socialLinks, logo }: Props) {
             transition={{ duration: 0.25 }}
           />
           <motion.span
-            className="absolute h-px w-4 bg-white"
+            className="absolute h-px w-4 bg-black"
             animate={{
               rotate: isOpen ? -45 : 0,
               y: isOpen ? 0 : 3,

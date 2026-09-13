@@ -46,13 +46,12 @@ const CASE_STUDY_DETAILS: Record<
     synopsis:
       "Agustin is a young shaman from the jungle, living at the edge of two worlds, who is trying to save the remnants of his declining culture. But his home is being plundered relentlessly. Will he manage to find balance between the two worlds in time? Is salvation even possible?",
     meta: [
-      { label: "Rok", value: "2025" },
-      { label: "Klient", value: "Analog Vision" },
-      { label: "Odvětví", value: "Environmental" },
-      { label: "Doba zpracování", value: "5 weeks" },
+      { label: "Rok", value: "2025 / 2026" },
       { label: "Režie", value: "Jan Rajnoha" },
+      { label: "Země", value: "Česká republika, Ekvádor, USA" },
+      { label: "Žánr", value: "Celovečerní dokumentární film" },
       { label: "Produkce", value: "Analog Vision s.r.o." },
-      { label: "Koproducent", value: "insideFILMS" },
+      { label: "Koproducent", value: "insidePRO" },
     ],
     partners: [
       "Mendelova univerzita v Brně",
