@@ -83,7 +83,9 @@ export function TeamShowcaseSection({
                     {member.name}
                   </h3>
                   {member.role && (
-                    <p className="font-body text-xs uppercase tracking-wide text-brand-gold mt-1.5">
+                    <p
+                      className={`font-body text-xs uppercase tracking-wide mt-1.5 ${invert ? "text-brand-black/50" : "text-brand-gold"}`}
+                    >
                       {member.role}
                     </p>
                   )}

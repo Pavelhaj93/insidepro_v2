@@ -8,6 +8,7 @@ import { film } from './documents/film'
 import { footer } from './documents/footer'
 import { brandLogo } from './documents/brandLogo'
 import { category } from './documents/category'
+import { video } from './documents/video'
 
 // Block objects
 import { heroSection } from './objects/blocks/heroSection'
@@ -46,6 +47,7 @@ export const schemaTypes = [
   footer,
   brandLogo,
   category,
+  video,
   // Block objects
   heroSection,
   servicesListSection,

@@ -74,7 +74,11 @@ export function SplitVideoReveal({
   // Mobile's corner card slides straight down instead of sideways — it's
   // anchored bottom-right, so 100% of its own height is enough to clear it
   // fully past the bottom edge.
-  const cornerYMobile = useTransform(scrollYProgress, [0, revealEnd], ["0%", "100%"]);
+  const cornerYMobile = useTransform(
+    scrollYProgress,
+    [0, revealEnd],
+    ["0%", "100%"],
+  );
   // Stacks on top of the panel's own -100% shift above, so by the time the
   // panel has fully slid off, the heading has additionally moved this many
   // extra vw further left. Desktop/tablet only — the mobile panel already
@@ -172,7 +176,7 @@ export function SplitVideoReveal({
         </motion.div>
 
         <motion.div
-          className="absolute z-10 max-w-[85vw] rounded-tl-4xl bg-black p-4 text-right bottom-4 right-4 sm:max-w-none sm:h-40 sm:bottom-8 sm:right-8 sm:w-100 sm:p-6 md:bottom-0 md:right-0 md:p-8 md:pr-12"
+          className="absolute z-10 max-w-[85vw] rounded-tl-4xl bg-black p-4 text-right bottom-4 right-0 sm:max-w-none sm:h-40 sm:bottom-8 sm:right-8 sm:w-100 sm:p-6 md:bottom-0 md:right-0 md:p-8 md:pr-12"
           style={isMobile ? { y: cornerYMobile } : { x: cornerX }}
         >
           <h2 className="font-display font-black uppercase text-base leading-tight text-white sm:text-3xl">

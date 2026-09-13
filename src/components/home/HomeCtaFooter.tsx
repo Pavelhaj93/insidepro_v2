@@ -49,7 +49,7 @@ export function HomeCtaFooter({
   legalText,
 }: Props) {
   return (
-    <section className="bg-brand-light text-brand-black pl-6 pr-6 py-16 sm:pl-24 sm:py-20 md:pr-10 md:py-28 lg:pl-48 lg:pr-24">
+    <section className="bg-brand-light text-brand-black pl-6 pr-6 pt-16 pb-8 sm:pl-24 sm:pt-20 sm:pb-10 md:pr-10 md:pt-28 md:pb-12 lg:pl-48 lg:pr-24">
       <div className="max-w-7xl mx-auto">
         <Reveal>
           <h2 className="font-display font-black uppercase text-3xl leading-[0.95] tracking-normal sm:text-4xl md:text-6xl lg:text-7xl">

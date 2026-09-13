@@ -119,62 +119,47 @@
   animation: badge-rotate 18s linear infinite;
 }
 
-/* Gradient Flow hover effect for the fullscreen nav links (MenuNavLinkGradient).
-   Applied only via the .is-active class, toggled from JS state (isActive) in
-   MenuNavLink — never a bare CSS :hover/:focus-visible selector, so mouse and
-   keyboard behave identically. */
-@keyframes gradient-flow {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 200% 50%;
-  }
+/* Clean/minimal hover effect for the fullscreen nav links
+   (MenuNavLinkUnderline). The word lifts slightly and warms to gold while a
+   thin underline draws in from the left beneath it — a single moving line
+   plus a small nudge, toggled by the .is-active class from JS state, same
+   as the other link effects. */
+.menu-link-underline {
+  position: relative;
+  display: inline-block;
+  color: var(--color-brand-light);
 }
 
-.menu-link-gradient {
-  background-image: linear-gradient(
-    90deg,
-    var(--color-brand-gold),
-    var(--color-brand-bronze),
-    var(--color-brand-light),
-    var(--color-brand-gold)
-  );
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.menu-link-underline-inner {
+  display: inline-block;
+  transition:
+    transform 0.35s cubic-bezier(0.65, 0, 0.35, 1),
+    color 0.35s ease;
 }
 
-.menu-link-gradient.is-active {
-  animation: gradient-flow 3s linear infinite;
+.menu-link-underline.is-active .menu-link-underline-inner {
+  transform: translateY(-0.08em);
+  color: var(--color-brand-gold);
 }
 
-/* Fill Wipe hover effect for the fullscreen nav links (MenuNavLinkWipe).
-   Rests as an outlined/transparent word; a hard-edged gold/transparent
-   background clipped to the text sweeps across it in one continuous motion
-   (not per-letter, not per-frame) via a single background-position transition,
-   toggled by the .is-active class from JS state — mouse and keyboard alike. */
-.menu-link-wipe {
-  color: transparent;
-  -webkit-text-stroke: 1.5px var(--color-brand-light);
-  background-image: linear-gradient(
-    90deg,
-    var(--color-brand-gold) 50%,
-    transparent 50%
-  );
-  background-size: 200% 100%;
-  background-position: 100% 0;
-  -webkit-background-clip: text;
-  background-clip: text;
-  transition: background-position 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+.menu-link-underline-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.12em;
+  height: 0.045em;
+  background: var(--color-brand-gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-.menu-link-wipe.is-active {
-  background-position: 0% 0;
+.menu-link-underline.is-active .menu-link-underline-bar {
+  transform: scaleX(1);
 }
 
-.menu-link-wipe.reduce-motion {
+.menu-link-underline.reduce-motion .menu-link-underline-inner,
+.menu-link-underline.reduce-motion .menu-link-underline-bar {
   transition: none;
 }
 

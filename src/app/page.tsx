@@ -21,7 +21,7 @@ const CLIENTS_QUERY = groq`*[_type == "page" && isHomepage == true][0].blocks[_t
       "backgroundImage": coverImage,
       "tagline": excerpt,
       "slug": slug.current,
-      hoverVideo { asset->{ url, mimeType } }
+      hoverVideo-> { file { asset->{ url, mimeType } } }
     }
   }
 }`;

@@ -19,10 +19,11 @@ type ClientItem = {
   logo?: SanityImage;
   backgroundImage?: SanityImage; // asset._ref may also be a raw https:// URL (mocks)
   slug?: string; // only set for entries backed by a real `project` reference
-  // Only set for entries backed by a real `project` reference (see
-  // `project.hoverVideo` in the Studio schema) — plays over the card's image
-  // on hover, desktop/tablet only (see ClientCard below).
-  hoverVideo?: { asset?: { url?: string; mimeType?: string } };
+  // Only set for entries backed by a real `project` reference — a
+  // dereferenced `video` library document (see `project.hoverVideo` in the
+  // Studio schema). Plays over the card's image on hover, desktop/tablet
+  // only (see ClientCard below).
+  hoverVideo?: { file?: { asset?: { url?: string; mimeType?: string } } };
 };
 
 type Props = {
@@ -48,7 +49,7 @@ function ClientCard({
   depthOpacity,
 }: HorizontalCardRenderArgs<ClientItem>) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const hoverVideoUrl = item.hoverVideo?.asset?.url;
+  const hoverVideoUrl = item.hoverVideo?.file?.asset?.url;
 
   const image = (
     <div className="relative aspect-4/3 w-full overflow-hidden rounded-3xl bg-brand-dark">

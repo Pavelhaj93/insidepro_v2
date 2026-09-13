@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { SocialLinks } from "@/components/layout/SocialLinks";
-import { MenuNavLink, type MenuEffect } from "./MenuNavLink";
-import { MenuSpotlightList } from "./MenuSpotlightList";
+import { MenuNavLink } from "./MenuNavLink";
 
 const navListVariants = {
   open: { transition: { staggerChildren: 0.06, delayChildren: 0.15 } },
@@ -19,7 +18,7 @@ const navItemVariants = {
   closed: { opacity: 0, x: -16 },
 };
 
-type NavLink = { label: string; href: string; translatedLabel?: string };
+type NavLink = { label: string; href: string };
 
 type SocialLinksValue = {
   instagram?: string | null;
@@ -35,10 +34,7 @@ type Props = {
   socialLinks?: SocialLinksValue | null;
 };
 
-const EFFECTS: MenuEffect[] = ["gradient", "wave", "glitch", "wipe", "spotlight"];
-
 export function FullscreenMenu({ isOpen, onClose, navLinks, socialLinks }: Props) {
-  const [effect, setEffect] = useState<MenuEffect>("gradient");
   const reduceMotion = useReducedMotion();
   // Slide direction/position differ enough (top-bar-less full overlay vs.
   // offset-from-sidebar panel) that this needs a real JS check, not just
@@ -77,33 +73,24 @@ export function FullscreenMenu({ isOpen, onClose, navLinks, socialLinks }: Props
               : { type: "spring", stiffness: 320, damping: 32 }
           }
         >
-          {effect === "spotlight" ? (
-            <MenuSpotlightList
-              navLinks={navLinks}
-              onNavigate={onClose}
-              reduceMotion={reduceMotion}
-            />
-          ) : (
-            <motion.ul
-              initial="closed"
-              animate="open"
-              exit="closed"
-              variants={navListVariants}
-              className="flex flex-col items-center gap-2 text-center sm:gap-3 md:gap-4"
-            >
-              {navLinks.map((link) => (
-                <motion.li key={link.href} variants={navItemVariants}>
-                  <MenuNavLink
-                    label={link.label}
-                    href={link.href}
-                    effect={effect}
-                    reduceMotion={reduceMotion}
-                    onNavigate={onClose}
-                  />
-                </motion.li>
-              ))}
-            </motion.ul>
-          )}
+          <motion.ul
+            initial="closed"
+            animate="open"
+            exit="closed"
+            variants={navListVariants}
+            className="flex flex-col items-center gap-2 text-center sm:gap-3 md:gap-4"
+          >
+            {navLinks.map((link) => (
+              <motion.li key={link.href} variants={navItemVariants}>
+                <MenuNavLink
+                  label={link.label}
+                  href={link.href}
+                  reduceMotion={reduceMotion}
+                  onNavigate={onClose}
+                />
+              </motion.li>
+            ))}
+          </motion.ul>
 
           {/* No room for social links in the mobile top bar (see
               VerticalSidebar) — they live here instead, below the nav
@@ -111,26 +98,6 @@ export function FullscreenMenu({ isOpen, onClose, navLinks, socialLinks }: Props
               vertical sidebar, so hidden there to avoid showing twice. */}
           {socialLinks && (
             <SocialLinks links={socialLinks} iconSize={22} className="mt-8 sm:hidden" />
-          )}
-
-          {process.env.NODE_ENV === "development" && (
-            <div className="fixed bottom-6 right-6 z-50 flex gap-2">
-              {EFFECTS.map((e) => (
-                <button
-                  key={e}
-                  type="button"
-                  onClick={() => setEffect(e)}
-                  className={cn(
-                    "rounded-full border px-3 py-1 text-[10px] uppercase tracking-widest transition-colors",
-                    effect === e
-                      ? "border-brand-gold text-brand-gold"
-                      : "border-white/20 text-white/50 hover:text-white"
-                  )}
-                >
-                  {e}
-                </button>
-              ))}
-            </div>
           )}
         </motion.nav>
       )}

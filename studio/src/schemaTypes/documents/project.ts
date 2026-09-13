@@ -19,9 +19,16 @@ export const project = defineType({
     defineField({
       name: 'hoverVideo',
       title: 'Hover Video (optional)',
-      type: 'file',
-      options: { accept: 'video/mp4,video/webm' },
+      type: 'reference',
+      to: [{ type: 'video' }],
       description: 'Plays on hover over this project\'s card in the homepage client showcase (falls back to Cover Image if empty)',
+    }),
+    defineField({
+      name: 'projectVideo',
+      title: 'Project Video (optional)',
+      type: 'reference',
+      to: [{ type: 'video' }],
+      description: 'Shown as a video player on this project\'s case-study page',
     }),
     defineField({
       name: 'categories',

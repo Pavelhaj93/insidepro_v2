@@ -38,15 +38,25 @@ const blocksProjection = groq`
     showViewAllLink,
     viewAllLabel,
     viewAllSlug,
-    projects[]-> { _id, title, client, slug, coverImage, gallery, category, excerpt },
-    // referenceWorksSection
+    _type == "featuredWorksSection" => {
+      projects[]-> { _id, title, client, slug, coverImage, gallery, category, excerpt },
+    },
+    // referenceWorksSection — "projects" is an explicit, ordered curation
+    // picked in Studio; falls back to every project tagged with one of the
+    // selected categories when nothing's been curated yet.
     allLabel,
     _type == "referenceWorksSection" => {
       "categories": categories[]-> { _id, title, "slug": slug.current },
-      "projects": *[_type == "project" && references(^.categories[]._ref)] | order(publishedAt desc) {
-        _id, title, client, slug, coverImage, gallery, excerpt,
-        "categories": categories[]-> { _id, title, "slug": slug.current }
-      },
+      "projects": select(
+        count(projects) > 0 => projects[]-> {
+          _id, title, client, slug, coverImage, gallery, excerpt,
+          "categories": categories[]-> { _id, title, "slug": slug.current }
+        },
+        *[_type == "project" && references(^.categories[]._ref)] | order(publishedAt desc) {
+          _id, title, client, slug, coverImage, gallery, excerpt,
+          "categories": categories[]-> { _id, title, "slug": slug.current }
+        }
+      ),
     },
     // ctaSection
     buttonLabel,
@@ -78,7 +88,7 @@ const blocksProjection = groq`
         "backgroundImage": coverImage,
         body,
         "tagline": excerpt,
-        hoverVideo { asset->{ url, mimeType } },
+        hoverVideo-> { file { asset->{ url, mimeType } } },
       },
     },
     // imageSection
@@ -112,6 +122,14 @@ export const pageBySlugQuery = groq`*[_type == "page" && slug.current == $slug][
 
 export const pagesQuery = groq`*[_type == "page"] | order(_createdAt desc) {
   _id, title, slug, isHomepage
+}`;
+
+// Used by the showcase /reference route to pull its Reference Works Section
+// block's config (heading, categories, curated projects) straight off the
+// `page` document with that same slug — reuses the same `blocksProjection`
+// the generic page-builder pipeline uses, so the two never drift apart.
+export const referencePageQuery = groq`*[_type == "page" && slug.current == "reference"][0] {
+  ${blocksProjection}
 }`;
 
 // ─── Projects ─────────────────────────────────────────────────────────────────

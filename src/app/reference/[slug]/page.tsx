@@ -22,11 +22,18 @@ type Project = {
   gallery?: SanityImage[];
   excerpt?: string;
   categories?: string[];
+  // Dereferenced `video` library document (see `project.projectVideo` in the
+  // Studio schema) — rendered as a plain <video> player below the synopsis.
+  projectVideo?: {
+    file?: { asset?: { url?: string; mimeType?: string } };
+    poster?: SanityImage;
+  };
 };
 
 const PROJECT_QUERY = groq`*[_type == "project" && slug.current == $slug][0]{
   _id, title, client, "slug": slug.current, coverImage, gallery, excerpt,
-  "categories": categories[]->title
+  "categories": categories[]->title,
+  projectVideo-> { file { asset->{ url, mimeType } }, poster }
 }`;
 
 // Rich case-study metadata hardcoded for this POC, keyed by slug — the real
@@ -156,6 +163,24 @@ export default async function CaseStudyPage({ params }: Props) {
           )}
         </div>
       </section>
+
+      {project.projectVideo?.file?.asset?.url && (
+        <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-16 md:pb-24">
+          <div className="mx-auto max-w-7xl">
+            <video
+              src={project.projectVideo.file.asset.url}
+              poster={
+                project.projectVideo.poster
+                  ? urlFor(project.projectVideo.poster).width(1920).url()
+                  : undefined
+              }
+              controls
+              playsInline
+              className="aspect-video w-full rounded-4xl bg-brand-dark"
+            />
+          </div>
+        </section>
+      )}
 
       {project.gallery && project.gallery.length > 0 && (
         <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-24">
