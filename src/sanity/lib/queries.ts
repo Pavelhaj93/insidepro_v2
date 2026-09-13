@@ -46,7 +46,7 @@ const blocksProjection = groq`
     // selected categories when nothing's been curated yet.
     allLabel,
     _type == "referenceWorksSection" => {
-      "categories": categories[]-> { _id, title, "slug": slug.current },
+      "categories": categories[]-> { _id, title, "slug": slug.current, order, "videoUrl": video.asset->url },
       "projects": select(
         count(projects) > 0 => projects[]-> {
           _id, title, client, slug, coverImage, gallery, excerpt,
