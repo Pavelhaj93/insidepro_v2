@@ -46,6 +46,13 @@ type ZoomTextTransitionProps = {
   scrollHeightVh?: number;
   /** How large the headline scales before the color layer takes over. */
   scaleTarget?: number;
+  /**
+   * Character index in `headline` to zoom into, overriding the automatic
+   * nearest-to-middle pick (see `findAnchorIndex`) — use this when the
+   * default lands on a glyph you don't want (e.g. an accented vowel) and you
+   * want a specific letter instead.
+   */
+  anchorIndex?: number;
   className?: string;
 };
 
@@ -60,7 +67,13 @@ export function ZoomTextTransition({
   headline,
   accentColor = "var(--color-brand-gold)",
   scrollHeightVh = 220,
-  scaleTarget = 40,
+  // Paired with the smaller text-[7vw] starting size below: 7 * 70 = 490,
+  // essentially the same final effective size as the old 12vw * 40 = 480 —
+  // so full-viewport ink coverage at max zoom is preserved even though the
+  // headline now starts noticeably smaller (and needs more relative zoom,
+  // hence more scroll, to get there).
+  scaleTarget = 70,
+  anchorIndex: anchorIndexProp,
   className,
 }: ZoomTextTransitionProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -73,7 +86,17 @@ export function ZoomTextTransition({
     offset: ["start start", "end end"],
   });
 
-  const textScale = useTransform(scrollYProgress, [0, 0.55], [1, scaleTarget]);
+  // A linear 1 → scaleTarget scale reads as a huge jump right at the start:
+  // going from 1x to 2x (a small slice of scroll) is a much bigger *visual*
+  // leap than going from 20x to 21x (an equally small slice, later on), even
+  // though both are the same absolute scale delta. Interpolating in log
+  // space instead (scale = scaleTarget^progress) makes each equal step of
+  // scroll multiply the scale by the same factor, so the zoom feels like a
+  // constant rate throughout instead of front-loaded.
+  const scaleProgress = useTransform(scrollYProgress, [0, 0.55], [0, 1]);
+  const textScale = useTransform(scaleProgress, (p) =>
+    Math.pow(scaleTarget, p),
+  );
   const colorOpacity = useTransform(scrollYProgress, [0.42, 0.58], [0, 1]);
   const labelOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
 
@@ -82,7 +105,10 @@ export function ZoomTextTransition({
   // likely to be a space/comma as it is a letter. Instead, pin the scale's
   // transform-origin to one specific glyph near the middle so the zoom is
   // always directed into solid ink.
-  const anchorIndex = useMemo(() => findAnchorIndex(headline), [headline]);
+  const anchorIndex = useMemo(
+    () => anchorIndexProp ?? findAnchorIndex(headline),
+    [headline, anchorIndexProp],
+  );
   const before = headline.slice(0, anchorIndex);
   const anchorChar = headline[anchorIndex] ?? "";
   const after = headline.slice(anchorIndex + 1);
@@ -169,7 +195,7 @@ export function ZoomTextTransition({
 
           <motion.h2
             ref={headlineRef}
-            className="relative z-10 font-display font-black uppercase text-[12vw] leading-none text-center px-4 select-none whitespace-pre-wrap"
+            className="relative z-10 font-display font-black uppercase text-[7vw] leading-none text-center px-4 select-none whitespace-pre-wrap"
             style={{
               color: accentColor,
               scale: textScale,

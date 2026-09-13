@@ -11,16 +11,15 @@ import { FullscreenMenu } from "./FullscreenMenu";
 // category slug, see ReferenceWorksSection) instead of linking to their
 // separate (currently unused) standalone pages — only Filmy gets its own
 // page.
+// `translatedLabel` is only used by the "spotlight" hover effect (a
+// cursor-follow window revealing the English word underneath) — harmless
+// for the other hover effects, which ignore it.
 const navLinks = [
-  { label: "Úvod", href: "/" },
-  { label: "Reference", href: "/reference" },
-  { label: "Branding", href: "/reference?category=branding" },
-  { label: "Marketing", href: "/reference?category=marketing" },
-  { label: "Filmy", href: "/filmy" },
-  { label: "Produkce", href: "/reference?category=produkce" },
-  { label: "Weby", href: "/reference?category=web" },
-  { label: "Kariéra", href: "/kariera" },
-  { label: "Kontakt", href: "/kontakt" },
+  { label: "Úvod", href: "/", translatedLabel: "Home" },
+  { label: "Reference", href: "/reference", translatedLabel: "Case studies" },
+  { label: "Filmy", href: "/filmy", translatedLabel: "Films" },
+  { label: "Kariéra", href: "/kariera", translatedLabel: "Careers" },
+  { label: "Kontakt", href: "/kontakt", translatedLabel: "Contact" },
 ];
 
 type SocialLinksValue = {

@@ -56,7 +56,7 @@ export function CtaSection({
             <PortableText value={headline} components={headlineComponents} />
           </h2>
         </Reveal>
-        {buttonLabel && buttonLink && (
+        {/* {buttonLabel && buttonLink && (
           <Reveal delay={0.15} className="inline-block">
             <MagneticButton>
               <BrandButton href={buttonLink} variant="gold">
@@ -64,7 +64,7 @@ export function CtaSection({
               </BrandButton>
             </MagneticButton>
           </Reveal>
-        )}
+        )} */}
       </div>
     </section>
   );

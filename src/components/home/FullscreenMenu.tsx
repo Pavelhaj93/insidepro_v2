@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { MenuNavLink, type MenuEffect } from "./MenuNavLink";
+import { MenuSpotlightList } from "./MenuSpotlightList";
 
 const navListVariants = {
   open: { transition: { staggerChildren: 0.06, delayChildren: 0.15 } },
@@ -16,7 +17,7 @@ const navItemVariants = {
   closed: { opacity: 0, x: -16 },
 };
 
-type NavLink = { label: string; href: string };
+type NavLink = { label: string; href: string; translatedLabel?: string };
 
 type Props = {
   isOpen: boolean;
@@ -24,7 +25,7 @@ type Props = {
   navLinks: NavLink[];
 };
 
-const EFFECTS: MenuEffect[] = ["gradient", "wave", "glitch", "wipe"];
+const EFFECTS: MenuEffect[] = ["gradient", "wave", "glitch", "wipe", "spotlight"];
 
 export function FullscreenMenu({ isOpen, onClose, navLinks }: Props) {
   const [effect, setEffect] = useState<MenuEffect>("gradient");
@@ -57,25 +58,33 @@ export function FullscreenMenu({ isOpen, onClose, navLinks }: Props) {
               : { type: "spring", stiffness: 320, damping: 32 }
           }
         >
-          <motion.ul
-            initial="closed"
-            animate="open"
-            exit="closed"
-            variants={navListVariants}
-            className="flex flex-col items-center gap-2 text-center sm:gap-3 md:gap-4"
-          >
-            {navLinks.map((link) => (
-              <motion.li key={link.href} variants={navItemVariants}>
-                <MenuNavLink
-                  label={link.label}
-                  href={link.href}
-                  effect={effect}
-                  reduceMotion={reduceMotion}
-                  onNavigate={onClose}
-                />
-              </motion.li>
-            ))}
-          </motion.ul>
+          {effect === "spotlight" ? (
+            <MenuSpotlightList
+              navLinks={navLinks}
+              onNavigate={onClose}
+              reduceMotion={reduceMotion}
+            />
+          ) : (
+            <motion.ul
+              initial="closed"
+              animate="open"
+              exit="closed"
+              variants={navListVariants}
+              className="flex flex-col items-center gap-2 text-center sm:gap-3 md:gap-4"
+            >
+              {navLinks.map((link) => (
+                <motion.li key={link.href} variants={navItemVariants}>
+                  <MenuNavLink
+                    label={link.label}
+                    href={link.href}
+                    effect={effect}
+                    reduceMotion={reduceMotion}
+                    onNavigate={onClose}
+                  />
+                </motion.li>
+              ))}
+            </motion.ul>
+          )}
 
           {process.env.NODE_ENV === "development" && (
             <div className="fixed bottom-6 right-6 z-50 flex gap-2">

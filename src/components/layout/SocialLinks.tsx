@@ -16,6 +16,8 @@ type Props = {
   links: SocialLinks;
   className?: string;
   iconSize?: number;
+  /** Overrides the default light-on-dark link color — for use on a light background. */
+  linkClassName?: string;
 };
 
 const platforms = [
@@ -41,7 +43,12 @@ const platforms = [
   },
 ];
 
-export function SocialLinks({ links, className = "", iconSize = 24 }: Props) {
+export function SocialLinks({
+  links,
+  className = "",
+  iconSize = 24,
+  linkClassName = "text-brand-light hover:text-brand-gold",
+}: Props) {
   const active = platforms.filter((p) => links[p.key]);
   if (!active.length) return null;
 
@@ -54,7 +61,7 @@ export function SocialLinks({ links, className = "", iconSize = 24 }: Props) {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={p.label}
-          className="text-brand-light hover:text-brand-gold transition-colors"
+          className={`transition-colors ${linkClassName}`}
         >
           {p.icon(iconSize)}
         </a>

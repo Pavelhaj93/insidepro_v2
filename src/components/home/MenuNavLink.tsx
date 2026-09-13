@@ -7,7 +7,10 @@ import { MenuNavLinkWave } from "./MenuNavLinkWave";
 import { MenuNavLinkGlitch } from "./MenuNavLinkGlitch";
 import { MenuNavLinkWipe } from "./MenuNavLinkWipe";
 
-export type MenuEffect = "gradient" | "wave" | "glitch" | "wipe";
+// "spotlight" is a whole-menu effect (see MenuSpotlightList), not a per-link
+// one — it's kept in this union only because FullscreenMenu's effect toggle
+// state is typed with it. MenuNavLink itself never renders that case.
+export type MenuEffect = "gradient" | "wave" | "glitch" | "wipe" | "spotlight";
 
 type Props = {
   label: string;

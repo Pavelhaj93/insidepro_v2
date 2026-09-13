@@ -40,7 +40,7 @@ export default async function RootLayout({
             logo={settings?.logo ?? null}
           />
           <div className="flex-1">{children}</div>
-          <FooterWrapper />
+          {/* <FooterWrapper /> */}
         </SmoothScrollProvider>
         <SanityLive />
         {isDraftMode && <VisualEditing />}
