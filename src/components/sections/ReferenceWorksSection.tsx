@@ -125,7 +125,7 @@ export function ReferenceWorksSection({
     isProjectWide(index) ? "aspect-4/3" : "aspect-4/3 lg:aspect-auto lg:h-full";
 
   return (
-    <section className="pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pt-36 md:pt-44 pb-24">
+    <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pt-36 md:pt-44 pb-24">
       <div className="mx-auto max-w-7xl">
         <Reveal>
           <p className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4">

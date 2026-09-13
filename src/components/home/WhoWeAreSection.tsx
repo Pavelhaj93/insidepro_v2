@@ -155,7 +155,7 @@ export function WhoWeAreSection({ logo }: Props) {
   const reduceMotion = useReducedMotion();
 
   return (
-    <section className="bg-brand-black pl-24 lg:pl-48 pr-6 py-24 md:pr-10 md:py-16 lg:pr-24 lg:flex lg:items-center">
+    <section className="bg-brand-black pl-6 sm:pl-24 lg:pl-48 pr-6 py-24 md:pr-10 md:py-16 lg:pr-24 lg:flex lg:items-center">
       {/* Column split confirmed from the live reference's actual markup
           (image `sizes` attrs: 65% / 35% of the content width) — not a
           rough guess.
@@ -221,7 +221,7 @@ export function WhoWeAreSection({ logo }: Props) {
                 not a fixed height — keeps it shorter than the story card
                 stacked above it without also shrinking the big photo,
                 which stretches to match this column's *total* height. */}
-          <div className="relative h-full overflow-hidden rounded-4xl bg-brand-dark">
+          <div className="relative aspect-4/3 overflow-hidden rounded-4xl bg-brand-dark lg:aspect-auto lg:h-full">
             <Image
               src="/images/right_image.png"
               alt="Tým"

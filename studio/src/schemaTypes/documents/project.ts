@@ -17,6 +17,13 @@ export const project = defineType({
       description: 'Extra images shown via the hover arrows on the homepage card (falls back to Cover Image if empty)',
     }),
     defineField({
+      name: 'hoverVideo',
+      title: 'Hover Video (optional)',
+      type: 'file',
+      options: { accept: 'video/mp4,video/webm' },
+      description: 'Plays on hover over this project\'s card in the homepage client showcase (falls back to Cover Image if empty)',
+    }),
+    defineField({
       name: 'categories',
       title: 'Categories',
       type: 'array',

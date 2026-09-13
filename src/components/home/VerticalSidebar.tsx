@@ -36,44 +36,59 @@ type Props = {
   logo?: Logo | null;
 };
 
+function HamburgerButton({
+  isOpen,
+  onToggle,
+}: {
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={isOpen ? "Zavřít menu" : "Otevřít menu"}
+      aria-expanded={isOpen}
+      onClick={onToggle}
+      className="relative flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full border border-black/20 bg-white text-black transition-colors hover:border-black/50"
+    >
+      <motion.span
+        className="absolute h-px w-4 bg-black"
+        animate={{
+          rotate: isOpen ? 45 : 0,
+          y: isOpen ? 0 : -3,
+        }}
+        transition={{ duration: 0.25 }}
+      />
+      <motion.span
+        className="absolute h-px w-4 bg-black"
+        animate={{
+          rotate: isOpen ? -45 : 0,
+          y: isOpen ? 0 : 3,
+        }}
+        transition={{ duration: 0.25 }}
+      />
+    </button>
+  );
+}
+
 /**
- * Fixed vertical sidebar standing in for a header — hamburger menu top,
- * rotated wordmark centered, real social links (from Sanity `settings`,
- * same as the live Header/Footer) at the bottom. Stays put regardless of
- * page scroll or the hero's own scroll-driven animation underneath it.
- * The hamburger toggles a nav drawer that slides in from the left, using
- * the same real nav links as the live site's Header.
+ * Header, standing in for a live site's Header/nav. Two CSS-switched
+ * layouts (no JS breakpoint check, so no hydration risk) sharing one
+ * `isOpen` state and one `<FullscreenMenu>`:
+ * - `sm:` and up (tablet/desktop): fixed vertical sidebar on the left —
+ *   hamburger top, rotated wordmark centered, social links at the bottom.
+ * - below `sm` (mobile): fixed horizontal bar on top — wordmark left,
+ *   hamburger right, no social links (those move into the fullscreen menu
+ *   itself on mobile, see FullscreenMenu).
  */
 export function VerticalSidebar({ socialLinks, logo }: Props) {
   const [isOpen, setIsOpen] = useState(false);
+  const toggle = () => setIsOpen((open) => !open);
 
   return (
     <>
-      <header className="fixed inset-y-0 left-0 z-50 flex w-20 flex-col items-center justify-between border-r border-white/10 bg-black py-6">
-        <button
-          type="button"
-          aria-label={isOpen ? "Zavřít menu" : "Otevřít menu"}
-          aria-expanded={isOpen}
-          onClick={() => setIsOpen((open) => !open)}
-          className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-black/20 bg-white text-black transition-colors hover:border-black/50"
-        >
-          <motion.span
-            className="absolute h-px w-4 bg-black"
-            animate={{
-              rotate: isOpen ? 45 : 0,
-              y: isOpen ? 0 : -3,
-            }}
-            transition={{ duration: 0.25 }}
-          />
-          <motion.span
-            className="absolute h-px w-4 bg-black"
-            animate={{
-              rotate: isOpen ? -45 : 0,
-              y: isOpen ? 0 : 3,
-            }}
-            transition={{ duration: 0.25 }}
-          />
-        </button>
+      <header className="fixed inset-y-0 left-0 z-50 hidden w-20 flex-col items-center justify-between border-r border-white/10 bg-black py-6 sm:flex">
+        <HamburgerButton isOpen={isOpen} onToggle={toggle} />
 
         <Link
           href="/"
@@ -99,10 +114,21 @@ export function VerticalSidebar({ socialLinks, logo }: Props) {
         )}
       </header>
 
+      <header className="fixed inset-x-0 top-0 z-50 flex h-16 items-center justify-between border-b border-white/10 bg-black px-5 sm:hidden">
+        <Link href="/" aria-label="insidePRO — domů" className="flex items-center">
+          <span className="font-display font-black uppercase text-lg tracking-wide text-white">
+            inside<span className="text-xl">PRO</span>
+          </span>
+        </Link>
+
+        <HamburgerButton isOpen={isOpen} onToggle={toggle} />
+      </header>
+
       <FullscreenMenu
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         navLinks={navLinks}
+        socialLinks={socialLinks}
       />
     </>
   );

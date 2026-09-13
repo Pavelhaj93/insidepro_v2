@@ -87,7 +87,7 @@ export default async function CaseStudyPage({ params }: Props) {
         )}
         <div className="absolute inset-0 bg-linear-to-t from-brand-black via-brand-black/50 to-transparent" />
 
-        <div className="absolute bottom-0 left-0 right-0 pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-10 md:pb-14">
+        <div className="absolute bottom-0 left-0 right-0 pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-10 md:pb-14">
           <div className="mx-auto max-w-7xl">
             <Link
               href="/reference"
@@ -111,7 +111,7 @@ export default async function CaseStudyPage({ params }: Props) {
         </div>
       </section>
 
-      <section className="pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 py-16 md:py-24">
+      <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 py-16 md:py-24">
         <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-12 items-start">
           <div className="flex flex-col gap-12 md:gap-16 max-w-2xl">
             <p className="font-body text-lg sm:text-xl leading-8 text-brand-light/80">
@@ -158,7 +158,7 @@ export default async function CaseStudyPage({ params }: Props) {
       </section>
 
       {project.gallery && project.gallery.length > 0 && (
-        <section className="pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-24">
+        <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-24">
           <div className="mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-6">
             {project.gallery.map((image, index) => (
               <div

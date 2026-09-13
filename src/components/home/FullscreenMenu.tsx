@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { SocialLinks } from "@/components/layout/SocialLinks";
 import { MenuNavLink, type MenuEffect } from "./MenuNavLink";
 import { MenuSpotlightList } from "./MenuSpotlightList";
 
@@ -19,17 +21,29 @@ const navItemVariants = {
 
 type NavLink = { label: string; href: string; translatedLabel?: string };
 
+type SocialLinksValue = {
+  instagram?: string | null;
+  linkedin?: string | null;
+  facebook?: string | null;
+  vimeo?: string | null;
+};
+
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   navLinks: NavLink[];
+  socialLinks?: SocialLinksValue | null;
 };
 
 const EFFECTS: MenuEffect[] = ["gradient", "wave", "glitch", "wipe", "spotlight"];
 
-export function FullscreenMenu({ isOpen, onClose, navLinks }: Props) {
+export function FullscreenMenu({ isOpen, onClose, navLinks, socialLinks }: Props) {
   const [effect, setEffect] = useState<MenuEffect>("gradient");
   const reduceMotion = useReducedMotion();
+  // Slide direction/position differ enough (top-bar-less full overlay vs.
+  // offset-from-sidebar panel) that this needs a real JS check, not just
+  // responsive classes — see useIsMobile's own doc comment.
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -48,10 +62,15 @@ export function FullscreenMenu({ isOpen, onClose, navLinks }: Props) {
           onClick={(e) => {
             if (e.target === e.currentTarget) onClose();
           }}
-          className="fixed inset-y-0 left-20 right-0 z-40 flex flex-col items-center justify-center gap-6 bg-brand-black px-6 py-20 sm:gap-8 sm:px-10 md:py-24"
-          initial={{ x: "-100%" }}
-          animate={{ x: 0 }}
-          exit={{ x: "-100%" }}
+          className={cn(
+            "fixed z-40 flex flex-col items-center gap-6 bg-brand-black px-6 py-20 sm:gap-8 sm:px-10 md:py-24",
+            isMobile
+              ? "inset-0 justify-center"
+              : "inset-y-0 left-20 right-0 justify-center"
+          )}
+          initial={isMobile ? { y: "-100%" } : { x: "-100%" }}
+          animate={isMobile ? { y: 0 } : { x: 0 }}
+          exit={isMobile ? { y: "-100%" } : { x: "-100%" }}
           transition={
             reduceMotion
               ? { duration: 0 }
@@ -84,6 +103,14 @@ export function FullscreenMenu({ isOpen, onClose, navLinks }: Props) {
                 </motion.li>
               ))}
             </motion.ul>
+          )}
+
+          {/* No room for social links in the mobile top bar (see
+              VerticalSidebar) — they live here instead, below the nav
+              links, on mobile only. Tablet/desktop keep them in the
+              vertical sidebar, so hidden there to avoid showing twice. */}
+          {socialLinks && (
+            <SocialLinks links={socialLinks} iconSize={22} className="mt-8 sm:hidden" />
           )}
 
           {process.env.NODE_ENV === "development" && (

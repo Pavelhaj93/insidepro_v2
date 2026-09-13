@@ -7,14 +7,13 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Badge } from "@/components/ui/Badge";
 import { SERVICES } from "./services-data";
 
-// The "open" row is whichever one's header currently crosses this thin
-// horizontal band — positioned a bit above dead-center, per "middle of the
-// page, or a bit before the middle". Expressed as a rootMargin: shrinking
-// the viewport 42% from the top and 55% from the bottom leaves a band
-// spanning 42%-45% down the screen. Rows are stacked with no gaps, so at
-// most one header's box can be inside that thin band at a time — scrolling
-// past it naturally hands "open" to the next row, and scrolling back up
-// naturally re-opens the previous one.
+// A row opens once its header crosses this thin horizontal band —
+// positioned a bit above dead-center, per "middle of the page, or a bit
+// before the middle". Expressed as a rootMargin: shrinking the viewport 42%
+// from the top and 55% from the bottom leaves a band spanning 42%-45% down
+// the screen. Rows are stacked with no gaps, so at most one header's box
+// crosses that thin band at a time — scrolling past it opens the next row
+// without affecting any row already opened earlier.
 const TRIGGER_BAND_ROOT_MARGIN = "-42% 0px -55% 0px";
 
 /**
@@ -23,6 +22,11 @@ const TRIGGER_BAND_ROOT_MARGIN = "-42% 0px -55% 0px";
  * automatically as its row scrolls through a trigger band near the middle
  * of the viewport — no click needed. Under reduced motion, every
  * description is simply shown at once (scroll-linked reveals don't apply).
+ *
+ * Every row up to and including whichever one currently crosses the trigger
+ * band is open — scrolling down opens more without closing rows already
+ * passed, but scrolling back up closes them again in reverse as the current
+ * row drops below the earlier ones.
  */
 export function ServicesAccordionScroll() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -49,7 +53,7 @@ export function ServicesAccordionScroll() {
 
   return (
     <section
-      className={`bg-brand-black pl-24 lg:pl-48 pr-6 py-8 md:pr-10 md:py-16 lg:pr-24 ${
+      className={`bg-brand-black pl-6 sm:pl-24 lg:pl-48 pr-6 py-8 md:pr-10 md:py-16 lg:pr-24 ${
         reduceMotion ? "" : "relative z-10 mt-[-100vh]"
       }`}
     >
@@ -63,7 +67,8 @@ export function ServicesAccordionScroll() {
 
         <ul className="border-t border-brand-light/15">
           {SERVICES.map((service, index) => {
-            const isOpen = reduceMotion || openIndex === index;
+            const isOpen =
+              reduceMotion || (openIndex !== null && index <= openIndex);
             return (
               <li
                 key={service.number}
@@ -123,13 +128,13 @@ export function ServicesAccordionScroll() {
                       transition={{ duration: reduceMotion ? 0 : 0.3 }}
                       className="overflow-hidden"
                     >
-                      <div className="grid grid-cols-1 gap-6 pb-7 pl-0 sm:pl-9 md:grid-cols-2 md:gap-10 md:pb-9 md:pl-12">
+                      <div className="grid grid-cols-1 gap-6 pb-7 pl-0 sm:pl-9 lg:grid-cols-2 lg:gap-10 lg:pb-9 lg:pl-12">
                         <p
-                          className={`${manrope.className} max-w-2xl text-xl leading-8 text-brand-light/70`}
+                          className={`${manrope.className} max-w-2xl text-base leading-6 text-brand-light/70 sm:text-lg sm:leading-7 lg:text-xl lg:leading-8`}
                         >
                           {service.description}
                         </p>
-                        <div className="flex flex-wrap content-start gap-3">
+                        <div className="grid grid-cols-1 content-start gap-3 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-3 lg:flex lg:flex-wrap lg:gap-3">
                           {service.keywords.map((keyword) => (
                             <Badge key={keyword}>{keyword}</Badge>
                           ))}

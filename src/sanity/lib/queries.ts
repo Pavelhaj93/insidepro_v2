@@ -78,6 +78,7 @@ const blocksProjection = groq`
         "backgroundImage": coverImage,
         body,
         "tagline": excerpt,
+        hoverVideo { asset->{ url, mimeType } },
       },
     },
     // imageSection

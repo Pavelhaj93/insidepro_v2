@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { HeroBackgroundVideo } from "@/components/motion/HeroBackgroundVideo";
 
 type SplitVideoRevealProps = {
@@ -51,6 +52,10 @@ export function SplitVideoReveal({
 }: SplitVideoRevealProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
+  // Mobile swaps the panel's slide axis (up instead of left) and drops the
+  // corner card's own slide entirely — different enough from CSS breakpoint
+  // tweaks that it needs a real JS check, not just responsive classes.
+  const isMobile = useIsMobile();
 
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
@@ -64,10 +69,16 @@ export function SplitVideoReveal({
   const revealEnd = revealVh / totalVh;
 
   const panelX = useTransform(scrollYProgress, [0, revealEnd], ["0%", "-100%"]);
+  const panelY = useTransform(scrollYProgress, [0, revealEnd], ["0%", "-100%"]);
   const cornerX = useTransform(scrollYProgress, [0, revealEnd], ["0%", "220%"]);
+  // Mobile's corner card slides straight down instead of sideways — it's
+  // anchored bottom-right, so 100% of its own height is enough to clear it
+  // fully past the bottom edge.
+  const cornerYMobile = useTransform(scrollYProgress, [0, revealEnd], ["0%", "100%"]);
   // Stacks on top of the panel's own -100% shift above, so by the time the
   // panel has fully slid off, the heading has additionally moved this many
-  // extra vw further left.
+  // extra vw further left. Desktop/tablet only — the mobile panel already
+  // clears the frame by sliding straight up with the rest of the panel.
   const headingExtraX = useTransform(
     scrollYProgress,
     [0, revealEnd],
@@ -75,7 +86,7 @@ export function SplitVideoReveal({
   );
 
   const headingClassName =
-    "font-display font-black uppercase text-6xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-7xl leading-tight mb-5 whitespace-nowrap";
+    "font-display font-black uppercase text-3xl sm:text-6xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-7xl leading-tight mb-5 whitespace-normal sm:whitespace-nowrap";
 
   if (reduceMotion) {
     return (
@@ -125,20 +136,20 @@ export function SplitVideoReveal({
         {/* <div className="absolute inset-0 z-0 bg-white" /> */}
 
         <motion.div
-          className="absolute inset-y-0 left-0 z-10 flex w-1/2 items-center bg-black pt-10 pr-10 pb-10 pl-24 text-white md:w-[52%] md:pt-14 md:pr-14 md:pb-14"
-          style={{ x: panelX }}
+          className="absolute inset-x-0 top-0 z-10 flex h-1/2 w-full items-start overflow-hidden bg-black px-6 pt-20 pb-6 text-white sm:inset-y-0 sm:inset-x-auto sm:left-0 sm:h-auto sm:w-1/2 sm:items-center sm:overflow-visible sm:pt-10 sm:pr-10 sm:pb-10 sm:pl-24 md:w-[52%] md:pt-14 md:pr-14 md:pb-14"
+          style={isMobile ? { y: panelY } : { x: panelX }}
         >
-          <div className="max-w-md ml-4 sm:ml-8">
-            <p className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4">
+          <div className="max-w-md sm:ml-8">
+            <p className="font-body text-xs tracking-widest uppercase text-brand-gold mb-3 sm:text-sm sm:mb-4">
               {`{ Film. Brand. Emotion. }`}
             </p>
             <motion.h1
               className={headingClassName}
-              style={{ x: headingExtraX }}
+              style={isMobile ? undefined : { x: headingExtraX }}
             >
               From <em className="italic">the</em> inside
             </motion.h1>
-            <p className="font-display font-bold uppercase text-lg sm:text-xl leading-snug text-brand-light/80">
+            <p className="font-display font-bold uppercase text-sm leading-snug text-brand-light/80 sm:text-xl">
               Jsme váš dlouhodobý produkční a kreativní partner
             </p>
           </div>
@@ -150,30 +161,32 @@ export function SplitVideoReveal({
             bottom-right corner (bottom-0 left-full puts this patch's
             bottom-left point exactly there), filled solid up to its radius
             and transparent beyond it, via radial-gradient (no CSS utility
-            produces an outward-bulging corner, only inward ones).
+            produces an outward-bulging corner, only inward ones). Desktop/
+            tablet only — the mobile panel spans full width, so it has no
+            side edge for this to bulge into.
           */}
           <div
             aria-hidden
-            className="pointer-events-none absolute bottom-8 left-full h-16 w-16 bg-[radial-gradient(circle_at_top_right,transparent_64px,black_65px)]"
+            className="pointer-events-none absolute bottom-8 left-full hidden h-16 w-16 bg-[radial-gradient(circle_at_top_right,transparent_64px,black_65px)] sm:block"
           />
         </motion.div>
 
         <motion.div
-          className="absolute h-40 bottom-8 right-8 z-10 w-100 rounded-tl-4xl bg-black p-6 text-right md:bottom-0 md:right-0 md:p-8 md:pr-12"
-          style={{ x: cornerX }}
+          className="absolute z-10 max-w-[85vw] rounded-tl-4xl bg-black p-4 text-right bottom-4 right-4 sm:max-w-none sm:h-40 sm:bottom-8 sm:right-8 sm:w-100 sm:p-6 md:bottom-0 md:right-0 md:p-8 md:pr-12"
+          style={isMobile ? { y: cornerYMobile } : { x: cornerX }}
         >
-          <h2 className="font-display font-black uppercase text-xl sm:text-3xl leading-tight text-white">
+          <h2 className="font-display font-black uppercase text-base leading-tight text-white sm:text-3xl">
             Tvoříme věci, které inspirují
           </h2>
-          {/* Mirror of the panel's flush corner, attached to this box's left edge instead. */}
+          {/* Mirror of the panel's flush corner, attached to this box's left edge instead — desktop/tablet only. */}
           <div
             aria-hidden
-            className="pointer-events-none absolute bottom-8 right-full h-16 w-16 bg-[radial-gradient(circle_at_top_left,transparent_64px,black_65px)]"
+            className="pointer-events-none absolute bottom-8 right-full hidden h-16 w-16 bg-[radial-gradient(circle_at_top_left,transparent_64px,black_65px)] sm:block"
           />
-          {/* Same shape again, rotated 90°: attached to this box's top edge, flush against the screen's right edge. */}
+          {/* Same shape again, rotated 90°: attached to this box's top edge, flush against the screen's right edge — desktop/tablet only. */}
           <div
             aria-hidden
-            className="pointer-events-none absolute right-0 bottom-full h-16 w-16 bg-[radial-gradient(circle_at_top_left,transparent_64px,black_65px)]"
+            className="pointer-events-none absolute right-0 bottom-full hidden h-16 w-16 bg-[radial-gradient(circle_at_top_left,transparent_64px,black_65px)] sm:block"
           />
         </motion.div>
 

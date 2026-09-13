@@ -16,7 +16,13 @@ import { HomeCtaFooter } from "@/components/home/HomeCtaFooter";
 const CLIENTS_QUERY = groq`*[_type == "page" && isHomepage == true][0].blocks[_type == "clientsSection"][0]{
   clients[]{
     _type != "reference" => { name, logo, url, backgroundImage, tagline },
-    _type == "reference" => @-> { "name": coalesce(client, title), "backgroundImage": coverImage, "tagline": excerpt, "slug": slug.current }
+    _type == "reference" => @-> {
+      "name": coalesce(client, title),
+      "backgroundImage": coverImage,
+      "tagline": excerpt,
+      "slug": slug.current,
+      hoverVideo { asset->{ url, mimeType } }
+    }
   }
 }`;
 

@@ -44,7 +44,7 @@ export default async function CaseStudyPocPage({ params }: Props) {
         )}
         <div className="absolute inset-0 bg-linear-to-t from-brand-black via-brand-black/50 to-transparent" />
 
-        <div className="absolute bottom-0 left-0 right-0 pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-10 md:pb-14">
+        <div className="absolute bottom-0 left-0 right-0 pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-10 md:pb-14">
           <div className="mx-auto max-w-7xl">
             <Link
               href="/reference"

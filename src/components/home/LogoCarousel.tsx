@@ -66,7 +66,7 @@ export function LogoCarousel({ logos }: Props) {
     return (
       <div className="mask-[linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
         <div
-          className={`flex items-center gap-16 ${
+          className={`flex items-center gap-8 sm:gap-12 md:gap-16 ${
             reduceMotion
               ? "flex-wrap"
               : `w-max ${
@@ -101,7 +101,7 @@ export function LogoCarousel({ logos }: Props) {
   };
 
   return (
-    <section className="overflow-hidden bg-brand-black py-16 pl-24 lg:pl-48 pr-6 md:py-20 md:pr-10 lg:pr-24">
+    <section className="overflow-hidden bg-brand-black py-16 pl-6 pr-6 sm:pl-24 md:py-20 md:pr-10 lg:pl-48 lg:pr-24">
       <div className="mx-auto max-w-7xl overflow-hidden">
         <p className="mb-10 font-display font-bold text-lg sm:text-xl leading-snug text-brand-light/80">
           Spolupracujeme se značkami napříč různými obory

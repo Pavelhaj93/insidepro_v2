@@ -38,7 +38,9 @@ export function TeamShowcaseSection({
   if (teamMembers.length === 0) return null;
 
   return (
-    <section className={`px-8 xl:px-0 py-24 ${invert ? "bg-brand-light" : ""}`}>
+    <section
+      className={`pl-6 pr-6 py-24 sm:pl-24 md:pr-10 lg:pl-48 lg:pr-24 ${invert ? "bg-brand-light" : ""}`}
+    >
       <div className="max-w-6xl mx-auto">
         <p className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4">
           {eyebrow}
@@ -49,7 +51,7 @@ export function TeamShowcaseSection({
           {heading}
         </h2>
 
-        <RevealStagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-20">
+        <RevealStagger className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-10 gap-y-20">
           {teamMembers.map((member) => (
             <RevealItem key={member._id} className="group">
               <div className="relative aspect-3/4">

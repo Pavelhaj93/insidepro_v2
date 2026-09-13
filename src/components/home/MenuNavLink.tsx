@@ -49,7 +49,7 @@ export function MenuNavLink({
       onFocus={() => setIsActive(true)}
       onBlur={() => setIsActive(false)}
       aria-label={ariaLabel}
-      className="relative inline-block select-none rounded-sm text-6xl font-black uppercase leading-[0.9] tracking-tight font-display outline-none sm:text-7xl md:text-8xl lg:text-[7.5rem] focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-4 focus-visible:ring-offset-brand-black"
+      className="relative inline-block select-none rounded-sm text-4xl font-black uppercase leading-[0.9] tracking-tight font-display outline-none sm:text-7xl md:text-8xl lg:text-[7.5rem] focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-4 focus-visible:ring-offset-brand-black"
     >
       {effect === "gradient" && (
         <MenuNavLinkGradient
