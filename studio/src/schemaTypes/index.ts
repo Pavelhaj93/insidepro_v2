@@ -12,7 +12,11 @@ import { video } from './documents/video'
 
 // Block objects
 import { heroSection } from './objects/blocks/heroSection'
+import { splitVideoRevealSection } from './objects/blocks/splitVideoRevealSection'
 import { servicesListSection } from './objects/blocks/servicesListSection'
+import { servicesAccordionSection } from './objects/blocks/servicesAccordionSection'
+import { whoWeAreSection } from './objects/blocks/whoWeAreSection'
+import { zoomTextSection } from './objects/blocks/zoomTextSection'
 import { featuredWorksSection } from './objects/blocks/featuredWorksSection'
 import { referenceWorksSection } from './objects/blocks/referenceWorksSection'
 import { ctaSection } from './objects/blocks/ctaSection'
@@ -50,7 +54,11 @@ export const schemaTypes = [
   video,
   // Block objects
   heroSection,
+  splitVideoRevealSection,
   servicesListSection,
+  servicesAccordionSection,
+  whoWeAreSection,
+  zoomTextSection,
   featuredWorksSection,
   referenceWorksSection,
   ctaSection,

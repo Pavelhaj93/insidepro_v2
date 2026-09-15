@@ -15,9 +15,21 @@ import { RichTextSection } from "./sections/RichTextSection";
 import { LogoWallSection } from "./sections/LogoWallSection";
 import { TextBlockSection } from "./sections/TextBlockSection";
 import { Separator } from "./sections/Separator";
+import { SplitVideoReveal } from "@/components/motion/SplitVideoReveal";
+import { ZoomTextTransition } from "@/components/motion/ZoomTextTransition";
+import { ServicesAccordionScroll } from "@/components/home/ServicesAccordionScroll";
+import { WhoWeAreSection } from "@/components/home/WhoWeAreSection";
+import { ClientShowcaseHorizontal } from "@/components/home/ClientShowcaseHorizontal";
+import { LogoCarousel } from "@/components/home/LogoCarousel";
+import { TeamShowcaseSection } from "@/components/home/TeamShowcaseSection";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function SectionRenderer({ blocks }: { blocks: any[] }) {
+type SectionRendererProps = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  blocks: any[];
+  settings?: { logo?: { asset: { _ref: string } } | null } | null;
+};
+
+export function SectionRenderer({ blocks, settings }: SectionRendererProps) {
   if (!blocks?.length) return null;
 
   return (
@@ -26,8 +38,53 @@ export function SectionRenderer({ blocks }: { blocks: any[] }) {
         switch (block._type) {
           case "heroSection":
             return <HeroSection key={block._key} {...block} />;
+          case "splitVideoRevealSection":
+            return (
+              <SplitVideoReveal
+                key={block._key}
+                kicker={block.kicker}
+                headline={block.headline}
+                subtitle={block.subtitle}
+                cornerHeadline={block.cornerHeadline}
+                videoSrc={block.video?.asset?.url}
+                videoMimeType={block.video?.asset?.mimeType}
+                mobileVideoSrc={block.mobileVideo?.asset?.url}
+              />
+            );
           case "servicesListSection":
             return <ServicesListSection key={block._key} {...block} />;
+          case "servicesAccordionSection":
+            return (
+              <ServicesAccordionScroll
+                key={block._key}
+                label={block.label}
+                heading={block.heading}
+                items={block.items}
+              />
+            );
+          case "whoWeAreSection":
+            return (
+              <WhoWeAreSection
+                key={block._key}
+                logo={settings?.logo ?? null}
+                eyebrow={block.eyebrow}
+                heading={block.heading}
+                missionText={block.missionText}
+                leftPhotos={block.leftPhotos}
+                rightImage={block.rightImage}
+                badgeText={block.badgeText}
+              />
+            );
+          case "zoomTextSection":
+            return (
+              <ZoomTextTransition
+                key={block._key}
+                label={block.label}
+                headline={block.headline}
+                accentColor={block.accentColor}
+                anchorIndex={block.anchorIndex}
+              />
+            );
           case "featuredWorksSection":
             return <FeaturedWorksSection key={block._key} {...block} />;
           case "referenceWorksSection":
@@ -39,11 +96,29 @@ export function SectionRenderer({ blocks }: { blocks: any[] }) {
           case "processSection":
             return <ProcessSection key={block._key} {...block} />;
           case "teamSection":
-            return <TeamSection key={block._key} {...block} />;
+            return block.lightBackground ? (
+              <TeamShowcaseSection
+                key={block._key}
+                eyebrow={block.eyebrow}
+                heading={block.heading}
+                teamMembers={block.teamMembers}
+                invert
+              />
+            ) : (
+              <TeamSection key={block._key} {...block} />
+            );
           case "filmShowcaseSection":
             return <FilmShowcaseSection key={block._key} {...block} />;
           case "clientsSection":
-            return <ClientsShowcaseSection key={block._key} {...block} />;
+            return block.layout === "horizontalScroll" ? (
+              <ClientShowcaseHorizontal
+                key={block._key}
+                label={block.label}
+                clients={block.clients}
+              />
+            ) : (
+              <ClientsShowcaseSection key={block._key} {...block} />
+            );
           case "imageSection":
             return <ImageSection key={block._key} {...block} />;
           case "infoBoxSection":
@@ -53,7 +128,19 @@ export function SectionRenderer({ blocks }: { blocks: any[] }) {
           case "richTextSection":
             return <RichTextSection key={block._key} {...block} />;
           case "logoWallSection":
-            return <LogoWallSection key={block._key} {...block} />;
+            return block.layout === "marquee" ? (
+              <LogoCarousel
+                key={block._key}
+                topRowLogos={block.topRowLogos}
+                bottomRowLogos={block.bottomRowLogos}
+              />
+            ) : (
+              <LogoWallSection
+                key={block._key}
+                title={block.title}
+                logos={[...(block.topRowLogos ?? []), ...(block.bottomRowLogos ?? [])]}
+              />
+            );
           case "textBlock":
             return <TextBlockSection key={block._key} {...block} />;
           case "separator":

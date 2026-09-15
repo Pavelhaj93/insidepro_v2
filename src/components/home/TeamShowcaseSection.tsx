@@ -42,7 +42,9 @@ export function TeamShowcaseSection({
       className={`pl-6 pr-6 py-24 sm:pl-24 md:pr-10 lg:pl-48 lg:pr-24 ${invert ? "bg-brand-light" : ""}`}
     >
       <div className="max-w-6xl mx-auto">
-        <p className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4">
+        <p
+          className={`font-body text-sm tracking-widest uppercase mb-4 ${invert ? "text-brand-black/50" : "text-brand-gold"}`}
+        >
           {eyebrow}
         </p>
         <h2
@@ -62,7 +64,7 @@ export function TeamShowcaseSection({
                       alt={member.name}
                       sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                       quality={85}
-                      className="object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-500"
+                      className="object-cover object-center grayscale scale-100 rotate-0 transition-all duration-500 ease-out group-hover:grayscale-0 group-hover:scale-110 group-hover:rotate-2"
                     />
                   )}
                 </div>

@@ -29,10 +29,25 @@ const blocksProjection = groq`
     subtitle,
     showScrollIndicator,
     showSocialIcons,
-    // servicesListSection
+    // splitVideoRevealSection
+    kicker,
+    cornerHeadline,
+    video { asset->{ url, mimeType } },
+    mobileVideo { asset->{ url, mimeType } },
+    posterImage,
+    // servicesListSection / servicesAccordionSection
     label,
     leftHeading,
-    items[] { number, title, description, linkLabel, link },
+    items[] { number, title, subtitle, description, linkLabel, link, keywords },
+    // whoWeAreSection
+    eyebrow,
+    missionText,
+    leftPhotos,
+    rightImage,
+    badgeText,
+    // zoomTextSection
+    accentColor,
+    anchorIndex,
     // featuredWorksSection
     heading,
     showViewAllLink,
@@ -76,11 +91,13 @@ const blocksProjection = groq`
     outroHighlight,
     ctaLabel,
     ctaLink,
+    lightBackground,
     // filmShowcaseSection
     introText,
     films[]-> { _id, title, slug, coverImage, description, director, production, coproducer, partners, status },
     // clientsSection
     supportLabel,
+    layout,
     clients[] {
       _type != "reference" => { name, logo, url, backgroundImage, quote, tagline },
       _type == "reference" => @-> {
@@ -88,6 +105,7 @@ const blocksProjection = groq`
         "backgroundImage": coverImage,
         body,
         "tagline": excerpt,
+        "slug": slug.current,
         hoverVideo-> { file { asset->{ url, mimeType } } },
       },
     },
@@ -104,7 +122,8 @@ const blocksProjection = groq`
     // textBlock
     number,
     // logoWallSection
-    logos[]-> { _id, name, image, url },
+    topRowLogos[]-> { _id, name, image, url },
+    bottomRowLogos[]-> { _id, name, image, url },
     // separator
     width,
   }

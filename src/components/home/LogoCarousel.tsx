@@ -18,12 +18,16 @@ type BrandLogo = {
 };
 
 type Props = {
-  logos?: BrandLogo[] | null;
+  topRowLogos?: BrandLogo[] | null;
+  bottomRowLogos?: BrandLogo[] | null;
 };
 
 type LogoWithImage = BrandLogo & { image: NonNullable<BrandLogo["image"]> };
 
 const SECONDS_PER_LOGO = 4;
+
+const withImagesOnly = (logos?: BrandLogo[] | null): LogoWithImage[] =>
+  (logos ?? []).filter((logo): logo is LogoWithImage => Boolean(logo.image));
 
 /**
  * Simple, continuously auto-scrolling logo strip — deliberately NOT
@@ -33,28 +37,19 @@ const SECONDS_PER_LOGO = 4;
  * doubled-up track left on a timer; no scroll math, no pin, nothing that
  * can desync from the user's scroll gesture.
  *
- * Rendered as two stacked rows, each its own half of the logo list: the
- * second row uses a dedicated mirrored keyframe (`.animate-marquee-reverse`,
- * see globals.css) so it drifts the opposite way from the row above it.
+ * Rendered as two stacked rows, each editorially curated in Studio (not an
+ * automatic split of one list): the second row uses a dedicated mirrored
+ * keyframe (`.animate-marquee-reverse`, see globals.css) so it drifts the
+ * opposite way from the row above it.
  */
-export function LogoCarousel({ logos }: Props) {
+export function LogoCarousel({ topRowLogos, bottomRowLogos }: Props) {
   const reduceMotion = useReducedMotion();
-  const withImages = (logos ?? []).filter((logo): logo is LogoWithImage =>
-    Boolean(logo.image),
-  );
-
-  if (!withImages.length) return null;
-
-  // Two independent rows drifting opposite ways — each gets its own half of
-  // the logos (not the same set twice), so the two rows actually show
-  // different content rather than mirroring each other.
-  const half = Math.ceil(withImages.length / 2);
   const rowLogos: [LogoWithImage[], LogoWithImage[]] = [
-    withImages.slice(0, half),
-    withImages.length > half
-      ? withImages.slice(half)
-      : withImages.slice(0, half),
+    withImagesOnly(topRowLogos),
+    withImagesOnly(bottomRowLogos),
   ];
+
+  if (!rowLogos[0].length && !rowLogos[1].length) return null;
 
   const renderRow = (
     logos: LogoWithImage[],

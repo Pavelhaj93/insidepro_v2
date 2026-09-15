@@ -27,6 +27,7 @@ type ClientItem = {
 };
 
 type Props = {
+  label?: string;
   clients?: ClientItem[] | null;
 };
 
@@ -242,14 +243,17 @@ function ClientCardStatic({ item, index }: { item: ClientItem; index: number }) 
  * scroll at all) — both are always mounted, CSS-toggled by breakpoint, so
  * there's no hydration-mismatch risk from a JS media-query check.
  */
-export function ClientShowcaseHorizontal({ clients }: Props) {
+export function ClientShowcaseHorizontal({
+  label = "{ Naši klienti }",
+  clients,
+}: Props) {
   if (!clients?.length) return null;
 
   return (
     <>
       <section className="bg-brand-black px-6 py-16 sm:hidden">
         <p className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4">
-          {`{ Naši klienti }`}
+          {label}
         </p>
         <h2 className="font-display font-black uppercase text-xl leading-tight text-brand-light mb-10">
           Značky, které nám důvěřují
@@ -283,7 +287,7 @@ export function ClientShowcaseHorizontal({ clients }: Props) {
           label={
             <div className="max-w-7xl mx-auto">
               <p className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4">
-                {`{ Naši klienti }`}
+                {label}
               </p>
               <h2 className="font-display font-black uppercase text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-tight text-brand-light">
                 Značky, které nám důvěřují

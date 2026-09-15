@@ -66,7 +66,12 @@ export function ZoomTextTransition({
   label,
   headline,
   accentColor = "var(--color-brand-gold)",
-  scrollHeightVh = 220,
+  // 220vh gave ~90vh of "dead scroll" after the color layer already hit full
+  // opacity (see colorOpacity below) — more total distance than this effect
+  // needs. 160vh keeps the zoom feeling deliberate, not rushed, while cutting
+  // the wasted tail once colorOpacity and scaleProgress are retimed to both
+  // finish near the end of the range instead of the middle.
+  scrollHeightVh = 160,
   // Paired with the smaller text-[7vw] starting size below: 7 * 70 = 490,
   // essentially the same final effective size as the old 12vw * 40 = 480 —
   // so full-viewport ink coverage at max zoom is preserved even though the
@@ -93,11 +98,23 @@ export function ZoomTextTransition({
   // space instead (scale = scaleTarget^progress) makes each equal step of
   // scroll multiply the scale by the same factor, so the zoom feels like a
   // constant rate throughout instead of front-loaded.
-  const scaleProgress = useTransform(scrollYProgress, [0, 0.55], [0, 1]);
+  // scaleProgress used to finish at 0.55 with colorOpacity ramping over
+  // [0.42, 0.58] — i.e. the color layer hit full opacity at just 58% of the
+  // pinned scroll range, leaving the remaining 42% (~90+vh at the old 220vh
+  // default) as dead scroll: the screen was already flat color with nothing
+  // left to animate, but the section wouldn't release until that whole tail
+  // was scrolled through. Both curves are now retimed to finish close to the
+  // *end* of the range instead of the middle, so the pinned section releases
+  // (and the next block starts appearing) almost as soon as the screen goes
+  // solid. The zoom still finishes first and the color continues ramping
+  // briefly after — same overlap relationship as before, just shifted later
+  // — so it still reads as one motion (zoom growing into the color) rather
+  // than two disjointed ones.
+  const scaleProgress = useTransform(scrollYProgress, [0, 0.85], [0, 1]);
   const textScale = useTransform(scaleProgress, (p) =>
     Math.pow(scaleTarget, p),
   );
-  const colorOpacity = useTransform(scrollYProgress, [0.42, 0.58], [0, 1]);
+  const colorOpacity = useTransform(scrollYProgress, [0.72, 0.95], [0, 1]);
   const labelOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
 
   // Scaling the whole headline from its box-center is what causes the "zooms
@@ -120,15 +137,27 @@ export function ZoomTextTransition({
     const anchorEl = anchorRef.current;
     if (!headlineEl || !anchorEl) return;
 
+    // `headlineEl` spans the full viewport width (see its `w-full` class),
+    // so a percentage of its width is the same as a percentage of the
+    // viewport. Horizontal origin is therefore pinned to the visible
+    // content area's own center (viewport center, shifted right to clear
+    // the fixed VerticalSidebar) directly from the viewport's geometry —
+    // not measured from the anchor character's own bounding box. That
+    // per-glyph measurement was sensitive to the specific letter's ink
+    // shape within its box (e.g. a "Y"'s fork sitting off-center in its own
+    // advance width), which could visibly miss "centered on screen" even
+    // though it was centered on the glyph's box. Vertical origin still
+    // comes from the anchor's own position, since that's what picks the
+    // correct *line* to zoom into.
+    const SIDEBAR_WIDTH_PX = 80; // VerticalSidebar's `w-20`, sm+ only
     const measure = () => {
       const headlineRect = headlineEl.getBoundingClientRect();
       const anchorRect = anchorEl.getBoundingClientRect();
       if (headlineRect.width === 0 || headlineRect.height === 0) return;
+      const sidebarWidth = window.innerWidth >= 640 ? SIDEBAR_WIDTH_PX : 0;
+      const contentCenterX = sidebarWidth + (window.innerWidth - sidebarWidth) / 2;
       setOrigin({
-        x:
-          ((anchorRect.left + anchorRect.width / 2 - headlineRect.left) /
-            headlineRect.width) *
-          100,
+        x: (contentCenterX / headlineRect.width) * 100,
         y:
           ((anchorRect.top + anchorRect.height / 2 - headlineRect.top) /
             headlineRect.height) *
@@ -140,7 +169,7 @@ export function ZoomTextTransition({
     window.addEventListener("resize", measure);
     document.fonts?.ready.then(measure);
     return () => window.removeEventListener("resize", measure);
-  }, [headline]);
+  }, [headline, anchorIndex]);
 
   if (reduceMotion) {
     return (
@@ -195,7 +224,17 @@ export function ZoomTextTransition({
 
           <motion.h2
             ref={headlineRef}
-            className="relative z-10 font-display font-black uppercase text-[7vw] leading-none text-center px-4 select-none whitespace-pre-wrap"
+            // Side padding in vw (matching the vw-based font size) rather
+            // than a fixed px value, so the same padding-to-font-size ratio
+            // — and therefore the same line breaks — holds at every
+            // viewport width instead of only the one it was tuned against.
+            // At sm+ the padding is split asymmetrically (still 20vw total,
+            // so the available width — and therefore the line breaks —
+            // don't change) to shift the centered text right by half the
+            // fixed VerticalSidebar's width (w-20 = 5rem), landing it in the
+            // middle of the visible content area instead of the full
+            // viewport the sidebar eats into.
+            className="relative z-10 w-full font-display font-black uppercase text-[7vw] leading-none text-center px-[10vw] sm:pl-[calc(10vw+2.5rem)] sm:pr-[calc(10vw-2.5rem)] select-none whitespace-pre-wrap"
             style={{
               color: accentColor,
               scale: textScale,

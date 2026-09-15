@@ -9,6 +9,7 @@ import { SocialLinks } from "@/components/layout/SocialLinks";
 import { ParallaxBackgroundImage } from "@/components/motion/ParallaxBackgroundImage";
 import { HeroBackgroundVideo } from "@/components/motion/HeroBackgroundVideo";
 import { Reveal } from "@/components/motion/Reveal";
+import { PageIntroCurtain } from "@/components/motion/PageIntroCurtain";
 import { client } from "@/sanity/lib/client";
 import { settingsQuery } from "@/sanity/lib/queries";
 
@@ -68,6 +69,8 @@ export async function HeroSection({
           : "h-screen"
       }`}
     >
+      <PageIntroCurtain />
+
       {/* Background image — always the poster/base layer, loads instantly */}
       {backgroundImage && (
         <ParallaxBackgroundImage

@@ -2,31 +2,37 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import {
+  PortableText,
+  type PortableTextBlock,
+  type PortableTextComponents,
+} from "next-sanity";
 import { urlFor } from "@/sanity/lib/image";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { InvertedCorner } from "../icons/InvertedCorner";
 
-type BadgeLogo = { asset: { _ref: string } };
-
-// Placeholder paths — content creator still needs to drop in
-// left_image-2.png .. left_image-5.png next to the existing left_image.png.
-// Until then slides 2-5 will 404; swap this array for real filenames (or
-// wire it up to a Sanity array field) once the photos exist.
-const LEFT_PHOTOS = [
-  "/images/left_image.png",
-  "/images/left_image-2.jpg",
-  "/images/left_image-3.jpg",
-  "/images/left_image-4.jpg",
-  "/images/left_image-5.jpg",
-];
+type SanityImage = { asset: { _ref: string } };
 
 const CAROUSEL_INTERVAL_MS = 3000;
+
+const headlineComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children }) => <>{children}</>,
+  },
+  marks: {
+    gold: ({ children }) => <span className="text-brand-gold">{children}</span>,
+    strong: ({ children }) => (
+      <strong className="font-extrabold">{children}</strong>
+    ),
+    em: ({ children }) => <em className="italic">{children}</em>,
+  },
+};
 
 function PhotoCarousel({
   images,
   reduceMotion,
 }: {
-  images: string[];
+  images: SanityImage[];
   reduceMotion: boolean;
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -41,10 +47,10 @@ function PhotoCarousel({
 
   return (
     <>
-      {images.map((src, index) => (
+      {images.map((image, index) => (
         <Image
-          key={src}
-          src={src}
+          key={image.asset._ref}
+          src={urlFor(image).url()}
           alt="Foto z produkce"
           fill
           sizes="(min-width: 1024px) 65vw, 100vw"
@@ -57,9 +63,9 @@ function PhotoCarousel({
 
       {images.length > 1 && (
         <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2 sm:bottom-5">
-          {images.map((src, index) => (
+          {images.map((image, index) => (
             <button
-              key={src}
+              key={image.asset._ref}
               type="button"
               aria-label={`Zobrazit fotku ${index + 1}`}
               aria-pressed={index === activeIndex}
@@ -98,12 +104,12 @@ function PhotoCarousel({
 function CircularBadge({
   reduceMotion,
   logo,
+  label,
 }: {
   reduceMotion: boolean;
-  logo?: BadgeLogo | null;
+  logo?: SanityImage | null;
+  label: string;
 }) {
-  const label = "TVOŘÍME • KREATIVITU • EMOCE • PŘÍBĚHY • ";
-
   return (
     <div className="absolute bottom-8 left-8 z-20 flex h-28 w-28 items-center justify-center sm:bottom-5 sm:left-5 sm:h-32 sm:w-32">
       <div className="absolute inset-0 rounded-full border border-brand-light bg-brand-black" />
@@ -148,10 +154,24 @@ function CircularBadge({
 }
 
 type Props = {
-  logo?: BadgeLogo | null;
+  logo?: SanityImage | null;
+  eyebrow?: string;
+  heading?: PortableTextBlock[];
+  missionText?: string;
+  leftPhotos?: SanityImage[];
+  rightImage?: SanityImage | null;
+  badgeText?: string;
 };
 
-export function WhoWeAreSection({ logo }: Props) {
+export function WhoWeAreSection({
+  logo,
+  eyebrow,
+  heading,
+  missionText,
+  leftPhotos,
+  rightImage,
+  badgeText,
+}: Props) {
   const reduceMotion = useReducedMotion();
 
   return (
@@ -167,19 +187,23 @@ export function WhoWeAreSection({ logo }: Props) {
           use to the 1fr (image) row automatically. */}
       <div className="grid w-full max-w-7xl mx-auto grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-[65fr_35fr] lg:grid-rows-[auto_auto_1fr] lg:gap-x-10">
         <div className="order-1 sm:col-span-2 lg:col-span-2">
-          <p className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4">
-            {"{ Kdo jsme }"}
-          </p>
-          <h2 className="font-display font-black uppercase text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-tight text-brand-light">
-            Jsme přední kreativní produkční agentura
-          </h2>
+          {eyebrow && (
+            <p className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4">
+              {eyebrow}
+            </p>
+          )}
+          {heading && (
+            <h2 className="font-display font-black uppercase text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-tight text-brand-light">
+              <PortableText value={heading} components={headlineComponents} />
+            </h2>
+          )}
         </div>
 
         <div className="relative order-2 sm:col-span-2 lg:col-span-1 lg:row-span-2">
           {/* Landscape on mobile/tablet; fixed 570px on desktop, matching
               the reference's actual measured height. */}
           <div className="relative aspect-6/5 overflow-hidden rounded-tl-[3rem] rounded-tr-[3rem] rounded-br-[3rem] bg-brand-dark sm:aspect-16/11 lg:aspect-auto lg:h-142.5">
-            <PhotoCarousel images={LEFT_PHOTOS} reduceMotion={reduceMotion} />
+            <PhotoCarousel images={leftPhotos ?? []} reduceMotion={reduceMotion} />
           </div>
           <InvertedCorner className="absolute rotate-90 left-44 bottom-0 w-8 h-8 text-brand-black" />
           <InvertedCorner className="absolute rotate-90 left-0 bottom-44 w-8 h-8 text-brand-black" />
@@ -187,7 +211,11 @@ export function WhoWeAreSection({ logo }: Props) {
                 reads as sitting on a cut-out of the photo rather than just
                 floating over it — same idea as the reference's white box. */}
           <div className="absolute bottom-0 left-0 z-10 h-32 w-32 rounded-tr-[5.5rem] bg-brand-black sm:h-44 sm:w-44" />
-          <CircularBadge reduceMotion={reduceMotion} logo={logo} />
+          <CircularBadge
+            reduceMotion={reduceMotion}
+            logo={logo}
+            label={badgeText ?? "TVOŘÍME • KREATIVITU • EMOCE • PŘÍBĚHY • "}
+          />
         </div>
 
         <div className="relative order-4 sm:order-3 lg:order-3 rounded-4xl overflow-hidden bg-brand-dark">
@@ -207,30 +235,31 @@ export function WhoWeAreSection({ logo }: Props) {
             <InvertedCorner className="absolute top-full left-0 h-8 w-8 rotate-180 text-brand-black" />
           </div>
 
-          <p className="font-body text-lg leading-7 text-brand-light/70 px-8 pt-6 pb-8 md:px-10 md:pt-7 md:pb-10">
-            Pomáháme firmám růst prostřednictvím strategie, kreativity a
-            kvalitního obsahu. Propojujeme produkci, branding a marketing do
-            jednoho funkčního celku, který dává značkám jasný směr a podporuje
-            jejich dlouhodobý růst.
-          </p>
+          {missionText && (
+            <p className="font-body text-lg leading-7 text-brand-light/70 px-8 pt-6 pb-8 md:px-10 md:pt-7 md:pb-10">
+              {missionText}
+            </p>
+          )}
         </div>
 
-        <div className="order-3 sm:order-4 lg:order-4">
-          {/* Uniform rounding on every corner (unlike the big photo's
-                mismatched "blob" corners). A landscape ratio at desktop —
-                not a fixed height — keeps it shorter than the story card
-                stacked above it without also shrinking the big photo,
-                which stretches to match this column's *total* height. */}
-          <div className="relative aspect-4/3 overflow-hidden rounded-4xl bg-brand-dark lg:aspect-auto lg:h-full">
-            <Image
-              src="/images/right_image.png"
-              alt="Tým"
-              fill
-              sizes="(min-width: 1024px) 35vw, 100vw"
-              className="object-cover object-center"
-            />
+        {rightImage && (
+          <div className="order-3 sm:order-4 lg:order-4">
+            {/* Uniform rounding on every corner (unlike the big photo's
+                  mismatched "blob" corners). A landscape ratio at desktop —
+                  not a fixed height — keeps it shorter than the story card
+                  stacked above it without also shrinking the big photo,
+                  which stretches to match this column's *total* height. */}
+            <div className="relative aspect-4/3 overflow-hidden rounded-4xl bg-brand-dark lg:aspect-auto lg:h-full">
+              <Image
+                src={urlFor(rightImage).url()}
+                alt="Tým"
+                fill
+                sizes="(min-width: 1024px) 35vw, 100vw"
+                className="object-cover object-center"
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

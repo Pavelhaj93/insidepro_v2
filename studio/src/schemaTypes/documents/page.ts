@@ -19,7 +19,11 @@ export const page = defineType({
       group: 'content',
       of: [
         { type: 'heroSection' },
+        { type: 'splitVideoRevealSection' },
         { type: 'servicesListSection' },
+        { type: 'servicesAccordionSection' },
+        { type: 'whoWeAreSection' },
+        { type: 'zoomTextSection' },
         { type: 'featuredWorksSection' },
         { type: 'referenceWorksSection' },
         { type: 'ctaSection' },

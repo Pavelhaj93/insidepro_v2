@@ -2,11 +2,20 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import {
+  PortableText,
+  type PortableTextBlock,
+  type PortableTextComponents,
+} from "next-sanity";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { HeroBackgroundVideo } from "@/components/motion/HeroBackgroundVideo";
 
 type SplitVideoRevealProps = {
+  kicker?: string;
+  headline?: PortableTextBlock[];
+  subtitle?: string;
+  cornerHeadline?: PortableTextBlock[];
   videoSrc: string;
   videoMimeType?: string;
   mobileVideoSrc?: string;
@@ -15,6 +24,19 @@ type SplitVideoRevealProps = {
   /** Extra scroll (vh) to hold the fully-revealed video before the next section can start covering it. */
   holdVh?: number;
   className?: string;
+};
+
+const headlineComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children }) => <>{children}</>,
+  },
+  marks: {
+    gold: ({ children }) => <span className="text-brand-gold">{children}</span>,
+    strong: ({ children }) => (
+      <strong className="font-extrabold">{children}</strong>
+    ),
+    em: ({ children }) => <em className="italic">{children}</em>,
+  },
 };
 
 // How much further (in vw) the heading travels than the rest of the panel
@@ -43,6 +65,10 @@ const HANDOFF_VH = 200;
  * of that handoff.
  */
 export function SplitVideoReveal({
+  kicker,
+  headline,
+  subtitle,
+  cornerHeadline,
   videoSrc,
   videoMimeType,
   mobileVideoSrc,
@@ -103,22 +129,30 @@ export function SplitVideoReveal({
           />
           <div className="absolute inset-x-0 bottom-0 z-10 bg-linear-to-t from-black/80 to-transparent p-8 md:p-12">
             <div className="max-w-md ml-4 sm:ml-8">
-              <p className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4">
-                {`{ Film. Brand. Emotion. }`}
-              </p>
-              <h1 className={headingClassName}>
-                From <em className="italic">the</em> inside
-              </h1>
-              <p className="font-display font-bold uppercase text-lg sm:text-xl leading-snug text-brand-light/80">
-                Jsme váš dlouhodobý produkční a kreativní partner
-              </p>
+              {kicker && (
+                <p className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4">
+                  {kicker}
+                </p>
+              )}
+              {headline && (
+                <h1 className={headingClassName}>
+                  <PortableText value={headline} components={headlineComponents} />
+                </h1>
+              )}
+              {subtitle && (
+                <p className="font-display font-bold uppercase text-lg sm:text-xl leading-snug text-brand-light/80">
+                  {subtitle}
+                </p>
+              )}
             </div>
           </div>
-          <div className="absolute bottom-8 right-8 z-10 max-w-xs rounded-2xl bg-black/80 p-4 text-right md:bottom-12 md:right-12">
-            <h2 className="font-display font-black uppercase text-xl sm:text-3xl leading-tight text-white">
-              Tvoříme věci, které inspirují
-            </h2>
-          </div>
+          {cornerHeadline && (
+            <div className="absolute bottom-8 right-8 z-10 max-w-xs rounded-2xl bg-black/80 p-4 text-right md:bottom-12 md:right-12">
+              <h2 className="font-display font-black uppercase text-xl sm:text-3xl leading-tight text-white">
+                <PortableText value={cornerHeadline} components={headlineComponents} />
+              </h2>
+            </div>
+          )}
           <div className="absolute inset-x-0 bottom-0 z-20 h-14 bg-black" />
         </div>
       </section>
@@ -144,18 +178,24 @@ export function SplitVideoReveal({
           style={isMobile ? { y: panelY } : { x: panelX }}
         >
           <div className="max-w-md sm:ml-8">
-            <p className="font-body text-xs tracking-widest uppercase text-brand-gold mb-3 sm:text-sm sm:mb-4">
-              {`{ Film. Brand. Emotion. }`}
-            </p>
-            <motion.h1
-              className={headingClassName}
-              style={isMobile ? undefined : { x: headingExtraX }}
-            >
-              From <em className="italic">the</em> inside
-            </motion.h1>
-            <p className="font-display font-bold uppercase text-sm leading-snug text-brand-light/80 sm:text-xl">
-              Jsme váš dlouhodobý produkční a kreativní partner
-            </p>
+            {kicker && (
+              <p className="font-body text-xs tracking-widest uppercase text-brand-gold mb-3 sm:text-sm sm:mb-4">
+                {kicker}
+              </p>
+            )}
+            {headline && (
+              <motion.h1
+                className={headingClassName}
+                style={isMobile ? undefined : { x: headingExtraX }}
+              >
+                <PortableText value={headline} components={headlineComponents} />
+              </motion.h1>
+            )}
+            {subtitle && (
+              <p className="font-display font-bold uppercase text-sm leading-snug text-brand-light/80 sm:text-xl">
+                {subtitle}
+              </p>
+            )}
           </div>
           {/*
             Reverse/"flush" corner: a normal `rounded-br-*` on the panel
@@ -179,9 +219,11 @@ export function SplitVideoReveal({
           className="absolute z-10 max-w-[85vw] rounded-tl-4xl bg-black p-4 text-right bottom-4 right-0 sm:max-w-none sm:h-40 sm:bottom-8 sm:right-8 sm:w-100 sm:p-6 md:bottom-0 md:right-0 md:p-8 md:pr-12"
           style={isMobile ? { y: cornerYMobile } : { x: cornerX }}
         >
-          <h2 className="font-display font-black uppercase text-base leading-tight text-white sm:text-3xl">
-            Tvoříme věci, které inspirují
-          </h2>
+          {cornerHeadline && (
+            <h2 className="font-display font-black uppercase text-base leading-tight text-white sm:text-3xl">
+              <PortableText value={cornerHeadline} components={headlineComponents} />
+            </h2>
+          )}
           {/* Mirror of the panel's flush corner, attached to this box's left edge instead — desktop/tablet only. */}
           <div
             aria-hidden

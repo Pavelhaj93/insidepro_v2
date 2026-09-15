@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { draftMode } from "next/headers";
 import { HeaderWrapper } from "@/components/layout/HeaderWrapper";
-import { FooterWrapper } from "@/components/layout/FooterWrapper";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { VerticalSidebar } from "@/components/home/VerticalSidebar";
+import { HomeCtaFooter } from "@/components/home/HomeCtaFooter";
 import { client } from "@/sanity/lib/client";
-import { settingsQuery } from "@/sanity/lib/queries";
+import { footerQuery, settingsQuery } from "@/sanity/lib/queries";
 import { SanityLive } from "@/sanity/lib/live";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { CustomCursor } from "@/components/motion/CustomCursor";
@@ -23,7 +23,10 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const isDraftMode = (await draftMode()).isEnabled;
-  const settings = await client.fetch(settingsQuery);
+  const [settings, footer] = await Promise.all([
+    client.fetch(settingsQuery),
+    client.fetch(footerQuery),
+  ]);
 
   return (
     <html
@@ -40,7 +43,17 @@ export default async function RootLayout({
             logo={settings?.logo ?? null}
           />
           <div className="flex-1">{children}</div>
-          {/* <FooterWrapper /> */}
+          <HomeCtaFooter
+            logo={settings?.logo ?? null}
+            logoText={settings?.logoText}
+            headingLine1={footer?.headingLine1}
+            headingLine2={footer?.headingLine2}
+            email={footer?.email}
+            phone={footer?.phone}
+            socialLinks={settings?.socialLinks ?? null}
+            copyrightText={footer?.copyrightText}
+            legalText={footer?.legalText}
+          />
         </SmoothScrollProvider>
         <SanityLive />
         {isDraftMode && <VisualEditing />}

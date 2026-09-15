@@ -2,10 +2,51 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  PortableText,
+  type PortableTextBlock,
+  type PortableTextComponents,
+} from "next-sanity";
 import { manrope } from "@/lib/fonts";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Badge } from "@/components/ui/Badge";
-import { SERVICES } from "./services-data";
+
+type ServiceItem = {
+  number?: string;
+  title: string;
+  subtitle?: string;
+  description?: PortableTextBlock[];
+  keywords?: string[];
+};
+
+type Props = {
+  label?: string;
+  heading?: PortableTextBlock[];
+  items?: ServiceItem[];
+};
+
+const headlineComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children }) => <>{children}</>,
+  },
+  marks: {
+    gold: ({ children }) => <span className="text-brand-gold">{children}</span>,
+    strong: ({ children }) => (
+      <strong className="font-extrabold">{children}</strong>
+    ),
+    em: ({ children }) => <em className="italic">{children}</em>,
+  },
+};
+
+const descriptionComponents: PortableTextComponents = {
+  marks: {
+    gold: ({ children }) => <span className="text-brand-gold">{children}</span>,
+    strong: ({ children }) => (
+      <strong className="font-extrabold">{children}</strong>
+    ),
+    em: ({ children }) => <em className="italic">{children}</em>,
+  },
+};
 
 // A row opens once its header crosses this thin horizontal band —
 // positioned a bit below mid-screen (partway between the original
@@ -29,7 +70,7 @@ const TRIGGER_BAND_ROOT_MARGIN = "-57% 0px -40% 0px";
  * passed, but scrolling back up closes them again in reverse as the current
  * row drops below the earlier ones.
  */
-export function ServicesAccordionScroll() {
+export function ServicesAccordionScroll({ label, heading, items = [] }: Props) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const reduceMotion = useReducedMotion();
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -59,20 +100,24 @@ export function ServicesAccordionScroll() {
       }`}
     >
       <div className="mx-auto max-w-7xl">
-        <p className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4">
-          {`{ Naše služby }`}
-        </p>
-        <h2 className="font-display font-black uppercase text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-tight text-brand-light mb-12 md:mb-16">
-          Co pro vás můžeme udělat
-        </h2>
+        {label && (
+          <p className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4">
+            {label}
+          </p>
+        )}
+        {heading && (
+          <h2 className="font-display font-black uppercase text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-tight text-brand-light mb-12 md:mb-16">
+            <PortableText value={heading} components={headlineComponents} />
+          </h2>
+        )}
 
         <ul className="border-t border-brand-light/15">
-          {SERVICES.map((service, index) => {
+          {items.map((service, index) => {
             const isOpen =
               reduceMotion || (openIndex !== null && index <= openIndex);
             return (
               <li
-                key={service.number}
+                key={service.number ?? service.title}
                 className="border-b border-brand-light/15"
               >
                 <div
@@ -130,13 +175,18 @@ export function ServicesAccordionScroll() {
                       className="overflow-hidden"
                     >
                       <div className="grid grid-cols-1 gap-6 pb-7 pl-0 sm:pl-9 lg:grid-cols-2 lg:gap-10 lg:pb-9 lg:pl-12">
-                        <p
-                          className={`${manrope.className} max-w-2xl text-base leading-6 text-brand-light/70 sm:text-lg sm:leading-7 lg:text-xl lg:leading-8`}
-                        >
-                          {service.description}
-                        </p>
+                        {service.description && (
+                          <div
+                            className={`${manrope.className} max-w-2xl text-base leading-6 text-brand-light/70 sm:text-lg sm:leading-7 lg:text-xl lg:leading-8`}
+                          >
+                            <PortableText
+                              value={service.description}
+                              components={descriptionComponents}
+                            />
+                          </div>
+                        )}
                         <div className="grid grid-cols-1 content-start gap-3 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-3 lg:flex lg:flex-wrap lg:gap-3">
-                          {service.keywords.map((keyword) => (
+                          {service.keywords?.map((keyword) => (
                             <Badge key={keyword}>{keyword}</Badge>
                           ))}
                         </div>

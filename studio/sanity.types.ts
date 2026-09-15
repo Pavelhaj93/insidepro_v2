@@ -79,6 +79,8 @@ export type ServiceItem = {
   _type: "serviceItem";
   number?: string;
   title?: string;
+  subtitle?: string;
+  keywords?: Array<string>;
   description?: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -132,7 +134,13 @@ export type BrandLogoReference = {
 export type LogoWallSection = {
   _type: "logoWallSection";
   title?: string;
-  logos?: Array<
+  layout?: "grid" | "marquee";
+  topRowLogos?: Array<
+    {
+      _key: string;
+    } & BrandLogoReference
+  >;
+  bottomRowLogos?: Array<
     {
       _key: string;
     } & BrandLogoReference
@@ -211,6 +219,7 @@ export type ClientsSection = {
   _type: "clientsSection";
   label?: string;
   supportLabel?: string;
+  layout?: "grid" | "horizontalScroll";
   showViewAllLink?: boolean;
   viewAllLabel?: string;
   viewAllSlug?: string;
@@ -252,7 +261,9 @@ export type TeamMemberReference = {
 
 export type TeamSection = {
   _type: "teamSection";
+  eyebrow?: string;
   heading?: string;
+  lightBackground?: boolean;
   teamMembers?: Array<
     {
       _key: string;
@@ -333,6 +344,11 @@ export type ReferenceWorksSection = {
       _key: string;
     } & CategoryReference
   >;
+  projects?: Array<
+    {
+      _key: string;
+    } & ProjectReference
+  >;
 };
 
 export type FeaturedWorksSection = {
@@ -345,6 +361,77 @@ export type FeaturedWorksSection = {
     {
       _key: string;
     } & ProjectReference
+  >;
+};
+
+export type ZoomTextSection = {
+  _type: "zoomTextSection";
+  label?: string;
+  headline?: string;
+  accentColor?:
+    | "var(--color-brand-light)"
+    | "var(--color-brand-gold)"
+    | "var(--color-brand-bronze)";
+  anchorIndex?: number;
+};
+
+export type WhoWeAreSection = {
+  _type: "whoWeAreSection";
+  eyebrow?: string;
+  heading?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  missionText?: string;
+  leftPhotos?: Array<{
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+    _key: string;
+  }>;
+  rightImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  badgeText?: string;
+};
+
+export type ServicesAccordionSection = {
+  _type: "servicesAccordionSection";
+  label?: string;
+  heading?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  items?: Array<
+    {
+      _key: string;
+    } & ServiceItem
   >;
 };
 
@@ -377,6 +464,57 @@ export type SanityFileAssetReference = {
   _type: "reference";
   _weak?: boolean;
   [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
+};
+
+export type SplitVideoRevealSection = {
+  _type: "splitVideoRevealSection";
+  kicker?: string;
+  headline?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  subtitle?: string;
+  cornerHeadline?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  video?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: "file";
+  };
+  mobileVideo?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: "file";
+  };
+  posterImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
 };
 
 export type HeroSection = {
@@ -433,6 +571,11 @@ export type Category = {
   title?: string;
   slug?: Slug;
   order?: number;
+  video?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: "file";
+  };
 };
 
 export type Slug = {
@@ -512,6 +655,8 @@ export type Film = {
     _type: "image";
   };
   description?: string;
+  genre?: string;
+  country?: string;
   director?: string;
   production?: string;
   coproducer?: string;
@@ -545,6 +690,13 @@ export type TeamMember = {
   order?: number;
 };
 
+export type VideoReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "video";
+};
+
 export type Project = {
   _id: string;
   _type: "project";
@@ -569,12 +721,13 @@ export type Project = {
     _type: "image";
     _key: string;
   }>;
+  hoverVideo?: VideoReference;
+  projectVideo?: VideoReference;
   categories?: Array<
     {
       _key: string;
     } & CategoryReference
   >;
-  category?: "film" | "branding" | "marketing" | "produkce";
   excerpt?: string;
   body?: Array<
     | {
@@ -606,6 +759,27 @@ export type Project = {
       }
   >;
   publishedAt?: string;
+};
+
+export type Video = {
+  _id: string;
+  _type: "video";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  file?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: "file";
+  };
+  poster?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
 };
 
 export type Settings = {
@@ -695,7 +869,19 @@ export type Page = {
       } & HeroSection)
     | ({
         _key: string;
+      } & SplitVideoRevealSection)
+    | ({
+        _key: string;
       } & ServicesListSection)
+    | ({
+        _key: string;
+      } & ServicesAccordionSection)
+    | ({
+        _key: string;
+      } & WhoWeAreSection)
+    | ({
+        _key: string;
+      } & ZoomTextSection)
     | ({
         _key: string;
       } & FeaturedWorksSection)
@@ -880,8 +1066,12 @@ export type AllSanitySchemaTypes =
   | CategoryReference
   | ReferenceWorksSection
   | FeaturedWorksSection
+  | ZoomTextSection
+  | WhoWeAreSection
+  | ServicesAccordionSection
   | ServicesListSection
   | SanityFileAssetReference
+  | SplitVideoRevealSection
   | HeroSection
   | Category
   | Slug
@@ -891,7 +1081,9 @@ export type AllSanitySchemaTypes =
   | Footer
   | Film
   | TeamMember
+  | VideoReference
   | Project
+  | Video
   | Settings
   | Post
   | Page
