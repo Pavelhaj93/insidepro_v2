@@ -137,27 +137,24 @@ export function ZoomTextTransition({
     const anchorEl = anchorRef.current;
     if (!headlineEl || !anchorEl) return;
 
-    // `headlineEl` spans the full viewport width (see its `w-full` class),
-    // so a percentage of its width is the same as a percentage of the
-    // viewport. Horizontal origin is therefore pinned to the visible
-    // content area's own center (viewport center, shifted right to clear
-    // the fixed VerticalSidebar) directly from the viewport's geometry —
-    // not measured from the anchor character's own bounding box. That
-    // per-glyph measurement was sensitive to the specific letter's ink
-    // shape within its box (e.g. a "Y"'s fork sitting off-center in its own
-    // advance width), which could visibly miss "centered on screen" even
-    // though it was centered on the glyph's box. Vertical origin still
-    // comes from the anchor's own position, since that's what picks the
-    // correct *line* to zoom into.
-    const SIDEBAR_WIDTH_PX = 80; // VerticalSidebar's `w-20`, sm+ only
+    // Origin is measured directly from the anchor character's own rendered
+    // position — the headline's asymmetric side padding (see its className)
+    // already shifts the *rendered text* to sit centered on the visible
+    // content area (right of the fixed VerticalSidebar), so measuring the
+    // anchor's actual box is what picks up that shift correctly. (A version
+    // of this that instead hardcoded the origin to the viewport's own
+    // content-center double-counted the shift — the padding had already
+    // moved the text there, so adding a second correction on top of it
+    // overshot to the right. Don't reintroduce that.)
     const measure = () => {
       const headlineRect = headlineEl.getBoundingClientRect();
       const anchorRect = anchorEl.getBoundingClientRect();
       if (headlineRect.width === 0 || headlineRect.height === 0) return;
-      const sidebarWidth = window.innerWidth >= 640 ? SIDEBAR_WIDTH_PX : 0;
-      const contentCenterX = sidebarWidth + (window.innerWidth - sidebarWidth) / 2;
       setOrigin({
-        x: (contentCenterX / headlineRect.width) * 100,
+        x:
+          ((anchorRect.left + anchorRect.width / 2 - headlineRect.left) /
+            headlineRect.width) *
+          100,
         y:
           ((anchorRect.top + anchorRect.height / 2 - headlineRect.top) /
             headlineRect.height) *

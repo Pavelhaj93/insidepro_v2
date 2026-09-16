@@ -7,6 +7,9 @@ import { urlFor } from "@/sanity/lib/image";
 import { Badge } from "@/components/ui/Badge";
 import { CaseStudyExtendedNarrative } from "@/components/sections/CaseStudyExtendedNarrative";
 import { CaseStudyBodySections } from "@/components/sections/CaseStudyBodySections";
+import { BehindTheScenesFilmstrip } from "@/components/sections/BehindTheScenesFilmstrip";
+import { OutputGalleryMosaic } from "@/components/sections/OutputGalleryMosaic";
+import { SectionMarkerHeading } from "@/components/sections/SectionMarkerHeading";
 import { parseCaseStudySections } from "@/lib/caseStudyBody";
 
 type Props = {
@@ -22,6 +25,7 @@ type Project = {
   slug: string;
   coverImage?: SanityImage;
   gallery?: SanityImage[];
+  behindTheScenesGallery?: SanityImage[];
   excerpt?: string;
   categories?: string[];
   // Dereferenced `video` library document (see `project.projectVideo` in the
@@ -36,7 +40,7 @@ type Project = {
 };
 
 const PROJECT_QUERY = groq`*[_type == "project" && slug.current == $slug][0]{
-  _id, title, client, "slug": slug.current, coverImage, gallery, excerpt, body,
+  _id, title, client, "slug": slug.current, coverImage, gallery, behindTheScenesGallery, excerpt, body,
   "categories": categories[]->title,
   projectVideo-> { file { asset->{ url, mimeType } }, poster }
 }`;
@@ -84,6 +88,10 @@ export default async function CaseStudyPage({ params }: Props) {
 
   const details = CASE_STUDY_DETAILS[slug];
   const bodySections = parseCaseStudySections(project.body);
+  const leftoverGallery =
+    bodySections.length > 0
+      ? (project.gallery ?? []).slice(bodySections.length)
+      : (project.gallery ?? []);
 
   return (
     <main className="bg-brand-black text-brand-light">
@@ -170,9 +178,23 @@ export default async function CaseStudyPage({ params }: Props) {
         </div>
       </section>
 
+      {bodySections.length > 0 && (
+        <CaseStudyBodySections
+          sections={bodySections}
+          gallery={project.gallery}
+          title={project.title}
+        />
+      )}
+
+      <BehindTheScenesFilmstrip
+        images={project.behindTheScenesGallery}
+        title={project.title}
+      />
+
       {project.projectVideo?.file?.asset?.url && (
         <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-16 md:pb-24">
           <div className="mx-auto max-w-7xl">
+            <SectionMarkerHeading marker="04" heading="Výsledek" />
             <video
               src={project.projectVideo.file.asset.url}
               poster={
@@ -188,35 +210,11 @@ export default async function CaseStudyPage({ params }: Props) {
         </section>
       )}
 
-      {bodySections.length > 0 ? (
-        <CaseStudyBodySections
-          sections={bodySections}
-          gallery={project.gallery}
-          title={project.title}
-        />
-      ) : (
-        project.gallery &&
-        project.gallery.length > 0 && (
-          <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-24">
-            <div className="mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-6">
-              {project.gallery.map((image, index) => (
-                <div
-                  key={index}
-                  className="relative aspect-4/3 overflow-hidden rounded-4xl bg-brand-dark"
-                >
-                  <Image
-                    src={urlFor(image).width(1200).height(900).url()}
-                    alt={`${project.title} — ${index + 1}`}
-                    fill
-                    sizes="(min-width: 768px) 50vw, 100vw"
-                    className="object-cover object-center"
-                  />
-                </div>
-              ))}
-            </div>
-          </section>
-        )
-      )}
+      <OutputGalleryMosaic
+        images={leftoverGallery}
+        title={project.title}
+        startIndex={bodySections.length}
+      />
     </main>
   );
 }

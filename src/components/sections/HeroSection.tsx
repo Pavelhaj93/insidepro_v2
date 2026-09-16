@@ -62,15 +62,13 @@ export async function HeroSection({
     : null;
 
   return (
-    <section
-      className={`relative flex flex-col items-center justify-center overflow-hidden ${
+    <PageIntroCurtain
+      className={`flex flex-col items-center justify-center overflow-hidden ${
         hasVideo
           ? "aspect-9/16 h-auto md:aspect-auto md:h-[calc(100dvh-88px)]"
           : "h-screen"
       }`}
     >
-      <PageIntroCurtain />
-
       {/* Background image — always the poster/base layer, loads instantly */}
       {backgroundImage && (
         <ParallaxBackgroundImage
@@ -134,6 +132,6 @@ export async function HeroSection({
           <SocialLinks links={socialLinks} iconSize={24} />
         </div>
       )}
-    </section>
+    </PageIntroCurtain>
   );
 }

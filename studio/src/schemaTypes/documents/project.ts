@@ -17,6 +17,13 @@ export const project = defineType({
       description: 'Extra images shown via the hover arrows on the homepage card (falls back to Cover Image if empty)',
     }),
     defineField({
+      name: 'behindTheScenesGallery',
+      title: 'Behind the Scenes Gallery',
+      type: 'array',
+      of: [{ type: 'image', options: { hotspot: true } }],
+      description: 'Behind-the-scenes production photos, shown as a scroll-driven filmstrip gallery on the case-study page.',
+    }),
+    defineField({
       name: 'hoverVideo',
       title: 'Hover Video (optional)',
       type: 'reference',
