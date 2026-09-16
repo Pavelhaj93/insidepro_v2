@@ -162,7 +162,7 @@ export function HomeCtaFooter({
                   // The uploaded mark is white — force it to black on the
                   // homepage's light background instead of shipping a second
                   // dark-colored asset just for this one inverted case.
-                  className={`h-8 w-auto sm:h-10 ${invert ? "" : "brightness-0"}`}
+                  className={`h-10 w-auto sm:h-12 ${invert ? "" : "brightness-0"}`}
                 />
               ) : (
                 <span className="font-display font-black text-lg uppercase tracking-wide sm:text-xl">

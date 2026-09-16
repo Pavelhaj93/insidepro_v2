@@ -77,7 +77,7 @@ export function ZoomTextTransition({
   // so full-viewport ink coverage at max zoom is preserved even though the
   // headline now starts noticeably smaller (and needs more relative zoom,
   // hence more scroll, to get there).
-  scaleTarget = 70,
+  scaleTarget = 150,
   anchorIndex: anchorIndexProp,
   className,
 }: ZoomTextTransitionProps) {

@@ -50,13 +50,13 @@ export function CtaSection({
       )}
       {!backgroundImage && <div className="absolute inset-0 bg-brand-dark" />}
 
-      <div className="relative z-10 max-w-5xl mx-auto text-center">
+      {/* <div className="relative z-10 max-w-5xl mx-auto text-center">
         <Reveal>
           <h2 className="font-display font-bold text-xl sm:text-2xl md:text-3xl lg:text-4xl uppercase leading-none text-brand-light mb-10">
             <PortableText value={headline} components={headlineComponents} />
           </h2>
         </Reveal>
-        {/* {buttonLabel && buttonLink && (
+        {buttonLabel && buttonLink && (
           <Reveal delay={0.15} className="inline-block">
             <MagneticButton>
               <BrandButton href={buttonLink} variant="gold">
@@ -64,8 +64,8 @@ export function CtaSection({
               </BrandButton>
             </MagneticButton>
           </Reveal>
-        )} */}
-      </div>
+        )}
+      </div> */}
     </section>
   );
 }

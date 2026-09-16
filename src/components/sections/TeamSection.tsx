@@ -16,6 +16,7 @@ type TeamMember = {
 };
 
 type Props = {
+  eyebrow?: string;
   heading?: string;
   teamMembers?: TeamMember[];
   outroText?: string;
@@ -28,6 +29,7 @@ type Props = {
 // corner reads as a notch cut into the photo via one InvertedCorner fillet at
 // the inner corner where the label meets the image.
 export function TeamSection({
+  eyebrow,
   heading,
   teamMembers = [],
   outroText,
@@ -37,6 +39,11 @@ export function TeamSection({
 }: Props) {
   return (
     <section className="px-8 xl:px-0 py-24 max-w-6xl mx-auto">
+      {eyebrow && (
+        <p className="font-body text-sm tracking-widest uppercase mb-4 text-brand-gold">
+          {eyebrow}
+        </p>
+      )}
       {heading && (
         <h2 className="font-display font-black uppercase text-3xl sm:text-4xl leading-tight text-brand-light mb-16">
           {heading}
@@ -54,7 +61,7 @@ export function TeamSection({
                     alt={member.name}
                     sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                     quality={85}
-                    className="object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-500"
+                    className="object-cover object-center grayscale scale-100 rotate-0 transition-all duration-500 ease-out group-hover:grayscale-0 group-hover:scale-110 group-hover:rotate-2"
                   />
                 )}
               </div>

@@ -30,6 +30,13 @@ export const film = defineType({
       },
     }),
     defineField({ name: 'publishedAt', title: 'Published At', type: 'datetime' }),
+    defineField({
+      name: 'relatedProject',
+      title: 'Related Project',
+      type: 'reference',
+      to: [{ type: 'project' }],
+      description: 'Links this film to its case-study page (/reference/{slug}) on the Filmy showcase. Leave empty if there is no matching case study yet.',
+    }),
   ],
   orderings: [{ title: 'Published, New', name: 'publishedAtDesc', by: [{ field: 'publishedAt', direction: 'desc' }] }],
   preview: {

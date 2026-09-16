@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -40,6 +40,19 @@ export function FullscreenMenu({ isOpen, onClose, navLinks, socialLinks }: Props
   // offset-from-sidebar panel) that this needs a real JS check, not just
   // responsive classes — see useIsMobile's own doc comment.
   const isMobile = useIsMobile();
+  // Which link (by href) is currently hovered/focused, lifted up from the
+  // individual MenuNavLinks so the rest of the list can dim in response —
+  // the "spotlight" effect. null means no link in the group is active.
+  const [hoveredHref, setHoveredHref] = useState<string | null>(null);
+
+  function handleHoverChange(href: string, active: boolean) {
+    setHoveredHref((current) => {
+      if (active) return href;
+      // Only clear if this link was the one that set it — guards against a
+      // stray blur/mouseleave from an old target clearing a newly-hovered one.
+      return current === href ? null : current;
+    });
+  }
 
   useEffect(() => {
     if (!isOpen) return;
@@ -87,6 +100,8 @@ export function FullscreenMenu({ isOpen, onClose, navLinks, socialLinks }: Props
                   href={link.href}
                   reduceMotion={reduceMotion}
                   onNavigate={onClose}
+                  dimmed={hoveredHref !== null && hoveredHref !== link.href}
+                  onHoverChange={handleHoverChange}
                 />
               </motion.li>
             ))}

@@ -49,7 +49,10 @@ function hasAsset(
   return Boolean(image?.asset?._ref);
 }
 
-export function ProjectCard({ project, aspectClassName = "aspect-4/3" }: Props) {
+export function ProjectCard({
+  project,
+  aspectClassName = "aspect-4/3",
+}: Props) {
   const gallery = project.gallery?.filter(hasAsset) ?? [];
   const images = gallery.length
     ? gallery
@@ -74,7 +77,6 @@ export function ProjectCard({ project, aspectClassName = "aspect-4/3" }: Props) 
   return (
     <Link
       href={`/reference/${project.slug.current}`}
-      data-cursor={project.slug.current === "yachak" ? "case-study" : undefined}
       className={`group relative block overflow-hidden ${aspectClassName} bg-brand-dark rounded-4xl`}
     >
       {images[currentIndex] && (

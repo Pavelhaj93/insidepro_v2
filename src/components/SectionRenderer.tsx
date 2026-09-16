@@ -102,6 +102,10 @@ export function SectionRenderer({ blocks, settings }: SectionRendererProps) {
                 eyebrow={block.eyebrow}
                 heading={block.heading}
                 teamMembers={block.teamMembers}
+                outroText={block.outroText}
+                outroHighlight={block.outroHighlight}
+                ctaLabel={block.ctaLabel}
+                ctaLink={block.ctaLink}
                 invert
               />
             ) : (

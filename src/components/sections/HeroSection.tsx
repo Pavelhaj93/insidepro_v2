@@ -1,15 +1,11 @@
-import {
-  PortableText,
-  type PortableTextBlock,
-  type PortableTextComponents,
-} from "next-sanity";
+import type { PortableTextBlock } from "next-sanity";
 import { urlFor } from "@/sanity/lib/image";
 import { ScrollIndicatorButton } from "./ScrollIndicatorButton";
 import { SocialLinks } from "@/components/layout/SocialLinks";
 import { ParallaxBackgroundImage } from "@/components/motion/ParallaxBackgroundImage";
 import { HeroBackgroundVideo } from "@/components/motion/HeroBackgroundVideo";
-import { Reveal } from "@/components/motion/Reveal";
 import { PageIntroCurtain } from "@/components/motion/PageIntroCurtain";
+import { HeroHeadline } from "./HeroHeadline";
 import { client } from "@/sanity/lib/client";
 import { settingsQuery } from "@/sanity/lib/queries";
 
@@ -22,27 +18,6 @@ type Props = {
   subtitle?: string;
   showScrollIndicator?: boolean;
   showSocialIcons?: boolean;
-};
-
-const headlineComponents: PortableTextComponents = {
-  block: {
-    normal: ({ children, index }) =>
-      index > 0 ? (
-        <>
-          <br />
-          {children}
-        </>
-      ) : (
-        <>{children}</>
-      ),
-  },
-  marks: {
-    gold: ({ children }) => <span className="text-brand-gold">{children}</span>,
-    strong: ({ children }) => (
-      <strong className="font-extrabold">{children}</strong>
-    ),
-    em: ({ children }) => <em className="italic">{children}</em>,
-  },
 };
 
 export async function HeroSection({
@@ -101,27 +76,21 @@ export async function HeroSection({
         <div className="absolute inset-0 bg-brand-black" />
       )}
 
-      {/* Content — centered */}
+      {/* Content — centered. Headline/subtitle live in a client component
+          since their entrance is timed off the curtain's own scroll
+          progress (see HeroHeadline/useCurtainProgress) rather than an
+          independent in-view reveal, so the curtain's label visibly hands
+          off to this text instead of both being on screen together. */}
       <div className="relative z-10 px-8 md:px-12 w-full text-center">
-        {headline && (
-          <Reveal duration={0.9}>
-            <h1 className="font-display font-black text-[2.5rem] leading-[1.05] sm:text-6xl md:text-7xl lg:text-8xl 2xl:text-9xl tracking-normal uppercase text-brand-light">
-              <PortableText value={headline} components={headlineComponents} />
-            </h1>
-          </Reveal>
-        )}
-        {subtitle && (
-          <Reveal delay={0.2}>
-            <p className="font-display font-medium text-base leading-none tracking-normal uppercase text-brand-light/70 mt-20">
-              {subtitle}
-            </p>
-          </Reveal>
-        )}
+        <HeroHeadline headline={headline} subtitle={subtitle} />
       </div>
 
-      {/* Scroll indicator — bottom center */}
+      {/* Scroll indicator — bottom center. z-50 (above the curtain's z-40)
+          so it stays visible over the closed black panels — the whole
+          point of it is to invite the scroll that opens the curtain, so it
+          can't be hidden underneath it. */}
       {showScrollIndicator && (
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10">
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50">
           <ScrollIndicatorButton />
         </div>
       )}

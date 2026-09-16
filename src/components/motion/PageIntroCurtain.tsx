@@ -1,11 +1,23 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { createContext, useContext, useLayoutEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { getPageLabel } from "@/lib/nav-links";
+
+// Lets the hero's own headline (rendered as `children`, underneath the
+// curtain) time its own entrance off the exact same scroll progress the
+// curtain's panels/label use — so the two texts hand off to one another
+// instead of both being visible at once. `null` (no provider, or reduced
+// motion) means "no curtain to hand off from": consumers should treat that
+// as already-settled/fully-visible.
+const CurtainProgressContext = createContext<MotionValue<number> | null>(null);
+
+export function useCurtainProgress() {
+  return useContext(CurtainProgressContext);
+}
 
 // Scroll budget (vh) dedicated purely to the curtain's own open/close
 // gesture — this is also how long the hero stays genuinely pinned
@@ -23,6 +35,10 @@ const CURTAIN_VH = 120;
 // has moved up by roughly its own line height it has already fully exited
 // past that box's top edge and been clipped away.
 const LABEL_TRAVEL_PX = 100;
+// Fraction of the curtain's scroll progress over which its own label fades
+// out (see `labelOpacity`) — tuned to finish before the hero's headline
+// (HeroHeadline's HEADLINE_ENTER_RANGE) becomes prominent.
+const LABEL_FADE_END = 0.45;
 const ENTRANCE_EASE = [0.76, 0, 0.24, 1] as const;
 
 type PageIntroCurtainProps = {
@@ -93,11 +109,20 @@ function PinnedCurtain({
   const leftX = useTransform(progress, [0, 1], ["0%", "-100%"]);
   const rightX = useTransform(progress, [0, 1], ["0%", "100%"]);
   const labelY = useTransform(progress, [0, 1], [0, -LABEL_TRAVEL_PX]);
+  // Fades out well before the panels finish opening, so it's fully gone by
+  // the time the hero's own headline (see CurtainProgressContext) has
+  // faded in underneath — one text visibly replaces the other instead of
+  // both being on screen together.
+  const labelOpacity = useTransform(progress, [0, LABEL_FADE_END], [1, 0], {
+    clamp: true,
+  });
 
   return (
     <div ref={wrapperRef} className="relative">
       <section className={`sticky top-0 ${className ?? ""}`}>
-        {children}
+        <CurtainProgressContext.Provider value={progress}>
+          {children}
+        </CurtainProgressContext.Provider>
 
         {/* Curtain overlay — absolutely positioned to the hero's own box
             (not viewport-fixed), so it covers exactly the hero regardless
@@ -145,7 +170,7 @@ function PinnedCurtain({
               <div className="overflow-hidden">
                 <motion.p
                   className="text-center font-display font-black uppercase text-brand-light text-4xl leading-none sm:text-6xl md:text-7xl"
-                  style={{ y: labelY }}
+                  style={{ y: labelY, opacity: labelOpacity }}
                 >
                   {label}
                 </motion.p>

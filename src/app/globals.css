@@ -119,47 +119,30 @@
   animation: badge-rotate 18s linear infinite;
 }
 
-/* Clean/minimal hover effect for the fullscreen nav links
-   (MenuNavLinkUnderline). The word lifts slightly and warms to gold while a
-   thin underline draws in from the left beneath it — a single moving line
-   plus a small nudge, toggled by the .is-active class from JS state, same
-   as the other link effects. */
-.menu-link-underline {
-  position: relative;
+/* Minimal hover effect for the fullscreen nav links (MenuNavLinkText): just
+   a color crossfade (light → gold) on the hovered link, combined with a
+   "spotlight" effect where sibling links dim in opacity while one is
+   active — no underline, no lift, no other decoration. .is-active and
+   .is-dimmed are toggled by JS state (hover/focus lifted up to
+   FullscreenMenu), same pattern as the other link effects. */
+.menu-link-text {
   display: inline-block;
   color: var(--color-brand-light);
-}
-
-.menu-link-underline-inner {
-  display: inline-block;
+  opacity: 1;
   transition:
-    transform 0.35s cubic-bezier(0.65, 0, 0.35, 1),
-    color 0.35s ease;
+    color 0.35s ease,
+    opacity 0.35s ease;
 }
 
-.menu-link-underline.is-active .menu-link-underline-inner {
-  transform: translateY(-0.08em);
+.menu-link-text.is-active {
   color: var(--color-brand-gold);
 }
 
-.menu-link-underline-bar {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -0.12em;
-  height: 0.045em;
-  background: var(--color-brand-gold);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+.menu-link-text.is-dimmed {
+  opacity: 0.35;
 }
 
-.menu-link-underline.is-active .menu-link-underline-bar {
-  transform: scaleX(1);
-}
-
-.menu-link-underline.reduce-motion .menu-link-underline-inner,
-.menu-link-underline.reduce-motion .menu-link-underline-bar {
+.menu-link-text.reduce-motion {
   transition: none;
 }
 

@@ -94,7 +94,7 @@ const blocksProjection = groq`
     lightBackground,
     // filmShowcaseSection
     introText,
-    films[]-> { _id, title, slug, coverImage, description, director, production, coproducer, partners, status },
+    films[]-> { _id, title, slug, coverImage, description, director, production, coproducer, partners, status, "relatedProjectSlug": relatedProject->slug.current },
     // clientsSection
     supportLabel,
     layout,

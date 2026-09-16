@@ -1,6 +1,9 @@
+import Link from "next/link";
+import { manrope } from "@/lib/fonts";
+import { ArrowRightIcon } from "@/components/icons/ArrowRight";
 import { urlFor } from "@/sanity/lib/image";
 import { SanityImage } from "@/components/ui/SanityImage";
-import { RevealItem, RevealStagger } from "@/components/motion/Reveal";
+import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 import { InvertedCorner } from "@/components/icons/InvertedCorner";
 
 type TeamMember = {
@@ -21,6 +24,11 @@ type Props = {
    * hands off to.
    */
   invert?: boolean;
+  /** Optional closing copy + CTA, same fields the plain TeamSection renders. */
+  outroText?: string;
+  outroHighlight?: string;
+  ctaLabel?: string;
+  ctaLink?: string;
 };
 
 /**
@@ -34,6 +42,10 @@ export function TeamShowcaseSection({
   heading = "PO CELOU DOBU SPOLUPRÁCE JSME TU S VÁMI",
   teamMembers = [],
   invert = false,
+  outroText,
+  outroHighlight,
+  ctaLabel,
+  ctaLink,
 }: Props) {
   if (teamMembers.length === 0) return null;
 
@@ -96,6 +108,39 @@ export function TeamShowcaseSection({
             </RevealItem>
           ))}
         </RevealStagger>
+
+        {(outroText || outroHighlight) && (
+          <Reveal className="max-w-3xl mx-auto mt-20">
+            <p
+              className={`${manrope.className} font-normal text-lg leading-relaxed tracking-normal text-center ${invert ? "text-brand-black" : "text-brand-light"}`}
+            >
+              {outroText}
+              {outroHighlight && (
+                <>
+                  {" "}
+                  <span className={invert ? "text-brand-black/50" : "text-brand-gold"}>
+                    {outroHighlight}
+                  </span>
+                </>
+              )}
+            </p>
+          </Reveal>
+        )}
+
+        {ctaLabel && ctaLink && (
+          <div className="flex justify-end mt-12">
+            <Link
+              href={ctaLink}
+              className={`font-display font-medium text-lg leading-relaxed tracking-normal uppercase transition-colors flex items-center gap-2 ${
+                invert
+                  ? "text-brand-black hover:text-brand-black/50"
+                  : "text-brand-gold hover:text-brand-light/50"
+              }`}
+            >
+              {ctaLabel} <ArrowRightIcon />
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );
