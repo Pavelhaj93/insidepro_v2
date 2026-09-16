@@ -91,7 +91,7 @@ export function ProjectCard({
 
       {/* Always-on scrim (not hover-gated) so the title stays readable over
           any cover image, not just on hover. */}
-      <div className="absolute inset-0 bg-linear-to-t from-brand-black/80 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-[35%] bg-linear-to-t from-brand-black/80 to-transparent" />
 
       <div className="absolute bottom-0 left-0 right-0 p-5">
         {project.client && (
