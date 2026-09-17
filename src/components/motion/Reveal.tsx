@@ -59,16 +59,25 @@ type RevealStaggerProps = {
   stagger?: number;
   delayChildren?: number;
   once?: boolean;
-  amount?: number;
 };
 
-/** Wraps a grid/list container; child <RevealItem>s reveal one after another. */
+/**
+ * Wraps a grid/list container; child <RevealItem>s reveal one after another.
+ *
+ * Triggers once the container's top edge scrolls within ~20% of the
+ * viewport's bottom, rather than requiring a fraction of the *container's
+ * own* height to be visible (an `amount` threshold, which is what this used
+ * previously). A percentage of the container's own height breaks down for a
+ * long single-column stack — e.g. a card grid collapsed to one column on
+ * mobile — where the container can be several screens tall, so 20% of it
+ * doesn't come into view until the user has already scrolled well past the
+ * first item.
+ */
 export function RevealStagger({
   children,
   stagger = 0.1,
   delayChildren = 0,
   once = true,
-  amount = 0.2,
   className,
   style,
 }: RevealStaggerProps) {
@@ -88,7 +97,7 @@ export function RevealStagger({
       style={style}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once, amount }}
+      viewport={{ once, margin: "0px 0px -20% 0px" }}
       variants={staggerContainer(stagger, delayChildren)}
     >
       {children}

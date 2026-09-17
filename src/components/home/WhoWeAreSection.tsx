@@ -9,6 +9,7 @@ import {
 } from "next-sanity";
 import { urlFor } from "@/sanity/lib/image";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { Reveal } from "@/components/motion/Reveal";
 import { InvertedCorner } from "../icons/InvertedCorner";
 
 type SanityImage = { asset: { _ref: string } };
@@ -186,7 +187,7 @@ export function WhoWeAreSection({
           algorithm hands any of that 570px the auto (story) row doesn't
           use to the 1fr (image) row automatically. */}
       <div className="grid w-full max-w-7xl mx-auto grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-[65fr_35fr] lg:grid-rows-[auto_auto_1fr] lg:gap-x-10">
-        <div className="order-1 sm:col-span-2 lg:col-span-2">
+        <Reveal className="order-1 sm:col-span-2 lg:col-span-2">
           {eyebrow && (
             <p className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4">
               {eyebrow}
@@ -197,9 +198,12 @@ export function WhoWeAreSection({
               <PortableText value={heading} components={headlineComponents} />
             </h2>
           )}
-        </div>
+        </Reveal>
 
-        <div className="relative order-2 sm:col-span-2 lg:col-span-1 lg:row-span-2">
+        <Reveal
+          delay={0.1}
+          className="relative order-2 sm:col-span-2 lg:col-span-1 lg:row-span-2"
+        >
           {/* Landscape on mobile/tablet; fixed 570px on desktop, matching
               the reference's actual measured height. */}
           <div className="relative aspect-6/5 overflow-hidden rounded-tl-[3rem] rounded-tr-[3rem] rounded-br-[3rem] bg-brand-dark sm:aspect-16/11 lg:aspect-auto lg:h-142.5">
@@ -216,9 +220,12 @@ export function WhoWeAreSection({
             logo={logo}
             label={badgeText ?? "TVOŘÍME • KREATIVITU • EMOCE • PŘÍBĚHY • "}
           />
-        </div>
+        </Reveal>
 
-        <div className="relative order-4 sm:order-3 lg:order-3 rounded-4xl overflow-hidden bg-brand-dark">
+        <Reveal
+          delay={0.15}
+          className="relative order-4 sm:order-3 lg:order-3 rounded-4xl overflow-hidden bg-brand-dark"
+        >
           {/* "OUR MISSION" sits in a solid-black tab cut into the card's
               top-left corner — same technique as TeamShowcaseSection's
               name/role label: two InvertedCorner fillets smooth the two
@@ -240,10 +247,10 @@ export function WhoWeAreSection({
               {missionText}
             </p>
           )}
-        </div>
+        </Reveal>
 
         {rightImage && (
-          <div className="order-3 sm:order-4 lg:order-4">
+          <Reveal delay={0.2} className="order-3 sm:order-4 lg:order-4">
             {/* Uniform rounding on every corner (unlike the big photo's
                   mismatched "blob" corners). A landscape ratio at desktop —
                   not a fixed height — keeps it shorter than the story card
@@ -258,7 +265,7 @@ export function WhoWeAreSection({
                 className="object-cover object-center"
               />
             </div>
-          </div>
+          </Reveal>
         )}
       </div>
     </section>

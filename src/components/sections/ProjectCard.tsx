@@ -49,10 +49,15 @@ function hasAsset(
   return Boolean(image?.asset?._ref);
 }
 
+// These projects have no case-study page worth linking to yet — the card
+// still shows in the grid, it just isn't clickable/navigable.
+const NON_LINKABLE_SLUGS = new Set(["malva", "nad-obal"]);
+
 export function ProjectCard({
   project,
   aspectClassName = "aspect-4/3",
 }: Props) {
+  const isLinkable = !NON_LINKABLE_SLUGS.has(project.slug.current);
   const gallery = project.gallery?.filter(hasAsset) ?? [];
   const images = gallery.length
     ? gallery
@@ -74,11 +79,10 @@ export function ProjectCard({
     setCurrentIndex((i) => (i + 1) % images.length);
   };
 
-  return (
-    <Link
-      href={`/reference/${project.slug.current}`}
-      className={`group relative block overflow-hidden ${aspectClassName} bg-brand-dark rounded-4xl`}
-    >
+  const className = `group relative block overflow-hidden ${aspectClassName} bg-brand-dark rounded-4xl`;
+
+  const cardContent = (
+    <>
       {images[currentIndex] && (
         <Image
           src={urlFor(images[currentIndex]).width(1200).height(900).url()}
@@ -94,19 +98,18 @@ export function ProjectCard({
       <div className="absolute inset-x-0 bottom-0 h-[35%] bg-linear-to-t from-brand-black/80 to-transparent" />
 
       <div className="absolute bottom-0 left-0 right-0 p-5">
-        {project.client && (
-          <p className="font-body text-xs tracking-widest text-brand-gold uppercase mb-1 -translate-y-1 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-            {project.client}
-          </p>
-        )}
-        <h3 className="font-display font-bold text-lg uppercase text-brand-light">
-          {project.title}
-        </h3>
-        {project.excerpt && (
-          <p className="font-body text-sm text-brand-light/60 leading-relaxed mt-1 translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-            {project.excerpt}
-          </p>
-        )}
+        <div className="grid grid-rows-[auto_0fr] group-hover:grid-rows-[auto_1fr] transition-[grid-template-rows] duration-300 ease-out">
+          <h3 className="font-display font-bold text-lg uppercase text-brand-light">
+            {project.title}
+          </h3>
+          {project.excerpt && (
+            <div className="overflow-hidden">
+              <p className="font-body text-sm text-brand-light/60 leading-relaxed pt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                {project.excerpt}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       {images.length > 1 && (
@@ -132,6 +135,16 @@ export function ProjectCard({
           </span>
         </>
       )}
+    </>
+  );
+
+  if (!isLinkable) {
+    return <div className={className}>{cardContent}</div>;
+  }
+
+  return (
+    <Link href={`/reference/${project.slug.current}`} className={className}>
+      {cardContent}
     </Link>
   );
 }
