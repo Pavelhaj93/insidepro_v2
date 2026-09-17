@@ -10,6 +10,7 @@ import { CaseStudyBodySections } from "@/components/sections/CaseStudyBodySectio
 import { BehindTheScenesFilmstrip } from "@/components/sections/BehindTheScenesFilmstrip";
 import { OutputGalleryMosaic } from "@/components/sections/OutputGalleryMosaic";
 import { SectionMarkerHeading } from "@/components/sections/SectionMarkerHeading";
+import { GlobeIcon } from "@/components/icons/Globe";
 import { parseCaseStudySections } from "@/lib/caseStudyBody";
 
 type Props = {
@@ -22,6 +23,7 @@ type Project = {
   _id: string;
   title: string;
   client?: string;
+  websiteUrl?: string;
   slug: string;
   coverImage?: SanityImage;
   gallery?: SanityImage[];
@@ -40,7 +42,7 @@ type Project = {
 };
 
 const PROJECT_QUERY = groq`*[_type == "project" && slug.current == $slug][0]{
-  _id, title, client, "slug": slug.current, coverImage, gallery, behindTheScenesGallery, excerpt, body,
+  _id, title, client, websiteUrl, "slug": slug.current, coverImage, gallery, behindTheScenesGallery, excerpt, body,
   "categories": categories[]->title,
   projectVideo-> { file { asset->{ url, mimeType } }, poster }
 }`;
@@ -109,44 +111,56 @@ export default async function CaseStudyPage({ params }: Props) {
         <div className="absolute inset-0 bg-linear-to-t from-brand-black via-brand-black/50 to-transparent" />
 
         <div className="absolute bottom-0 left-0 right-0 pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-10 md:pb-14">
-          <div className="mx-auto max-w-7xl">
-            <Link
-              href="/reference"
-              className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4 inline-flex items-center gap-2 transition-colors hover:text-brand-light"
-            >
-              ← Reference
-            </Link>
+          <div className="mx-auto max-w-7xl flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+            <div className="max-w-3xl">
+              <Link
+                href="/reference"
+                className="font-body text-sm tracking-widest uppercase text-brand-gold mb-4 inline-flex items-center gap-2 transition-colors hover:text-brand-light"
+              >
+                ← Reference
+              </Link>
 
-            {project.categories && project.categories.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-4">
-                {project.categories.map((category) => (
-                  <Badge key={category}>{category}</Badge>
-                ))}
-              </div>
+              {project.categories && project.categories.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {project.categories.map((category) => (
+                    <Badge key={category}>{category}</Badge>
+                  ))}
+                </div>
+              )}
+
+              <h1 className="font-display font-black uppercase text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-none text-brand-light">
+                {project.title}
+              </h1>
+
+              {(details?.synopsis ?? project.excerpt) && (
+                <p className="font-body text-lg sm:text-xl leading-8 text-brand-light/80 mt-4 max-w-2xl">
+                  {details?.synopsis ?? project.excerpt}
+                </p>
+              )}
+            </div>
+
+            {project.websiteUrl && (
+              <a
+                href={project.websiteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 inline-flex items-center gap-2 font-display font-medium text-sm sm:text-base uppercase tracking-wide text-brand-gold hover:text-brand-light transition-colors"
+              >
+                <GlobeIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                Navštívit web
+              </a>
             )}
-
-            <h1 className="font-display font-black uppercase text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-none text-brand-light">
-              {project.title}
-            </h1>
           </div>
         </div>
       </section>
 
-      <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 py-16 md:py-24">
-        <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-12 items-start">
-          <div className="flex flex-col gap-12 md:gap-16 max-w-2xl">
-            <p className="font-body text-lg sm:text-xl leading-8 text-brand-light/80">
-              {details?.synopsis ?? project.excerpt}
-            </p>
+      {details && (
+        <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 py-16 md:py-24">
+          <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-12 items-start">
+            <div className="flex flex-col gap-12 md:gap-16 max-w-2xl">
+              <CaseStudyExtendedNarrative />
+            </div>
 
-            {/* Gated on the same hardcoded `details` lookup as the meta panel
-                to the right (design POC, yachak only). Swap for a real
-                per-project CMS field once actual case-study content exists
-                to replace these placeholders. */}
-            {details && <CaseStudyExtendedNarrative />}
-          </div>
-
-          {details && (
             <div className="flex flex-col gap-6 lg:sticky lg:top-32">
               <dl className="grid grid-cols-2 gap-x-6 gap-y-6">
                 {details.meta.map((item) => (
@@ -174,9 +188,9 @@ export default async function CaseStudyPage({ params }: Props) {
                 </div>
               )}
             </div>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {bodySections.length > 0 && (
         <CaseStudyBodySections

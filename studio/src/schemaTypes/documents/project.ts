@@ -7,6 +7,12 @@ export const project = defineType({
   fields: [
     defineField({ name: 'title', title: 'Title', type: 'string', validation: Rule => Rule.required() }),
     defineField({ name: 'client', title: 'Client Name', type: 'string' }),
+    defineField({
+      name: 'websiteUrl',
+      title: 'Website URL',
+      type: 'url',
+      description: 'Company\'s website — shown as a "Visit website" link on the case-study hero',
+    }),
     defineField({ name: 'slug', title: 'Slug', type: 'slug', options: { source: 'title' }, validation: Rule => Rule.required() }),
     defineField({ name: 'coverImage', title: 'Cover Image', type: 'image', options: { hotspot: true } }),
     defineField({
