@@ -10,7 +10,7 @@ import {
   type HorizontalCardRenderArgs,
 } from "@/components/motion/HorizontalScrollCards";
 
-type SanityImage = { asset: { _ref: string } };
+type SanityImage = { asset: { _ref: string }; lqip?: string };
 
 type ClientItem = {
   name: string;
@@ -64,6 +64,8 @@ function ClientCard({
           quality={85}
           className="object-cover object-center"
           priority={index === 0}
+          placeholder={item.backgroundImage.lqip ? "blur" : "empty"}
+          blurDataURL={item.backgroundImage.lqip}
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center">
@@ -176,6 +178,8 @@ function ClientCardStatic({ item, index }: { item: ClientItem; index: number }) 
           quality={85}
           className="object-cover object-center"
           priority={index === 0}
+          placeholder={item.backgroundImage.lqip ? "blur" : "empty"}
+          blurDataURL={item.backgroundImage.lqip}
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center">

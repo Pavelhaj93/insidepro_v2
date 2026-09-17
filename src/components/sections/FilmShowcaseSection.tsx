@@ -1,13 +1,13 @@
-import Image from "next/image";
 import Link from "next/link";
 import { urlFor } from "@/sanity/lib/image";
+import { SanityImage } from "@/components/ui/SanityImage";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 
 type Film = {
   _id: string;
   title: string;
   slug: { current: string };
-  coverImage?: { asset: { _ref: string } };
+  coverImage?: { asset: { _ref: string }; lqip?: string };
   description?: string;
   director?: string;
   production?: string;
@@ -76,12 +76,12 @@ export function FilmShowcaseSection({
             <>
               <div className="relative aspect-4/5 overflow-hidden bg-brand-dark rounded-t-md">
                 {film.coverImage && (
-                  <Image
-                    src={urlFor(film.coverImage).width(600).height(800).url()}
+                  <SanityImage
+                    src={urlFor(film.coverImage).url()}
                     alt={film.title}
-                    fill
                     sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
                     className="object-cover object-center grayscale transition-all duration-700 ease-out group-hover:grayscale-0 motion-safe:group-hover:scale-105"
+                    blurDataURL={film.coverImage.lqip}
                   />
                 )}
               </div>

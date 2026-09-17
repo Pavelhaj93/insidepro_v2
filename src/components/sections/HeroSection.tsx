@@ -10,8 +10,8 @@ import { client } from "@/sanity/lib/client";
 import { settingsQuery } from "@/sanity/lib/queries";
 
 type Props = {
-  backgroundImage?: { asset: { _ref: string } };
-  backgroundImageMobile?: { asset: { _ref: string } };
+  backgroundImage?: { asset: { _ref: string }; lqip?: string };
+  backgroundImageMobile?: { asset: { _ref: string }; lqip?: string };
   backgroundVideo?: { asset?: { url?: string; mimeType?: string } };
   backgroundVideoMobile?: { asset?: { url?: string; mimeType?: string } };
   headline?: PortableTextBlock[];
@@ -57,6 +57,8 @@ export async function HeroSection({
           sizes="110vw"
           quality={90}
           priority
+          blurDataURL={backgroundImage.lqip}
+          mobileBlurDataURL={backgroundImageMobile?.lqip}
         />
       )}
 

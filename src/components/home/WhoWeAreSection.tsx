@@ -7,12 +7,12 @@ import {
   type PortableTextBlock,
   type PortableTextComponents,
 } from "next-sanity";
-import { urlFor } from "@/sanity/lib/image";
+import { sanityImageLoader, urlFor } from "@/sanity/lib/image";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Reveal } from "@/components/motion/Reveal";
 import { InvertedCorner } from "../icons/InvertedCorner";
 
-type SanityImage = { asset: { _ref: string } };
+type SanityImage = { asset: { _ref: string }; lqip?: string };
 
 const CAROUSEL_INTERVAL_MS = 3000;
 
@@ -52,6 +52,7 @@ function PhotoCarousel({
         <Image
           key={image.asset._ref}
           src={urlFor(image).url()}
+          loader={sanityImageLoader}
           alt="Foto z produkce"
           fill
           sizes="(min-width: 1024px) 65vw, 100vw"
@@ -59,6 +60,8 @@ function PhotoCarousel({
           className={`object-cover object-center transition-opacity duration-700 ease-out ${
             index === activeIndex ? "opacity-100" : "opacity-0"
           }`}
+          placeholder={image.lqip ? "blur" : "empty"}
+          blurDataURL={image.lqip}
         />
       ))}
 
@@ -140,11 +143,14 @@ function CircularBadge({
       <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full sm:h-18 sm:w-18">
         {logo ? (
           <Image
-            src={urlFor(logo).height(80).url()}
+            src={urlFor(logo).url()}
+            loader={sanityImageLoader}
             alt="insidePRO"
             fill
             sizes="56px"
             className="object-contain p-2.5"
+            placeholder={logo.lqip ? "blur" : "empty"}
+            blurDataURL={logo.lqip}
           />
         ) : (
           <span className="h-2.5 w-2.5 rounded-full bg-brand-black" />
@@ -259,10 +265,13 @@ export function WhoWeAreSection({
             <div className="relative aspect-4/3 overflow-hidden rounded-4xl bg-brand-dark lg:aspect-auto lg:h-full">
               <Image
                 src={urlFor(rightImage).url()}
+                loader={sanityImageLoader}
                 alt="Tým"
                 fill
                 sizes="(min-width: 1024px) 35vw, 100vw"
                 className="object-cover object-center"
+                placeholder={rightImage.lqip ? "blur" : "empty"}
+                blurDataURL={rightImage.lqip}
               />
             </div>
           </Reveal>

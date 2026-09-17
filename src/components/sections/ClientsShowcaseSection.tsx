@@ -11,8 +11,8 @@ import {
 } from "next-sanity";
 import { urlFor, sanityImageLoader } from "@/sanity/lib/image";
 
-type SanityImage = { asset: { _ref: string } };
-type MockImage = { asset: { _ref: string } }; // _ref may also be a plain https:// URL for mocks
+type SanityImage = { asset: { _ref: string }; lqip?: string };
+type MockImage = { asset: { _ref: string }; lqip?: string }; // _ref may also be a plain https:// URL for mocks
 
 type ClientItem = {
   name: string;
@@ -122,6 +122,8 @@ function ClientSlide({
                 quality={85}
                 className="object-cover object-center"
                 priority={index === 0}
+                placeholder={client.backgroundImage.lqip ? "blur" : "empty"}
+                blurDataURL={client.backgroundImage.lqip}
               />
             </motion.div>
           ) : (
@@ -148,6 +150,8 @@ function ClientSlide({
                       fill
                       sizes="128px"
                       className="object-contain object-left filter invert"
+                      placeholder={client.logo.lqip ? "blur" : "empty"}
+                      blurDataURL={client.logo.lqip}
                     />
                   </div>
                 ) : (
@@ -205,6 +209,8 @@ function ClientSlide({
               quality={85}
               className="object-cover object-center"
               priority={index === 0}
+              placeholder={client.backgroundImage.lqip ? "blur" : "empty"}
+              blurDataURL={client.backgroundImage.lqip}
             />
             <div className="absolute inset-0 bg-linear-to-r from-black/40 via-transparent to-transparent" />
           </motion.div>
@@ -233,6 +239,8 @@ function ClientSlide({
                       fill
                       sizes="160px"
                       className="object-contain object-left filter invert"
+                      placeholder={client.logo.lqip ? "blur" : "empty"}
+                      blurDataURL={client.logo.lqip}
                     />
                   </div>
                 ) : (

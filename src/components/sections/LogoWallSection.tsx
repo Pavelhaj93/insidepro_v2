@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import Image from "next/image";
 import AutoScroll from "embla-carousel-auto-scroll";
-import { urlFor } from "@/sanity/lib/image";
+import { sanityImageLoader, urlFor } from "@/sanity/lib/image";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import {
   Carousel,
@@ -14,7 +14,7 @@ import {
 type BrandLogo = {
   _id: string;
   name: string;
-  image?: { asset: { _ref: string } };
+  image?: { asset: { _ref: string }; lqip?: string };
   url?: string;
 };
 
@@ -101,11 +101,14 @@ function LogoWallRow({
         {slides.map((logo, i) => {
           const img = (
             <Image
-              src={urlFor(logo.image).height(200).url()}
+              src={urlFor(logo.image).url()}
+              loader={sanityImageLoader}
               alt={logo.name}
               width={160}
               height={60}
               className="h-6 sm:h-7 md:h-8 lg:h-9 w-auto object-contain brightness-0 invert"
+              placeholder={logo.image.lqip ? "blur" : "empty"}
+              blurDataURL={logo.image.lqip}
             />
           );
 

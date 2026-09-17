@@ -11,7 +11,7 @@ import { BrandButton } from "@/components/ui/BrandButton";
 
 type Props = {
   headline: PortableTextBlock[];
-  backgroundImage?: { asset: { _ref: string } };
+  backgroundImage?: { asset: { _ref: string }; lqip?: string };
   buttonLabel?: string;
   buttonLink?: string;
 };
@@ -44,6 +44,7 @@ export function CtaSection({
             intensity={10}
             sizes="110vw"
             quality={85}
+            blurDataURL={backgroundImage.lqip}
           />
           <div className="absolute inset-0 bg-brand-black/60" />
         </>

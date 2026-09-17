@@ -1,6 +1,6 @@
 import { groq } from "next-sanity";
 import { client } from "@/sanity/lib/client";
-import { referencePageQuery } from "@/sanity/lib/queries";
+import { lqip, referencePageQuery } from "@/sanity/lib/queries";
 import { ReferenceWorksSection } from "@/components/sections/ReferenceWorksSection";
 
 // Fallback used only when there's no `page` document with slug "reference"
@@ -9,7 +9,7 @@ import { ReferenceWorksSection } from "@/components/sections/ReferenceWorksSecti
 const FALLBACK_QUERY = groq`{
   "categories": *[_type == "category"] { _id, title, "slug": slug.current, order, "videoUrl": video.asset->url },
   "projects": *[_type == "project"] | order(publishedAt desc) {
-    _id, title, client, slug, coverImage, gallery, excerpt,
+    _id, title, client, slug, coverImage { ${lqip} }, gallery[] { ${lqip} }, excerpt,
     "categories": categories[]-> { _id, title, "slug": slug.current }
   }
 }`;

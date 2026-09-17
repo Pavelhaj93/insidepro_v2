@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { urlFor } from "@/sanity/lib/image";
+import { sanityImageLoader, urlFor } from "@/sanity/lib/image";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 // Matches LogoWallSection.tsx's `BrandLogo` — same `brandLogo` documents,
@@ -13,7 +13,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 type BrandLogo = {
   _id: string;
   name: string;
-  image?: { asset: { _ref: string } };
+  image?: { asset: { _ref: string }; lqip?: string };
   url?: string;
 };
 
@@ -82,11 +82,14 @@ export function LogoCarousel({ topRowLogos, bottomRowLogos }: Props) {
               className="relative h-9 w-24 shrink-0 opacity-60 grayscale transition-opacity duration-300 hover:opacity-100 hover:grayscale-0 md:h-10 md:w-28"
             >
               <Image
-                src={urlFor(logo.image).height(200).url()}
+                src={urlFor(logo.image).url()}
+                loader={sanityImageLoader}
                 alt={logo.name}
                 fill
                 sizes="112px"
                 className="object-contain object-center brightness-0 invert"
+                placeholder={logo.image.lqip ? "blur" : "empty"}
+                blurDataURL={logo.image.lqip}
               />
             </div>
           ))}

@@ -1,7 +1,7 @@
-import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
+import { SanityImage } from "@/components/ui/SanityImage";
 
-type SanityImage = { asset: { _ref: string } };
+type SanityImage = { asset: { _ref: string }; lqip?: string };
 
 type Props = {
   images?: SanityImage[];
@@ -42,12 +42,12 @@ export function OutputGalleryMosaic({ images, title, startIndex = 0 }: Props) {
                 wide ? "lg:col-span-2 aspect-4/3" : "aspect-4/3 lg:aspect-auto lg:h-full"
               }`}
             >
-              <Image
-                src={urlFor(image).width(1200).height(900).url()}
+              <SanityImage
+                src={urlFor(image).url()}
                 alt={`${title} — ${startIndex + index + 1}`}
-                fill
                 sizes="(min-width: 768px) 50vw, 100vw"
                 className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                blurDataURL={image.lqip}
               />
             </div>
           );

@@ -10,7 +10,7 @@ type TeamMember = {
   _id: string;
   name: string;
   role?: string;
-  photo?: { asset: { _ref: string } };
+  photo?: { asset: { _ref: string }; lqip?: string };
 };
 
 type Props = {
@@ -74,9 +74,10 @@ export function TeamShowcaseSection({
                     <SanityImage
                       src={urlFor(member.photo).url()}
                       alt={member.name}
-                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      sizes="(min-width: 1280px) 33vw, (min-width: 640px) 50vw, 100vw"
                       quality={85}
                       className="object-cover object-center grayscale scale-100 rotate-0 transition-all duration-500 ease-out group-hover:grayscale-0 group-hover:scale-110 group-hover:rotate-2"
+                      blurDataURL={member.photo.lqip}
                     />
                   )}
                 </div>

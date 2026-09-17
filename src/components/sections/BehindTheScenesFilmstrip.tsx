@@ -5,7 +5,7 @@ import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import AutoScroll from "embla-carousel-auto-scroll";
-import { urlFor } from "@/sanity/lib/image";
+import { sanityImageLoader, urlFor } from "@/sanity/lib/image";
 import {
   HorizontalScrollCards,
   type HorizontalCardRenderArgs,
@@ -14,7 +14,7 @@ import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carouse
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { SectionMarkerHeading } from "@/components/sections/SectionMarkerHeading";
 
-type SanityImage = { asset: { _ref: string } };
+type SanityImage = { asset: { _ref: string }; lqip?: string };
 
 type Props = {
   images?: SanityImage[];
@@ -55,11 +55,14 @@ function FilmFrameVisual({
 
       <div className="relative aspect-4/3 overflow-hidden rounded-lg bg-brand-dark">
         <Image
-          src={urlFor(image).width(800).height(600).url()}
+          src={urlFor(image).url()}
+          loader={sanityImageLoader}
           alt={`${title} — zákulisí ${index + 1}`}
           fill
           sizes="(min-width: 640px) 28vw, 70vw"
           className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+          placeholder={image.lqip ? "blur" : "empty"}
+          blurDataURL={image.lqip}
         />
         <span className="absolute bottom-2 right-3 font-display text-xs tracking-widest text-brand-light/60">
           {String(index + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
@@ -179,12 +182,14 @@ function Lightbox({
         className="relative aspect-4/3 w-full max-w-4xl"
       >
         <Image
-          src={urlFor(image).width(1800).height(1350).url()}
+          src={urlFor(image).url()}
+          loader={sanityImageLoader}
           alt={`${title} — zákulisí ${index + 1}`}
           fill
           sizes="90vw"
           className="object-contain"
-          priority
+          placeholder={image.lqip ? "blur" : "empty"}
+          blurDataURL={image.lqip}
         />
       </motion.div>
 

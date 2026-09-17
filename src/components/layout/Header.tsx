@@ -10,7 +10,7 @@ import {
   useMotionValueEvent,
 } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { urlFor } from "@/sanity/lib/image";
+import { sanityImageLoader, urlFor } from "@/sanity/lib/image";
 import { SocialLinks } from "./SocialLinks";
 import link from "next/link";
 
@@ -22,7 +22,7 @@ type SocialLinksValue = {
 };
 
 type Props = {
-  logo: { asset: { _ref: string } } | null;
+  logo: { asset: { _ref: string }; lqip?: string } | null;
   logoText: string;
   socialLinks: SocialLinksValue | null;
 };
@@ -74,11 +74,14 @@ export function Header({ logo, logoText, socialLinks }: Props) {
           <Link href="/" className="flex items-center">
             {logo ? (
               <Image
-                src={urlFor(logo).height(40).url()}
+                src={urlFor(logo).url()}
+                loader={sanityImageLoader}
                 alt="insidePRO"
                 width={80}
                 height={40}
                 className="h-8 w-auto object-contain"
+                placeholder={logo.lqip ? "blur" : "empty"}
+                blurDataURL={logo.lqip}
               />
             ) : (
               <span className="font-display font-bold text-lg tracking-widest text-brand-light">

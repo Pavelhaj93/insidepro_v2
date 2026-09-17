@@ -1,9 +1,14 @@
 import { groq } from "next-sanity";
 
+// Appended to a bare image field's projection to pull its LQIP blur-up
+// placeholder alongside everything `urlFor()` needs (asset ref, hotspot,
+// crop) — see skills/sanity-best-practices/references/image.md.
+export const lqip = groq`..., "lqip": asset->metadata.lqip`;
+
 // ─── Settings ────────────────────────────────────────────────────────────────
 
 export const settingsQuery = groq`*[_type == "settings"][0] {
-  _id, title, description, logoText, logo,
+  _id, title, description, logoText, logo { ${lqip} },
   socialLinks { instagram, linkedin, facebook, vimeo }
 }`;
 
@@ -21,8 +26,8 @@ const blocksProjection = groq`
     _type,
     _key,
     // heroSection
-    backgroundImage,
-    backgroundImageMobile,
+    backgroundImage { ${lqip} },
+    backgroundImageMobile { ${lqip} },
     backgroundVideo { asset->{ url, mimeType } },
     backgroundVideoMobile { asset->{ url, mimeType } },
     headline,
@@ -42,8 +47,8 @@ const blocksProjection = groq`
     // whoWeAreSection
     eyebrow,
     missionText,
-    leftPhotos,
-    rightImage,
+    leftPhotos[] { ${lqip} },
+    rightImage { ${lqip} },
     badgeText,
     // zoomTextSection
     accentColor,
@@ -54,7 +59,7 @@ const blocksProjection = groq`
     viewAllLabel,
     viewAllSlug,
     _type == "featuredWorksSection" => {
-      projects[]-> { _id, title, client, slug, coverImage, gallery, category, excerpt },
+      projects[]-> { _id, title, client, slug, coverImage { ${lqip} }, gallery[] { ${lqip} }, category, excerpt },
     },
     // referenceWorksSection — "projects" is an explicit, ordered curation
     // picked in Studio; falls back to every project tagged with one of the
@@ -64,11 +69,11 @@ const blocksProjection = groq`
       "categories": categories[]-> { _id, title, "slug": slug.current, order, "videoUrl": video.asset->url },
       "projects": select(
         count(projects) > 0 => projects[]-> {
-          _id, title, client, slug, coverImage, gallery, excerpt,
+          _id, title, client, slug, coverImage { ${lqip} }, gallery[] { ${lqip} }, excerpt,
           "categories": categories[]-> { _id, title, "slug": slug.current }
         },
         *[_type == "project" && references(^.categories[]._ref)] | order(publishedAt desc) {
-          _id, title, client, slug, coverImage, gallery, excerpt,
+          _id, title, client, slug, coverImage { ${lqip} }, gallery[] { ${lqip} }, excerpt,
           "categories": categories[]-> { _id, title, "slug": slug.current }
         }
       ),
@@ -86,7 +91,7 @@ const blocksProjection = groq`
     // twoColumnSection
     rightBodyText,
     // teamSection
-    teamMembers[]-> { _id, name, role, email, phone, photo },
+    teamMembers[]-> { _id, name, role, email, phone, photo { ${lqip} } },
     outroText,
     outroHighlight,
     ctaLabel,
@@ -94,15 +99,15 @@ const blocksProjection = groq`
     lightBackground,
     // filmShowcaseSection
     introText,
-    films[]-> { _id, title, slug, coverImage, description, director, production, coproducer, partners, status, "relatedProjectSlug": relatedProject->slug.current },
+    films[]-> { _id, title, slug, coverImage { ${lqip} }, description, director, production, coproducer, partners, status, "relatedProjectSlug": relatedProject->slug.current },
     // clientsSection
     supportLabel,
     layout,
     clients[] {
-      _type != "reference" => { name, logo, url, backgroundImage, quote, tagline },
+      _type != "reference" => { name, logo { ${lqip} }, url, backgroundImage { ${lqip} }, quote, tagline },
       _type == "reference" => @-> {
         "name": coalesce(client, title),
-        "backgroundImage": coverImage,
+        "backgroundImage": coverImage { ${lqip} },
         body,
         "tagline": excerpt,
         "slug": slug.current,
@@ -110,7 +115,7 @@ const blocksProjection = groq`
       },
     },
     // imageSection
-    image { asset->{ url, metadata { dimensions { width, height } } }, alt, hotspot },
+    image { asset->{ url, metadata { dimensions { width, height }, lqip } }, alt, hotspot },
     // infoBoxSection
     boxTitle,
     boxDescription,
@@ -122,8 +127,8 @@ const blocksProjection = groq`
     // textBlock
     number,
     // logoWallSection
-    topRowLogos[]-> { _id, name, image, url },
-    bottomRowLogos[]-> { _id, name, image, url },
+    topRowLogos[]-> { _id, name, image { ${lqip} }, url },
+    bottomRowLogos[]-> { _id, name, image { ${lqip} }, url },
     // separator
     width,
   }

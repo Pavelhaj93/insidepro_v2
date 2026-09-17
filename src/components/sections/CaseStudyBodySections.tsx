@@ -1,10 +1,10 @@
-import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
+import { SanityImage } from "@/components/ui/SanityImage";
 import { Reveal } from "@/components/motion/Reveal";
 import { SectionMarkerHeading } from "@/components/sections/SectionMarkerHeading";
 import type { CaseStudySection } from "@/lib/caseStudyBody";
 
-type SanityImage = { asset: { _ref: string } };
+type SanityImage = { asset: { _ref: string }; lqip?: string };
 
 type Props = {
   sections: CaseStudySection[];
@@ -54,12 +54,11 @@ export function CaseStudyBodySections({ sections, gallery = [], title }: Props) 
                       imageOnRight ? "lg:order-2" : "lg:order-1"
                     }`}
                   >
-                    <Image
-                      src={urlFor(image).width(1200).height(900).url()}
+                    <SanityImage
+                      src={urlFor(image).url()}
                       alt={`${title} — ${section.marker}`}
-                      fill
                       sizes="(min-width: 1024px) 50vw, 100vw"
-                      className="object-cover object-center"
+                      blurDataURL={image.lqip}
                     />
                   </div>
                 )}

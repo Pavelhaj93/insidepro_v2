@@ -12,7 +12,7 @@ type TeamMember = {
   role?: string;
   email?: string;
   phone?: string;
-  photo?: { asset: { _ref: string } };
+  photo?: { asset: { _ref: string }; lqip?: string };
 };
 
 type Props = {
@@ -62,6 +62,7 @@ export function TeamSection({
                     sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                     quality={85}
                     className="object-cover object-center grayscale scale-100 rotate-0 transition-all duration-500 ease-out group-hover:grayscale-0 group-hover:scale-110 group-hover:rotate-2"
+                    blurDataURL={member.photo.lqip}
                   />
                 )}
               </div>

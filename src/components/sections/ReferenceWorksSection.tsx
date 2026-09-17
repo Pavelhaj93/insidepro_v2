@@ -124,6 +124,14 @@ export function ReferenceWorksSection({
   const projectAspectClass = (index: number) =>
     isProjectWide(index) ? "aspect-4/3" : "aspect-4/3 lg:aspect-auto lg:h-full";
 
+  // Matches the grid above: 1 column below md, 2 columns md–lg, 3 columns
+  // from lg — where a wide card spans 2/3 of the row and a narrow one 1/3 —
+  // so the CDN is asked for a resolution matching each card's real width.
+  const projectSizes = (index: number) =>
+    isProjectWide(index)
+      ? "(min-width: 1024px) 66vw, (min-width: 768px) 50vw, 100vw"
+      : "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw";
+
   return (
     <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pt-36 md:pt-44 pb-24">
       <div className="mx-auto max-w-7xl">
@@ -187,6 +195,7 @@ export function ReferenceWorksSection({
                     <ProjectCard
                       project={project}
                       aspectClassName={projectAspectClass(index)}
+                      sizes={projectSizes(index)}
                     />
                   </div>
                 ))}
@@ -210,6 +219,7 @@ export function ReferenceWorksSection({
                       <ProjectCard
                         project={project}
                         aspectClassName={projectAspectClass(index)}
+                        sizes={projectSizes(index)}
                       />
                     </motion.div>
                   ))}

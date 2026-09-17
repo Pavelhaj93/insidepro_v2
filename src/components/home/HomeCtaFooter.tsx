@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { urlFor } from "@/sanity/lib/image";
+import { sanityImageLoader, urlFor } from "@/sanity/lib/image";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 import { SocialLinks } from "@/components/layout/SocialLinks";
 import { MapPinIcon } from "@/components/icons/MapPin";
@@ -16,7 +16,7 @@ type SocialLinksValue = {
   vimeo?: string | null;
 };
 
-type Logo = { asset: { _ref: string } };
+type Logo = { asset: { _ref: string }; lqip?: string };
 
 type Props = {
   logo?: Logo | null;
@@ -155,7 +155,8 @@ export function HomeCtaFooter({
             <div className="mt-8 flex justify-end lg:mt-auto">
               {logo ? (
                 <Image
-                  src={urlFor(logo).height(64).url()}
+                  src={urlFor(logo).url()}
+                  loader={sanityImageLoader}
                   alt={logoText ?? "insidePRO"}
                   width={160}
                   height={40}
@@ -163,6 +164,8 @@ export function HomeCtaFooter({
                   // homepage's light background instead of shipping a second
                   // dark-colored asset just for this one inverted case.
                   className={`h-10 w-auto sm:h-12 ${invert ? "" : "brightness-0"}`}
+                  placeholder={logo.lqip ? "blur" : "empty"}
+                  blurDataURL={logo.lqip}
                 />
               ) : (
                 <span className="font-display font-black text-lg uppercase tracking-wide sm:text-xl">

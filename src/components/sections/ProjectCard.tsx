@@ -3,9 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { urlFor } from "@/sanity/lib/image";
+import { sanityImageLoader, urlFor } from "@/sanity/lib/image";
 
-type SanityImage = { asset: { _ref: string } };
+type SanityImage = { asset: { _ref: string }; lqip?: string };
 
 type Project = {
   _id: string;
@@ -27,6 +27,14 @@ type Props = {
    * rather than keep the same aspect ratio at a smaller width.
    */
   aspectClassName?: string;
+  /**
+   * `next/image` `sizes` for the cover photo — defaults to a plain 2-column
+   * grid (`FeaturedWorksSection`). Override when the caller's grid varies a
+   * card's real rendered width (e.g. `ReferenceWorksSection`'s alternating
+   * wide/narrow 3-column layout), so the CDN is asked for a resolution that
+   * actually matches what's on screen.
+   */
+  sizes?: string;
 };
 
 function ArrowIcon({ direction }: { direction: "left" | "right" }) {
@@ -56,6 +64,7 @@ const NON_LINKABLE_SLUGS = new Set(["malva", "nad-obal"]);
 export function ProjectCard({
   project,
   aspectClassName = "aspect-4/3",
+  sizes = "(min-width: 768px) 50vw, 100vw",
 }: Props) {
   const isLinkable = !NON_LINKABLE_SLUGS.has(project.slug.current);
   const gallery = project.gallery?.filter(hasAsset) ?? [];
@@ -85,11 +94,14 @@ export function ProjectCard({
     <>
       {images[currentIndex] && (
         <Image
-          src={urlFor(images[currentIndex]).width(1200).height(900).url()}
+          src={urlFor(images[currentIndex]).url()}
+          loader={sanityImageLoader}
           alt={project.title}
           fill
-          sizes="(min-width: 768px) 50vw, 100vw"
+          sizes={sizes}
           className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+          placeholder={images[currentIndex].lqip ? "blur" : "empty"}
+          blurDataURL={images[currentIndex].lqip}
         />
       )}
 

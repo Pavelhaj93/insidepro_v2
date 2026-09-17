@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { groq } from "next-sanity";
 import { client } from "@/sanity/lib/client";
+import { lqip } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
+import { SanityImage } from "@/components/ui/SanityImage";
 import { Badge } from "@/components/ui/Badge";
 import { CaseStudyExtendedNarrative } from "@/components/sections/CaseStudyExtendedNarrative";
 import { CaseStudyBodySections } from "@/components/sections/CaseStudyBodySections";
@@ -17,7 +18,7 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-type SanityImage = { asset: { _ref: string } };
+type SanityImage = { asset: { _ref: string }; lqip?: string };
 
 type Project = {
   _id: string;
@@ -42,7 +43,9 @@ type Project = {
 };
 
 const PROJECT_QUERY = groq`*[_type == "project" && slug.current == $slug][0]{
-  _id, title, client, websiteUrl, "slug": slug.current, coverImage, gallery, behindTheScenesGallery, excerpt, body,
+  _id, title, client, websiteUrl, "slug": slug.current,
+  coverImage { ${lqip} }, gallery[] { ${lqip} }, behindTheScenesGallery[] { ${lqip} },
+  excerpt, body,
   "categories": categories[]->title,
   projectVideo-> { file { asset->{ url, mimeType } }, poster }
 }`;
@@ -99,13 +102,13 @@ export default async function CaseStudyPage({ params }: Props) {
     <main className="bg-brand-black text-brand-light">
       <section className="relative h-[70vh] min-h-125 w-full overflow-hidden">
         {project.coverImage && (
-          <Image
-            src={urlFor(project.coverImage).width(1920).url()}
+          <SanityImage
+            src={urlFor(project.coverImage).url()}
             alt={project.title}
-            fill
             sizes="100vw"
             className="object-cover object-center lg:object-[center_30%]"
             priority
+            blurDataURL={project.coverImage.lqip}
           />
         )}
         <div className="absolute inset-0 bg-linear-to-t from-brand-black via-brand-black/50 to-transparent" />
