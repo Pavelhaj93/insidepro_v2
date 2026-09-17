@@ -7,6 +7,19 @@ export const clientsSection = defineType({
   fields: [
     defineField({ name: 'label', title: 'Section Label', type: 'string', description: 'e.g. "NAŠI KLIENTI"' }),
     defineField({ name: 'supportLabel', title: 'Support Label', type: 'string', description: 'e.g. "NAŠÍ tvorbu podporují"' }),
+    defineField({
+      name: 'layout',
+      title: 'Layout',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Grid', value: 'grid' },
+          { title: 'Horizontal Scroll', value: 'horizontalScroll' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'grid',
+    }),
     defineField({ name: 'showViewAllLink', title: 'Show "View All" Link', type: 'boolean', initialValue: true }),
     defineField({ name: 'viewAllLabel', title: 'View All Label', type: 'string', initialValue: 'ZOBRAZIT VŠE' }),
     defineField({ name: 'viewAllSlug', title: 'View All Link Path', type: 'string', initialValue: '/klienti' }),

@@ -10,6 +10,8 @@ type Props = {
   quality?: number;
   priority?: boolean;
   className?: string;
+  /** LQIP base64 string from `asset->metadata.lqip` — shows a blurred preview while the real image loads. */
+  blurDataURL?: string;
 };
 
 /**
@@ -26,6 +28,7 @@ export function SanityImage({
   quality,
   priority,
   className = "object-cover object-center",
+  blurDataURL,
 }: Props) {
   return (
     <Image
@@ -37,6 +40,8 @@ export function SanityImage({
       quality={quality}
       priority={priority}
       className={className}
+      placeholder={blurDataURL ? "blur" : "empty"}
+      blurDataURL={blurDataURL}
     />
   );
 }

@@ -5,7 +5,15 @@ export const teamSection = defineType({
   title: 'Team Section',
   type: 'object',
   fields: [
+    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
+    defineField({
+      name: 'lightBackground',
+      title: 'Light Background (inverted)',
+      type: 'boolean',
+      initialValue: false,
+      description: 'Renders the section with a light background and dark text instead of the default dark theme.',
+    }),
     defineField({
       name: 'teamMembers',
       title: 'Team Members',

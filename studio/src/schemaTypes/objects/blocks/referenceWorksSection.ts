@@ -15,6 +15,13 @@ export const referenceWorksSection = defineType({
       description: 'Pick which categories show up as filter tabs, in this order. Only projects tagged with one of these categories are shown.',
       validation: Rule => Rule.min(1).error('Pick at least one category'),
     }),
+    defineField({
+      name: 'projects',
+      title: 'Projects',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'project' }] }],
+      description: 'Pick and order which projects appear on the Reference page. Leave empty to show every project tagged with one of the Categories above instead.',
+    }),
   ],
   preview: {
     select: { title: 'heading' },

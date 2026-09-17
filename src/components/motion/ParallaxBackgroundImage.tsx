@@ -13,6 +13,10 @@ type Props = {
   priority?: boolean;
   intensity?: number;
   className?: string;
+  /** LQIP base64 string from `asset->metadata.lqip` for `src`. */
+  blurDataURL?: string;
+  /** LQIP base64 string from `asset->metadata.lqip` for `mobileSrc`. */
+  mobileBlurDataURL?: string;
 };
 
 /**
@@ -31,6 +35,8 @@ export function ParallaxBackgroundImage({
   priority,
   intensity = 12,
   className = "object-cover object-center",
+  blurDataURL,
+  mobileBlurDataURL,
 }: Props) {
   return (
     <ParallaxLayer intensity={intensity}>
@@ -45,6 +51,8 @@ export function ParallaxBackgroundImage({
             quality={quality}
             className={`${className} block md:hidden`}
             priority={priority}
+            placeholder={mobileBlurDataURL ? "blur" : "empty"}
+            blurDataURL={mobileBlurDataURL}
           />
           <Image
             src={src}
@@ -55,6 +63,8 @@ export function ParallaxBackgroundImage({
             quality={quality}
             className={`${className} hidden md:block`}
             priority={priority}
+            placeholder={blurDataURL ? "blur" : "empty"}
+            blurDataURL={blurDataURL}
           />
         </>
       ) : (
@@ -67,6 +77,8 @@ export function ParallaxBackgroundImage({
           quality={quality}
           className={className}
           priority={priority}
+          placeholder={blurDataURL ? "blur" : "empty"}
+          blurDataURL={blurDataURL}
         />
       )}
     </ParallaxLayer>

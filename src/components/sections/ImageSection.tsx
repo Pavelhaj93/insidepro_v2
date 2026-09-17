@@ -7,7 +7,7 @@ type Props = {
   image?: {
     asset?: {
       url?: string;
-      metadata?: { dimensions?: { width: number; height: number } };
+      metadata?: { dimensions?: { width: number; height: number }; lqip?: string };
     };
     alt?: string;
   };
@@ -31,6 +31,7 @@ export function ImageSection({ image }: Props) {
           intensity={8}
           sizes="110vw"
           quality={85}
+          blurDataURL={image.asset.metadata?.lqip}
         />
       </Reveal>
     </section>

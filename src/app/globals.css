@@ -70,9 +70,120 @@
   animation: scroll-float 2.5s ease-in-out infinite;
 }
 
+/* Continuous right-to-left logo marquee (see LogoCarousel POC component).
+   Track content is rendered twice back-to-back, so sliding exactly 50% of
+   the track's own width loops seamlessly with no visible seam/reset. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee linear infinite;
+  animation-duration: var(--marquee-duration, 30s);
+}
+
+/* Second logo row, drifting the opposite way — a dedicated keyframe (rather
+   than `animation-direction: reverse` on `.animate-marquee`, which some
+   engines fail to actually animate when duration is set via a separate
+   `animation-duration` override) so it's guaranteed to move. */
+@keyframes marquee-reverse {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-marquee-reverse {
+  animation: marquee-reverse linear infinite;
+  animation-duration: var(--marquee-duration, 30s);
+}
+
+/* Slow continuous rotation for the circular badge on WhoWeAreSection (POC).
+   Deliberately NOT named "spin-*" — Tailwind v4 ships a built-in `animate-spin`
+   utility and silently drops any custom class/keyframes whose name starts
+   with "spin" instead of emitting them, even outside its own layer. */
+@keyframes badge-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-badge-rotate {
+  animation: badge-rotate 18s linear infinite;
+}
+
+/* Minimal hover effect for the fullscreen nav links (MenuNavLinkText): just
+   a color crossfade (light → gold) on the hovered link, combined with a
+   "spotlight" effect where sibling links dim in opacity while one is
+   active — no underline, no lift, no other decoration. .is-active and
+   .is-dimmed are toggled by JS state (hover/focus lifted up to
+   FullscreenMenu), same pattern as the other link effects. */
+.menu-link-text {
+  display: inline-block;
+  color: var(--color-brand-light);
+  opacity: 1;
+  transition:
+    color 0.35s ease,
+    opacity 0.35s ease;
+}
+
+.menu-link-text.is-active {
+  color: var(--color-brand-gold);
+}
+
+.menu-link-text.is-dimmed {
+  opacity: 0.35;
+}
+
+.menu-link-text.reduce-motion {
+  transition: none;
+}
+
+/* Shimmer sweep for skeleton/placeholder blocks (case-study design POC, see
+   src/components/ui/Skeleton.tsx). A soft gold-bronze sweep over brand-dark,
+   not a generic gray pulse, so placeholders read as on-brand rather than a
+   stock loading state. Reduced-motion falls back to a flat fill in JS instead
+   of using this class at all. */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -150% 0;
+  }
+  100% {
+    background-position: 150% 0;
+  }
+}
+
+.animate-skeleton-shimmer {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-brand-dark) 40%,
+    var(--color-brand-gold-light) 50%,
+    var(--color-brand-dark) 60%
+  );
+  background-size: 250% 100%;
+  animation: skeleton-shimmer 1.8s ease-in-out infinite;
+}
+
 /* ─── Base ───────────────────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
+}
+
+/* Hides the native cursor only while CustomCursor.tsx is actually active
+   (fine-pointer + motion-safe) — toggled via classList on <html>, not a
+   blanket rule, so touch/coarse-pointer and reduced-motion users keep the
+   OS cursor. The descendant selector matters: cursor:none on <html> alone
+   would be overridden by any element's own cursor-pointer/cursor-grab class. */
+.no-native-cursor,
+.no-native-cursor * {
+  cursor: none;
 }
 
 body {

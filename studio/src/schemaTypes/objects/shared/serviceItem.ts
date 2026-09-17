@@ -7,6 +7,14 @@ export const serviceItem = defineType({
   fields: [
     defineField({ name: 'number', title: 'Number', type: 'string' }),
     defineField({ name: 'title', title: 'Title', type: 'string', validation: Rule => Rule.required() }),
+    defineField({ name: 'subtitle', title: 'Subtitle', type: 'string' }),
+    defineField({
+      name: 'keywords',
+      title: 'Keywords',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: { layout: 'tags' },
+    }),
     defineField({
       name: 'description',
       title: 'Description',

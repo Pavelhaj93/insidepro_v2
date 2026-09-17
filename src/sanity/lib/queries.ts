@@ -1,9 +1,14 @@
 import { groq } from "next-sanity";
 
+// Appended to a bare image field's projection to pull its LQIP blur-up
+// placeholder alongside everything `urlFor()` needs (asset ref, hotspot,
+// crop) — see skills/sanity-best-practices/references/image.md.
+export const lqip = groq`..., "lqip": asset->metadata.lqip`;
+
 // ─── Settings ────────────────────────────────────────────────────────────────
 
 export const settingsQuery = groq`*[_type == "settings"][0] {
-  _id, title, description, logoText, logo,
+  _id, title, description, logoText, logo { ${lqip} },
   socialLinks { instagram, linkedin, facebook, vimeo }
 }`;
 
@@ -21,32 +26,57 @@ const blocksProjection = groq`
     _type,
     _key,
     // heroSection
-    backgroundImage,
-    backgroundImageMobile,
+    backgroundImage { ${lqip} },
+    backgroundImageMobile { ${lqip} },
     backgroundVideo { asset->{ url, mimeType } },
     backgroundVideoMobile { asset->{ url, mimeType } },
     headline,
     subtitle,
     showScrollIndicator,
     showSocialIcons,
-    // servicesListSection
+    // splitVideoRevealSection
+    kicker,
+    cornerHeadline,
+    video { asset->{ url, mimeType } },
+    mobileVideo { asset->{ url, mimeType } },
+    posterImage,
+    // servicesListSection / servicesAccordionSection
     label,
     leftHeading,
-    items[] { number, title, description, linkLabel, link },
+    items[] { number, title, subtitle, description, linkLabel, link, keywords },
+    // whoWeAreSection
+    eyebrow,
+    missionText,
+    leftPhotos[] { ${lqip} },
+    rightImage { ${lqip} },
+    badgeText,
+    // zoomTextSection
+    accentColor,
+    anchorIndex,
     // featuredWorksSection
     heading,
     showViewAllLink,
     viewAllLabel,
     viewAllSlug,
-    projects[]-> { _id, title, client, slug, coverImage, gallery, category, excerpt },
-    // referenceWorksSection
+    _type == "featuredWorksSection" => {
+      projects[]-> { _id, title, client, slug, coverImage { ${lqip} }, gallery[] { ${lqip} }, category, excerpt },
+    },
+    // referenceWorksSection — "projects" is an explicit, ordered curation
+    // picked in Studio; falls back to every project tagged with one of the
+    // selected categories when nothing's been curated yet.
     allLabel,
     _type == "referenceWorksSection" => {
-      "categories": categories[]-> { _id, title, "slug": slug.current },
-      "projects": *[_type == "project" && references(^.categories[]._ref)] | order(publishedAt desc) {
-        _id, title, client, slug, coverImage, gallery, excerpt,
-        "categories": categories[]-> { _id, title, "slug": slug.current }
-      },
+      "categories": categories[]-> { _id, title, "slug": slug.current, order, "videoUrl": video.asset->url },
+      "projects": select(
+        count(projects) > 0 => projects[]-> {
+          _id, title, client, slug, coverImage { ${lqip} }, gallery[] { ${lqip} }, excerpt,
+          "categories": categories[]-> { _id, title, "slug": slug.current }
+        },
+        *[_type == "project" && references(^.categories[]._ref)] | order(publishedAt desc) {
+          _id, title, client, slug, coverImage { ${lqip} }, gallery[] { ${lqip} }, excerpt,
+          "categories": categories[]-> { _id, title, "slug": slug.current }
+        }
+      ),
     },
     // ctaSection
     buttonLabel,
@@ -61,27 +91,31 @@ const blocksProjection = groq`
     // twoColumnSection
     rightBodyText,
     // teamSection
-    teamMembers[]-> { _id, name, role, email, phone, photo },
+    teamMembers[]-> { _id, name, role, email, phone, photo { ${lqip} } },
     outroText,
     outroHighlight,
     ctaLabel,
     ctaLink,
+    lightBackground,
     // filmShowcaseSection
     introText,
-    films[]-> { _id, title, slug, coverImage, description, director, production, coproducer, partners, status },
+    films[]-> { _id, title, slug, coverImage { ${lqip} }, description, director, production, coproducer, partners, status, "relatedProjectSlug": relatedProject->slug.current },
     // clientsSection
     supportLabel,
+    layout,
     clients[] {
-      _type != "reference" => { name, logo, url, backgroundImage, quote, tagline },
+      _type != "reference" => { name, logo { ${lqip} }, url, backgroundImage { ${lqip} }, quote, tagline },
       _type == "reference" => @-> {
         "name": coalesce(client, title),
-        "backgroundImage": coverImage,
+        "backgroundImage": coverImage { ${lqip} },
         body,
         "tagline": excerpt,
+        "slug": slug.current,
+        hoverVideo-> { file { asset->{ url, mimeType } } },
       },
     },
     // imageSection
-    image { asset->{ url, metadata { dimensions { width, height } } }, alt, hotspot },
+    image { asset->{ url, metadata { dimensions { width, height }, lqip } }, alt, hotspot },
     // infoBoxSection
     boxTitle,
     boxDescription,
@@ -93,7 +127,8 @@ const blocksProjection = groq`
     // textBlock
     number,
     // logoWallSection
-    logos[]-> { _id, name, image, url },
+    topRowLogos[]-> { _id, name, image { ${lqip} }, url },
+    bottomRowLogos[]-> { _id, name, image { ${lqip} }, url },
     // separator
     width,
   }
@@ -111,6 +146,14 @@ export const pageBySlugQuery = groq`*[_type == "page" && slug.current == $slug][
 
 export const pagesQuery = groq`*[_type == "page"] | order(_createdAt desc) {
   _id, title, slug, isHomepage
+}`;
+
+// Used by the showcase /reference route to pull its Reference Works Section
+// block's config (heading, categories, curated projects) straight off the
+// `page` document with that same slug — reuses the same `blocksProjection`
+// the generic page-builder pipeline uses, so the two never drift apart.
+export const referencePageQuery = groq`*[_type == "page" && slug.current == "reference"][0] {
+  ${blocksProjection}
 }`;
 
 // ─── Projects ─────────────────────────────────────────────────────────────────

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   PortableText,
   type PortableTextBlock,
@@ -8,10 +7,11 @@ import { urlFor } from "@/sanity/lib/image";
 import { ParallaxBackgroundImage } from "@/components/motion/ParallaxBackgroundImage";
 import { Reveal } from "@/components/motion/Reveal";
 import { MagneticButton } from "@/components/motion/MagneticButton";
+import { BrandButton } from "@/components/ui/BrandButton";
 
 type Props = {
   headline: PortableTextBlock[];
-  backgroundImage?: { asset: { _ref: string } };
+  backgroundImage?: { asset: { _ref: string }; lqip?: string };
   buttonLabel?: string;
   buttonLink?: string;
 };
@@ -44,31 +44,29 @@ export function CtaSection({
             intensity={10}
             sizes="110vw"
             quality={85}
+            blurDataURL={backgroundImage.lqip}
           />
           <div className="absolute inset-0 bg-brand-black/60" />
         </>
       )}
       {!backgroundImage && <div className="absolute inset-0 bg-brand-dark" />}
 
-      <div className="relative z-10 max-w-5xl mx-auto text-center">
+      {/* <div className="relative z-10 max-w-5xl mx-auto text-center">
         <Reveal>
-          <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-7xl 2xl:text-7xl uppercase leading-none text-brand-light mb-10">
+          <h2 className="font-display font-bold text-xl sm:text-2xl md:text-3xl lg:text-4xl uppercase leading-none text-brand-light mb-10">
             <PortableText value={headline} components={headlineComponents} />
           </h2>
         </Reveal>
         {buttonLabel && buttonLink && (
           <Reveal delay={0.15} className="inline-block">
             <MagneticButton>
-              <Link
-                href={buttonLink}
-                className="inline-block font-body text-sm tracking-widest uppercase px-8 py-4 border border-brand-light text-brand-light hover:bg-brand-light hover:text-brand-black transition-colors"
-              >
+              <BrandButton href={buttonLink} variant="gold">
                 {buttonLabel}
-              </Link>
+              </BrandButton>
             </MagneticButton>
           </Reveal>
         )}
-      </div>
+      </div> */}
     </section>
   );
 }
