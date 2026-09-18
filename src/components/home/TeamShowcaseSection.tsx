@@ -53,7 +53,7 @@ export function TeamShowcaseSection({
     <section
       className={`pl-6 pr-6 py-24 sm:pl-24 md:pr-10 lg:pl-48 lg:pr-24 ${invert ? "bg-brand-light" : ""}`}
     >
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <p
           className={`font-body text-sm tracking-widest uppercase mb-4 ${invert ? "text-brand-black/50" : "text-brand-gold"}`}
         >
@@ -65,7 +65,7 @@ export function TeamShowcaseSection({
           {heading}
         </h2>
 
-        <RevealStagger className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-10 gap-y-20">
+        <RevealStagger className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-10 xl:gap-x-14 gap-y-20">
           {teamMembers.map((member) => (
             <RevealItem key={member._id} className="group">
               <div className="relative aspect-3/4">
@@ -74,7 +74,7 @@ export function TeamShowcaseSection({
                     <SanityImage
                       src={urlFor(member.photo).url()}
                       alt={member.name}
-                      sizes="(min-width: 1280px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      sizes="(min-width: 1280px) 390px, (min-width: 640px) 50vw, 100vw"
                       quality={85}
                       className="object-cover object-center grayscale scale-100 rotate-0 transition-all duration-500 ease-out group-hover:grayscale-0 group-hover:scale-110 group-hover:rotate-2"
                       blurDataURL={member.photo.lqip}

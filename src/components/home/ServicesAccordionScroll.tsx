@@ -146,18 +146,18 @@ export function ServicesAccordionScroll({ label, heading, items = [] }: Props) {
 
                   <span
                     aria-hidden
-                    className={`relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full border text-brand-light transition-colors md:h-16 md:w-16 ${
+                    className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-brand-light transition-colors sm:h-14 sm:w-14 md:h-16 md:w-16 ${
                       isOpen ? "border-brand-gold" : "border-brand-light/30"
                     }`}
                   >
                     <span
-                      className="absolute h-px w-5 bg-current transition-transform duration-300 md:w-6"
+                      className="absolute h-px w-4 bg-current transition-transform duration-300 sm:w-5 md:w-6"
                       style={{
                         transform: isOpen ? "rotate(45deg)" : "rotate(0deg)",
                       }}
                     />
                     <span
-                      className="absolute h-px w-5 bg-current transition-transform duration-300 md:w-6"
+                      className="absolute h-px w-4 bg-current transition-transform duration-300 sm:w-5 md:w-6"
                       style={{
                         transform: isOpen ? "rotate(45deg)" : "rotate(90deg)",
                       }}
@@ -185,7 +185,7 @@ export function ServicesAccordionScroll({ label, heading, items = [] }: Props) {
                             />
                           </div>
                         )}
-                        <div className="grid grid-cols-1 content-start gap-3 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-3 lg:flex lg:flex-wrap lg:gap-3">
+                        <div className="flex flex-wrap content-start gap-3">
                           {service.keywords?.map((keyword) => (
                             <Badge key={keyword}>{keyword}</Badge>
                           ))}

@@ -8,6 +8,7 @@ type Props = {
   mimeType?: string;
   mobileSrc?: string;
   mobileMimeType?: string;
+  timecodeClassName?: string;
 };
 
 // Standard player timestamp: M:SS while under an hour (matches how long
@@ -39,6 +40,7 @@ export function HeroBackgroundVideo({
   mimeType = "video/mp4",
   mobileSrc,
   mobileMimeType = "video/mp4",
+  timecodeClassName,
 }: Props) {
   const reduceMotion = useReducedMotion();
   const [currentTime, setCurrentTime] = useState(0);
@@ -66,7 +68,12 @@ export function HeroBackgroundVideo({
         <source src={src} type={mimeType} />
       </video>
 
-      <div className="pointer-events-none absolute top-4 right-4 z-20 flex flex-col items-end gap-1.5 rounded-xl bg-black/50 px-3 py-2 backdrop-blur-sm md:top-6 md:right-6">
+      <div
+        className={
+          timecodeClassName ??
+          "pointer-events-none absolute top-4 right-4 z-20 flex flex-col items-end gap-1.5 rounded-xl bg-black/50 px-3 py-2 backdrop-blur-sm md:top-6 md:right-6"
+        }
+      >
         <span className="font-body text-xs tabular-nums tracking-wider text-brand-light/80">
           {formatTimecode(currentTime)} / {formatTimecode(duration)}
         </span>

@@ -121,7 +121,7 @@ export function SplitVideoReveal({
   if (reduceMotion) {
     return (
       <section className={`relative bg-black ${className ?? ""}`}>
-        <div className="relative h-screen w-full overflow-hidden">
+        <div className="relative h-svh w-full overflow-hidden">
           <HeroBackgroundVideo
             src={videoSrc}
             mimeType={videoMimeType}
@@ -136,7 +136,10 @@ export function SplitVideoReveal({
               )}
               {headline && (
                 <h1 className={headingClassName}>
-                  <PortableText value={headline} components={headlineComponents} />
+                  <PortableText
+                    value={headline}
+                    components={headlineComponents}
+                  />
                 </h1>
               )}
               {subtitle && (
@@ -149,7 +152,10 @@ export function SplitVideoReveal({
           {cornerHeadline && (
             <div className="absolute bottom-8 right-8 z-10 max-w-xs rounded-2xl bg-black/80 p-4 text-right md:bottom-12 md:right-12">
               <h2 className="font-display font-black uppercase text-xl sm:text-3xl leading-tight text-white">
-                <PortableText value={cornerHeadline} components={headlineComponents} />
+                <PortableText
+                  value={cornerHeadline}
+                  components={headlineComponents}
+                />
               </h2>
             </div>
           )}
@@ -165,16 +171,17 @@ export function SplitVideoReveal({
       className={`bg-black ${className ?? ""}`}
       style={{ height: `${totalVh}vh` }}
     >
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+      <div className="sticky top-0 h-svh w-full overflow-hidden">
         <HeroBackgroundVideo
           src={videoSrc}
           mimeType={videoMimeType}
           mobileSrc={mobileVideoSrc}
+          timecodeClassName="pointer-events-none absolute bottom-10 left-4 top-auto right-auto z-20 flex flex-col items-start gap-1.5 rounded-xl bg-black/50 px-3 py-2 backdrop-blur-sm sm:top-4 sm:right-4 sm:bottom-auto sm:left-auto sm:items-end md:top-6 md:right-6"
         />
         {/* <div className="absolute inset-0 z-0 bg-white" /> */}
 
         <motion.div
-          className="absolute inset-x-0 top-0 z-10 flex h-1/2 w-full items-start overflow-hidden bg-black px-6 pt-20 pb-6 text-white sm:inset-y-0 sm:inset-x-auto sm:left-0 sm:h-auto sm:w-1/2 sm:items-center sm:overflow-visible sm:pt-10 sm:pr-10 sm:pb-10 sm:pl-24 md:w-[52%] md:pt-14 md:pr-14 md:pb-14"
+          className="absolute inset-x-0 top-0 z-10 flex h-1/2 w-full items-center overflow-hidden bg-black px-6 pt-20 pb-6 text-white sm:inset-y-0 sm:inset-x-auto sm:left-0 sm:h-auto sm:w-1/2 sm:items-center sm:overflow-visible sm:pt-10 sm:pr-10 sm:pb-10 sm:pl-24 md:w-[52%] md:pt-14 md:pr-14 md:pb-14"
           style={isMobile ? { y: panelY } : { x: panelX }}
         >
           <div className="max-w-md sm:ml-8">
@@ -188,7 +195,10 @@ export function SplitVideoReveal({
                 className={headingClassName}
                 style={isMobile ? undefined : { x: headingExtraX }}
               >
-                <PortableText value={headline} components={headlineComponents} />
+                <PortableText
+                  value={headline}
+                  components={headlineComponents}
+                />
               </motion.h1>
             )}
             {subtitle && (
@@ -216,12 +226,15 @@ export function SplitVideoReveal({
         </motion.div>
 
         <motion.div
-          className="absolute z-10 max-w-[85vw] rounded-tl-4xl bg-black p-4 text-right bottom-4 right-0 sm:max-w-none sm:h-40 sm:bottom-8 sm:right-8 sm:w-100 sm:p-6 md:bottom-0 md:right-0 md:p-8 md:pr-12"
+          className="absolute z-10 max-w-[60vw] rounded-tl-4xl bg-black p-4 text-right bottom-4 right-0 sm:max-w-none sm:h-40 sm:bottom-8 sm:right-8 sm:w-100 sm:p-6 md:bottom-0 md:right-0 md:p-8 md:pr-12"
           style={isMobile ? { y: cornerYMobile } : { x: cornerX }}
         >
           {cornerHeadline && (
             <h2 className="font-display font-black uppercase text-base leading-tight text-white sm:text-3xl">
-              <PortableText value={cornerHeadline} components={headlineComponents} />
+              <PortableText
+                value={cornerHeadline}
+                components={headlineComponents}
+              />
             </h2>
           )}
           {/* Mirror of the panel's flush corner, attached to this box's left edge instead — desktop/tablet only. */}
