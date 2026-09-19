@@ -115,7 +115,7 @@ function CircularBadge({
   label: string;
 }) {
   return (
-    <div className="absolute bottom-4 left-4 z-20 flex h-24 w-24 items-center justify-center sm:bottom-5 sm:left-5 sm:h-32 sm:w-32">
+    <div className="absolute bottom-0 left-0 z-20 flex h-20 w-20 items-center justify-center sm:bottom-5 sm:left-5 sm:h-32 sm:w-32">
       <div className="absolute inset-0 rounded-full border border-brand-light bg-brand-black" />
       {/* Only the text ring spins — the logo sits outside this <svg>, so it
           stays perfectly still at the center while the text rotates around it. */}
@@ -213,14 +213,17 @@ export function WhoWeAreSection({
           {/* Landscape on mobile/tablet; fixed 570px on desktop, matching
               the reference's actual measured height. */}
           <div className="relative aspect-6/5 overflow-hidden rounded-tl-[3rem] rounded-tr-[3rem] rounded-br-[3rem] bg-brand-dark sm:aspect-16/11 lg:aspect-auto lg:h-142.5">
-            <PhotoCarousel images={leftPhotos ?? []} reduceMotion={reduceMotion} />
+            <PhotoCarousel
+              images={leftPhotos ?? []}
+              reduceMotion={reduceMotion}
+            />
           </div>
-          <InvertedCorner className="absolute rotate-90 left-32 sm:left-44 bottom-0 w-8 h-8 text-brand-black" />
-          <InvertedCorner className="absolute rotate-90 left-0 bottom-32 sm:bottom-44 w-8 h-8 text-brand-black" />
+          <InvertedCorner className="absolute rotate-90 left-24 sm:left-44 bottom-0 w-8 h-8 text-brand-black" />
+          <InvertedCorner className="absolute rotate-90 left-0 bottom-24 sm:bottom-44 w-8 h-8 text-brand-black" />
           {/* Backdrop matching the section background, so the badge
                 reads as sitting on a cut-out of the photo rather than just
                 floating over it — same idea as the reference's white box. */}
-          <div className="absolute bottom-0 left-0 z-10 h-32 w-32 rounded-tr-[5.5rem] bg-brand-black sm:h-44 sm:w-44" />
+          <div className="absolute bottom-0 left-0 z-10 h-24 w-24 rounded-tr-[3rem] sm:rounded-tr-[5.5rem] bg-brand-black sm:h-44 sm:w-44" />
           <CircularBadge
             reduceMotion={reduceMotion}
             logo={logo}
