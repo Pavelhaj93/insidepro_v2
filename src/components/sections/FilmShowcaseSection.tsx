@@ -115,7 +115,8 @@ export function FilmShowcaseSection({
 
           return (
             <RevealItem key={film._id} className="h-full">
-              {film.relatedProjectSlug ? (
+              {film.relatedProjectSlug &&
+              film.relatedProjectSlug !== "beyond-tomorrow" ? (
                 <Link
                   href={`/reference/${film.relatedProjectSlug}`}
                   className="group flex h-full flex-col"
