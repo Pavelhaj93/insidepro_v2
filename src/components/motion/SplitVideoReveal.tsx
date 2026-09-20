@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useLenis } from "lenis/react";
 import {
   PortableText,
   type PortableTextBlock,
@@ -12,6 +13,7 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { HeroBackgroundVideo } from "@/components/motion/HeroBackgroundVideo";
 import { MagneticButton } from "@/components/motion/MagneticButton";
 import { BrandButton } from "@/components/ui/BrandButton";
+import { scrollToAnchor } from "@/lib/scrollToAnchor";
 
 type SplitVideoRevealProps = {
   kicker?: string;
@@ -88,6 +90,18 @@ export function SplitVideoReveal({
   // corner card's own slide entirely — different enough from CSS breakpoint
   // tweaks that it needs a real JS check, not just responsive classes.
   const isMobile = useIsMobile();
+  const lenis = useLenis();
+
+  // The CTA button's `buttonLink` is typically an in-page anchor (e.g.
+  // "#home-cta-footer") — a plain native anchor jump gets fought by Lenis
+  // (see scrollToAnchor's own comment), so anchor links are intercepted and
+  // routed through Lenis instead. A full URL/path is left alone as a normal
+  // link.
+  function handleCtaClick(e: React.MouseEvent) {
+    if (!buttonLink?.startsWith("#")) return;
+    e.preventDefault();
+    scrollToAnchor(lenis, buttonLink);
+  }
 
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
@@ -187,7 +201,11 @@ export function SplitVideoReveal({
               {buttonLabel && buttonLink && (
                 <div className="inline-block mt-6">
                   <MagneticButton>
-                    <BrandButton href={buttonLink} variant="gold">
+                    <BrandButton
+                      href={buttonLink}
+                      onClick={handleCtaClick}
+                      variant="gold"
+                    >
                       {buttonLabel}
                     </BrandButton>
                   </MagneticButton>
@@ -256,7 +274,11 @@ export function SplitVideoReveal({
             {buttonLabel && buttonLink && (
               <div className="inline-block mt-4 sm:mt-6">
                 <MagneticButton>
-                  <BrandButton href={buttonLink} variant="gold">
+                  <BrandButton
+                    href={buttonLink}
+                    onClick={handleCtaClick}
+                    variant="gold"
+                  >
                     {buttonLabel}
                   </BrandButton>
                 </MagneticButton>

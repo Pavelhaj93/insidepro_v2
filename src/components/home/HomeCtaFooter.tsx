@@ -67,6 +67,7 @@ export function HomeCtaFooter({
 
   return (
     <footer
+      id="home-cta-footer"
       className={`${bgClass} pl-6 pr-6 pt-16 pb-8 sm:pl-24 sm:pt-20 sm:pb-10 md:pr-10 md:pt-28 md:pb-12 lg:pl-48 lg:pr-24`}
     >
       <div className="max-w-7xl mx-auto">
