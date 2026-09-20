@@ -11,8 +11,10 @@ import { CaseStudyBodySections } from "@/components/sections/CaseStudyBodySectio
 import { BehindTheScenesFilmstrip } from "@/components/sections/BehindTheScenesFilmstrip";
 import { OutputGalleryMosaic } from "@/components/sections/OutputGalleryMosaic";
 import { SectionMarkerHeading } from "@/components/sections/SectionMarkerHeading";
+import { ProjectPrevNextNav } from "@/components/sections/ProjectPrevNextNav";
 import { GlobeIcon } from "@/components/icons/Globe";
 import { parseCaseStudySections } from "@/lib/caseStudyBody";
+import { getOrderedReferenceProjects, getAdjacentProjects } from "@/lib/projects";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -87,10 +89,15 @@ const CASE_STUDY_DETAILS: Record<
 
 export default async function CaseStudyPage({ params }: Props) {
   const { slug } = await params;
-  const project: Project | null = await client.fetch(PROJECT_QUERY, { slug });
+  const [project, orderedProjects]: [Project | null, Awaited<ReturnType<typeof getOrderedReferenceProjects>>] =
+    await Promise.all([
+      client.fetch(PROJECT_QUERY, { slug }),
+      getOrderedReferenceProjects(),
+    ]);
 
   if (!project) notFound();
 
+  const adjacentProjects = getAdjacentProjects(orderedProjects, slug);
   const details = CASE_STUDY_DETAILS[slug];
   const bodySections = parseCaseStudySections(project.body);
   const leftoverGallery =
@@ -232,6 +239,10 @@ export default async function CaseStudyPage({ params }: Props) {
         title={project.title}
         startIndex={bodySections.length}
       />
+
+      {adjacentProjects && (
+        <ProjectPrevNextNav prev={adjacentProjects.prev} next={adjacentProjects.next} />
+      )}
     </main>
   );
 }

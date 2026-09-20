@@ -166,6 +166,30 @@ export const projectBySlugQuery = groq`*[_type == "project" && slug.current == $
   _id, title, client, slug, coverImage, category, excerpt, body, publishedAt
 }`;
 
+// ─── Reference project ordering (case-study prev/next nav) ──────────────────
+// Lean counterpart to blocksProjection's referenceWorksSection branch above —
+// same curated-projects-else-category-tagged-projects cascade, but only the
+// fields the prev/next nav needs (no images/excerpt/categories). Keep the
+// select() shape in sync with that branch if it ever changes.
+export const referenceWorksOrderQuery = groq`*[_type == "page" && slug.current == "reference"][0] {
+  "blocks": blocks[_type == "referenceWorksSection"][0] {
+    "hasCategories": count(categories) > 0,
+    "projects": select(
+      count(projects) > 0 => projects[]-> { _id, title, "slug": slug.current },
+      *[_type == "project" && references(^.categories[]._ref)] | order(publishedAt desc) {
+        _id, title, "slug": slug.current
+      }
+    )
+  }
+}`;
+
+// Page-level fallback used when the "reference" page doc doesn't exist yet,
+// or its referenceWorksSection has no categories configured — mirrors
+// FALLBACK_QUERY in src/app/reference/page.tsx exactly (keep both in sync).
+export const allProjectsOrderQuery = groq`*[_type == "project"] | order(publishedAt desc) {
+  _id, title, "slug": slug.current
+}`;
+
 // ─── Team ─────────────────────────────────────────────────────────────────────
 
 export const teamMembersQuery = groq`*[_type == "teamMember"] | order(order asc) {

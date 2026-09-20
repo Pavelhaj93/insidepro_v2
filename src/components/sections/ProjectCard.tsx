@@ -42,7 +42,11 @@ function hasAsset(
 
 // These projects have no case-study page worth linking to yet — the card
 // still shows in the grid, it just isn't clickable/navigable.
-const NON_LINKABLE_SLUGS = new Set(["malva", "nad-obal"]);
+export const NON_LINKABLE_SLUGS = new Set([
+  "malva",
+  "nad-obal",
+  "beyond-tomorrow",
+]);
 
 export function ProjectCard({
   project,
