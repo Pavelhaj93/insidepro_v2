@@ -33,6 +33,7 @@ import { richTextSection } from './objects/blocks/richTextSection'
 import { logoWallSection } from './objects/blocks/logoWallSection'
 import { textBlock } from './objects/blocks/textBlock'
 import { separator } from './objects/blocks/separator'
+import { contactFormSection } from './objects/blocks/contactFormSection'
 
 // Shared objects
 import { serviceItem } from './objects/shared/serviceItem'
@@ -75,6 +76,7 @@ export const schemaTypes = [
   logoWallSection,
   textBlock,
   separator,
+  contactFormSection,
   // Shared objects
   serviceItem,
   processStep,

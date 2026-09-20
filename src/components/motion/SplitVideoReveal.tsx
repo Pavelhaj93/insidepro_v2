@@ -10,6 +10,8 @@ import {
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { HeroBackgroundVideo } from "@/components/motion/HeroBackgroundVideo";
+import { MagneticButton } from "@/components/motion/MagneticButton";
+import { BrandButton } from "@/components/ui/BrandButton";
 
 type SplitVideoRevealProps = {
   kicker?: string;
@@ -19,6 +21,8 @@ type SplitVideoRevealProps = {
   videoSrc: string;
   videoMimeType?: string;
   mobileVideoSrc?: string;
+  buttonLabel?: string;
+  buttonLink?: string;
   /** Scroll distance (vh) over which the panel/corner slide apart. */
   revealVh?: number;
   /** Extra scroll (vh) to hold the fully-revealed video before the next section can start covering it. */
@@ -72,6 +76,8 @@ export function SplitVideoReveal({
   videoSrc,
   videoMimeType,
   mobileVideoSrc,
+  buttonLabel,
+  buttonLink,
   revealVh = 150,
   holdVh = 20,
   className,
@@ -178,6 +184,15 @@ export function SplitVideoReveal({
                   {subtitle}
                 </p>
               )}
+              {buttonLabel && buttonLink && (
+                <div className="inline-block mt-6">
+                  <MagneticButton>
+                    <BrandButton href={buttonLink} variant="gold">
+                      {buttonLabel}
+                    </BrandButton>
+                  </MagneticButton>
+                </div>
+              )}
             </div>
           </div>
           {cornerHeadline && (
@@ -237,6 +252,15 @@ export function SplitVideoReveal({
               <p className="font-display font-bold uppercase text-sm leading-snug text-brand-light/80 sm:text-xl">
                 {subtitle}
               </p>
+            )}
+            {buttonLabel && buttonLink && (
+              <div className="inline-block mt-4 sm:mt-6">
+                <MagneticButton>
+                  <BrandButton href={buttonLink} variant="gold">
+                    {buttonLabel}
+                  </BrandButton>
+                </MagneticButton>
+              </div>
             )}
           </div>
           {/*

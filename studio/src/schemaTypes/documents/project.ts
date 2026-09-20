@@ -59,11 +59,11 @@ export const project = defineType({
       description: 'Plays on hover over this project\'s card in the homepage client showcase (falls back to Cover Image if empty)',
     }),
     defineField({
-      name: 'projectVideo',
-      title: 'Project Video (optional)',
-      type: 'reference',
-      to: [{ type: 'video' }],
-      description: 'Shown as a video player on this project\'s case-study page',
+      name: 'projectVideos',
+      title: 'Project Videos (optional)',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'video' }] }],
+      description: 'Shown as stacked video players on this project\'s case-study page',
     }),
     defineField({
       name: 'categories',

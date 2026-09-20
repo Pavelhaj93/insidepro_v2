@@ -15,6 +15,7 @@ import { RichTextSection } from "./sections/RichTextSection";
 import { LogoWallSection } from "./sections/LogoWallSection";
 import { TextBlockSection } from "./sections/TextBlockSection";
 import { Separator } from "./sections/Separator";
+import { ContactFormSection } from "./sections/ContactFormSection";
 import { SplitVideoReveal } from "@/components/motion/SplitVideoReveal";
 import { ZoomTextTransition } from "@/components/motion/ZoomTextTransition";
 import { ServicesAccordionScroll } from "@/components/home/ServicesAccordionScroll";
@@ -49,6 +50,8 @@ export function SectionRenderer({ blocks, settings }: SectionRendererProps) {
                 videoSrc={block.video?.asset?.url}
                 videoMimeType={block.video?.asset?.mimeType}
                 mobileVideoSrc={block.mobileVideo?.asset?.url}
+                buttonLabel={block.buttonLabel}
+                buttonLink={block.buttonLink}
               />
             );
           case "servicesListSection":
@@ -149,6 +152,8 @@ export function SectionRenderer({ blocks, settings }: SectionRendererProps) {
             return <TextBlockSection key={block._key} {...block} />;
           case "separator":
             return <Separator key={block._key} {...block} />;
+          case "contactFormSection":
+            return <ContactFormSection key={block._key} {...block} />;
           default:
             return null;
         }

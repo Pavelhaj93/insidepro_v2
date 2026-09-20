@@ -46,7 +46,7 @@ type ReferenceItem = {
   body?: { _type: string; children?: { _type: "span"; text?: string; marks?: string[] }[] }[];
   gallery?: SanityImageT[];
   behindTheScenesGallery?: SanityImageT[];
-  projectVideo?: VideoField;
+  projectVideos?: VideoField[];
   // Film-only fields (undefined on "project" docs)
   description?: string;
   yearOfProduction?: string;
@@ -108,7 +108,10 @@ export default async function CaseStudyPage({ params }: Props) {
   // project missing "Jak to vznikalo" jumps straight to "02 Výsledek"
   // instead of leaving a gap at "02" or hardcoding "03"/"04".
   const hasBehindTheScenes = !isFilm && (item.behindTheScenesGallery?.length ?? 0) > 0;
-  const hasResultVideo = !isFilm && Boolean(item.projectVideo?.file?.asset?.url);
+  const resultVideos = isFilm
+    ? []
+    : (item.projectVideos ?? []).filter((video) => Boolean(video.file?.asset?.url));
+  const hasResultVideo = resultVideos.length > 0;
   const hasResultPhotos = !isFilm && leftoverGallery.length > 0;
   const showResultSection = hasResultVideo || hasResultPhotos;
 
@@ -273,21 +276,22 @@ export default async function CaseStudyPage({ params }: Props) {
         />
       )}
 
-      {!isFilm && item.projectVideo?.file?.asset?.url && (
+      {hasResultVideo && (
         <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-16 md:pb-24">
           <div className="mx-auto max-w-7xl">
             <SectionMarkerHeading marker={resultMarker} heading="Výsledek" />
-            <video
-              src={item.projectVideo.file.asset.url}
-              poster={
-                item.projectVideo.poster
-                  ? urlFor(item.projectVideo.poster).width(1920).url()
-                  : undefined
-              }
-              controls
-              playsInline
-              className="aspect-video w-full rounded-4xl bg-brand-dark"
-            />
+            <div className="flex flex-col gap-6 md:gap-8">
+              {resultVideos.map((video, index) => (
+                <video
+                  key={index}
+                  src={video.file!.asset!.url}
+                  poster={video.poster ? urlFor(video.poster).width(1920).url() : undefined}
+                  controls
+                  playsInline
+                  className="aspect-video w-full rounded-4xl bg-brand-dark"
+                />
+              ))}
+            </div>
           </div>
         </section>
       )}

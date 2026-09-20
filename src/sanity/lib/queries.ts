@@ -146,6 +146,10 @@ const blocksProjection = groq`
     bottomRowLogos[]-> { _id, name, image { ${lqip} }, url },
     // separator
     width,
+    // contactFormSection
+    headingLine1,
+    headingLine2,
+    successMessage,
   }
 `;
 
@@ -239,7 +243,7 @@ export const referenceDetailQuery = groq`*[(_type == "project" || _type == "film
   body,
   gallery[] { ${lqip} },
   behindTheScenesGallery[] { ${lqip} },
-  projectVideo-> { file { asset->{ url, mimeType } }, poster },
+  projectVideos[]-> { file { asset->{ url, mimeType } }, poster },
   // film-only fields (undefined on "project" docs)
   description,
   yearOfProduction,

@@ -41,6 +41,7 @@ export const page = defineType({
         { type: 'logoWallSection' },
         { type: 'textBlock' },
         { type: 'separator' },
+        { type: 'contactFormSection' },
       ],
     }),
     defineField({ name: 'seoTitle', title: 'SEO Title', type: 'string', group: 'seo' }),
