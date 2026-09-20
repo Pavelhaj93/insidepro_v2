@@ -140,12 +140,12 @@ export const homepageQuery = groq`*[_type == "page" && isHomepage == true][0] {
 }`;
 
 export const pageBySlugQuery = groq`*[_type == "page" && slug.current == $slug][0] {
-  _id, title, slug, seoTitle, seoDescription, seoImage,
+  _id, title, slug, seoTitle, seoDescription, seoImage, isPublished,
   ${blocksProjection}
 }`;
 
 export const pagesQuery = groq`*[_type == "page"] | order(_createdAt desc) {
-  _id, title, slug, isHomepage
+  _id, title, slug, isHomepage, isPublished
 }`;
 
 // Used by the showcase /reference route to pull its Reference Works Section

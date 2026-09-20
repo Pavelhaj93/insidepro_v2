@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
-import { sanityImageLoader, urlFor } from "@/sanity/lib/image";
+import { urlFor } from "@/sanity/lib/image";
+import { SanityImage } from "@/components/ui/SanityImage";
 
 type SanityImage = { asset: { _ref: string }; lqip?: string };
 
@@ -65,14 +65,11 @@ export function ProjectCard({
   const cardContent = (
     <>
       {image && (
-        <Image
+        <SanityImage
           src={urlFor(image).url()}
-          loader={sanityImageLoader}
           alt={project.title}
-          fill
           sizes={sizes}
           className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-          placeholder={image.lqip ? "blur" : "empty"}
           blurDataURL={image.lqip}
         />
       )}

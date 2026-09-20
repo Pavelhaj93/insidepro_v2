@@ -19,6 +19,11 @@ type SanityImage = { asset: { _ref: string }; lqip?: string };
 type Props = {
   images?: SanityImage[];
   title: string;
+  /** Chapter number for this section's heading — computed by the caller so
+   * numbering stays sequential when earlier/later optional sections are
+   * absent (e.g. becomes "02" instead of "03" when there's only one text
+   * section above it). */
+  marker: string;
 };
 
 const PERFORATIONS = Array.from({ length: 8 });
@@ -218,7 +223,7 @@ function Lightbox({
  * primitive, same as the homepage's `ClientShowcaseHorizontal`), and opens
  * a full-screen lightbox on click.
  */
-export function BehindTheScenesFilmstrip({ images, title }: Props) {
+export function BehindTheScenesFilmstrip({ images, title, marker }: Props) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const reduceMotion = useReducedMotion();
 
@@ -240,14 +245,14 @@ export function BehindTheScenesFilmstrip({ images, title }: Props) {
 
   const heading = (
     <div className="max-w-7xl mx-auto">
-      <SectionMarkerHeading marker="03" heading="Jak to vznikalo" className="mb-0" />
+      <SectionMarkerHeading marker={marker} heading="Jak to vznikalo" className="mb-0" />
     </div>
   );
 
   return (
     <>
       <section className="bg-brand-black px-6 py-16 sm:hidden">
-        <SectionMarkerHeading marker="03" heading="Jak to vznikalo" className="mb-10" />
+        <SectionMarkerHeading marker={marker} heading="Jak to vznikalo" className="mb-10" />
         <Carousel
           opts={mobileOpts}
           plugins={mobilePlugins}

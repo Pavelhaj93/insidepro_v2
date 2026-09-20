@@ -13,7 +13,10 @@ type Props = {
 export async function generateStaticParams() {
   const pages = await client.fetch(pagesQuery)
   return pages
-    .filter((p: { isHomepage?: boolean; slug?: { current: string } }) => !p.isHomepage && p.slug?.current)
+    .filter(
+      (p: { isHomepage?: boolean; isPublished?: boolean; slug?: { current: string } }) =>
+        !p.isHomepage && p.isPublished !== false && p.slug?.current,
+    )
     .map((p: { slug: { current: string } }) => ({ slug: p.slug.current }))
 }
 
@@ -31,7 +34,11 @@ export default async function DynamicPage({ params }: Props) {
   const { slug } = await params
   const page = await client.fetch(pageBySlugQuery, { slug })
 
-  if (!page) notFound()
+  // isPublished === false keeps the page out of generateStaticParams above,
+  // but Next still serves unknown [slug] params on demand (dynamicParams
+  // defaults to true) — this guard is what actually makes a direct visit to
+  // its URL 404 instead of falling through to a live render.
+  if (!page || page.isPublished === false) notFound()
 
   return (
     <main>

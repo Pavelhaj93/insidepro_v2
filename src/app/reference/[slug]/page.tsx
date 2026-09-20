@@ -105,6 +105,21 @@ export default async function CaseStudyPage({ params }: Props) {
       ? (project.gallery ?? []).slice(bodySections.length)
       : (project.gallery ?? []);
 
+  // Chapter numbering after the 01/02 text sections stays sequential even
+  // when a project has no behind-the-scenes photos and/or no result video —
+  // each optional section only claims a number if it actually renders, so a
+  // project missing "Jak to vznikalo" jumps straight to "02 Výsledek"
+  // instead of leaving a gap at "02" or hardcoding "03"/"04".
+  const hasBehindTheScenes = (project.behindTheScenesGallery?.length ?? 0) > 0;
+  const hasResultVideo = Boolean(project.projectVideo?.file?.asset?.url);
+  const hasResultPhotos = leftoverGallery.length > 0;
+  const showResultSection = hasResultVideo || hasResultPhotos;
+
+  const behindTheScenesMarker = String(bodySections.length + 1).padStart(2, "0");
+  const resultMarker = String(
+    bodySections.length + (hasBehindTheScenes ? 2 : 1),
+  ).padStart(2, "0");
+
   return (
     <main className="bg-brand-black text-brand-light">
       <section className="relative h-[70vh] min-h-125 w-full overflow-hidden">
@@ -210,15 +225,18 @@ export default async function CaseStudyPage({ params }: Props) {
         />
       )}
 
-      <BehindTheScenesFilmstrip
-        images={project.behindTheScenesGallery}
-        title={project.title}
-      />
+      {hasBehindTheScenes && (
+        <BehindTheScenesFilmstrip
+          images={project.behindTheScenesGallery}
+          title={project.title}
+          marker={behindTheScenesMarker}
+        />
+      )}
 
       {project.projectVideo?.file?.asset?.url && (
         <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-16 md:pb-24">
           <div className="mx-auto max-w-7xl">
-            <SectionMarkerHeading marker="04" heading="Výsledek" />
+            <SectionMarkerHeading marker={resultMarker} heading="Výsledek" />
             <video
               src={project.projectVideo.file.asset.url}
               poster={
@@ -238,6 +256,7 @@ export default async function CaseStudyPage({ params }: Props) {
         images={leftoverGallery}
         title={project.title}
         startIndex={bodySections.length}
+        marker={!hasResultVideo && showResultSection ? resultMarker : undefined}
       />
 
       {adjacentProjects && (
