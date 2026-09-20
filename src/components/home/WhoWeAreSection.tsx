@@ -66,7 +66,7 @@ function PhotoCarousel({
       ))}
 
       {images.length > 1 && (
-        <div className="absolute bottom-4 left-[calc(50%+4rem)] z-10 flex -translate-x-1/2 gap-2 sm:left-1/2 sm:bottom-5">
+        <div className="absolute bottom-4 left-[calc(50%+3rem)] z-10 flex -translate-x-1/2 gap-2 sm:left-1/2 sm:bottom-5">
           {images.map((image, index) => (
             <button
               key={image.asset._ref}
@@ -182,7 +182,7 @@ export function WhoWeAreSection({
   const reduceMotion = useReducedMotion();
 
   return (
-    <section className="bg-brand-black pl-6 sm:pl-24 lg:pl-48 pr-6 py-24 md:pr-10 md:py-16 lg:pr-24 lg:flex lg:items-center">
+    <section className="bg-brand-black pl-6 sm:pl-24 lg:pl-48 pr-6 py-16 md:pr-10 lg:pr-24 lg:flex lg:items-center">
       {/* Column split confirmed from the live reference's actual markup
           (image `sizes` attrs: 65% / 35% of the content width) — not a
           rough guess.

@@ -1,9 +1,10 @@
-export type NavLink = { label: string; href: string };
+export type NavLink = { label: string; href: string; isDisabled?: boolean };
 
 export const NAV_LINKS: NavLink[] = [
   { label: "Úvod", href: "/" },
   { label: "Reference", href: "/reference" },
   { label: "Filmy", href: "/filmy" },
+  { label: "Blog", href: "/blog", isDisabled: true },
   { label: "Kariéra", href: "/kariera" },
   { label: "Kontakt", href: "/kontakt" },
 ];

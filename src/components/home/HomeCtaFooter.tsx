@@ -55,8 +55,12 @@ export function HomeCtaFooter({
   const pathname = usePathname();
   const invert = pathname !== "/";
 
-  const bgClass = invert ? "bg-brand-black text-brand-light" : "bg-brand-light text-brand-black";
-  const borderClass = invert ? "border-brand-light/15" : "border-brand-black/15";
+  const bgClass = invert
+    ? "bg-brand-black text-brand-light"
+    : "bg-brand-light text-brand-black";
+  const borderClass = invert
+    ? "border-brand-light/15"
+    : "border-brand-black/15";
   const labelClass = invert ? "text-brand-light/50" : "text-brand-black/50";
   const linkClass = invert ? "text-brand-light" : "text-brand-black";
   const legalClass = invert ? "text-brand-light/40" : "text-brand-black/40";
@@ -94,9 +98,13 @@ export function HomeCtaFooter({
           </div>
         </Reveal>
 
-        <RevealStagger className={`grid grid-cols-1 gap-10 mt-16 pt-10 border-t ${borderClass} sm:mt-20 sm:grid-cols-2 lg:grid-cols-3`}>
+        <RevealStagger
+          className={`grid grid-cols-1 gap-10 mt-16 pt-10 border-t ${borderClass} sm:mt-20 sm:grid-cols-2 lg:grid-cols-3`}
+        >
           <RevealItem>
-            <p className={`font-body text-xs tracking-widest uppercase ${labelClass} mb-4`}>
+            <p
+              className={`font-body text-xs tracking-widest uppercase ${labelClass} mb-4`}
+            >
               Stránky
             </p>
             <ul className="flex flex-col gap-2">
@@ -105,6 +113,8 @@ export function HomeCtaFooter({
                   <Link
                     href={link.href}
                     className={`font-display font-bold text-lg uppercase ${linkClass} hover:text-brand-gold transition-colors`}
+                    aria-disabled={link.isDisabled}
+                    tabIndex={link.isDisabled ? -1 : 0}
                   >
                     {link.label}
                   </Link>
@@ -114,7 +124,9 @@ export function HomeCtaFooter({
           </RevealItem>
 
           <RevealItem>
-            <p className={`font-body text-xs tracking-widest uppercase ${labelClass} mb-4`}>
+            <p
+              className={`font-body text-xs tracking-widest uppercase ${labelClass} mb-4`}
+            >
               Kontakt
             </p>
             <div className="flex flex-col gap-2">
@@ -138,7 +150,9 @@ export function HomeCtaFooter({
           </RevealItem>
 
           <RevealItem className="flex h-full flex-col">
-            <p className={`font-body text-xs tracking-widest uppercase ${labelClass} mb-4`}>
+            <p
+              className={`font-body text-xs tracking-widest uppercase ${labelClass} mb-4`}
+            >
               Sledujte nás
             </p>
             {socialLinks && (
@@ -176,7 +190,9 @@ export function HomeCtaFooter({
           </RevealItem>
         </RevealStagger>
 
-        <div className={`mt-16 pt-6 border-t ${borderClass} flex flex-col md:flex-row items-center justify-between gap-2 text-center md:text-left`}>
+        <div
+          className={`mt-16 pt-6 border-t ${borderClass} flex flex-col md:flex-row items-center justify-between gap-2 text-center md:text-left`}
+        >
           {copyrightText && (
             <p className={`font-body text-xs ${labelClass}`}>
               © {new Date().getFullYear()} {copyrightText}
