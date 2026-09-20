@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useInViewport } from "@/hooks/useInViewport";
 
 type Props = {
   src: string;
@@ -9,6 +10,11 @@ type Props = {
   mobileSrc?: string;
   mobileMimeType?: string;
   timecodeClassName?: string;
+  /** Forces playback off regardless of viewport intersection — for callers
+   *  that visually occlude the video via CSS (e.g. SplitVideoReveal's
+   *  sticky video getting covered by the next section) even though it's
+   *  still geometrically inside the viewport. */
+  forcePause?: boolean;
 };
 
 // Standard player timestamp: M:SS while under an hour (matches how long
@@ -41,10 +47,28 @@ export function HeroBackgroundVideo({
   mobileSrc,
   mobileMimeType = "video/mp4",
   timecodeClassName,
+  forcePause = false,
 }: Props) {
   const reduceMotion = useReducedMotion();
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const isInViewport = useInViewport(videoRef);
+  const shouldPlay = isInViewport && !forcePause;
+
+  useEffect(() => {
+    const node = videoRef.current;
+    if (!node) return;
+
+    if (shouldPlay) {
+      // Interrupted play() calls (rapid scroll direction changes, dev
+      // StrictMode's double-invoke) reject with AbortError — expected, not
+      // an error condition, so it's swallowed rather than logged.
+      node.play().catch(() => {});
+    } else {
+      node.pause();
+    }
+  }, [shouldPlay]);
 
   if (reduceMotion) return null;
 
@@ -53,12 +77,12 @@ export function HeroBackgroundVideo({
   return (
     <>
       <video
+        ref={videoRef}
         className="absolute inset-0 w-full h-full object-cover object-center"
-        autoPlay
         muted
         loop
         playsInline
-        preload="auto"
+        preload="metadata"
         onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)}
         onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
       >

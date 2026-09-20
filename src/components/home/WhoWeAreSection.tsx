@@ -141,9 +141,11 @@ function CircularBadge({
         </text>
       </svg>
       <div className="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full sm:h-18 sm:w-18">
+        {/* The logo is black how can I change it to white ?  */}
         {logo ? (
           <Image
             src={urlFor(logo).url()}
+            style={{ filter: "invert(1)" }}
             loader={sanityImageLoader}
             alt="insidePRO"
             fill

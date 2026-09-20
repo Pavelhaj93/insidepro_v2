@@ -108,16 +108,24 @@ export function HomeCtaFooter({
               Stránky
             </p>
             <ul className="flex flex-col gap-2">
+              {/* links filtered by isDisabled flag, it should map and when it is isDisabled, render nonclickable text */}
+
               {navLinks.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className={`font-display font-bold text-lg uppercase ${linkClass} hover:text-brand-gold transition-colors`}
-                    aria-disabled={link.isDisabled}
-                    tabIndex={link.isDisabled ? -1 : 0}
-                  >
-                    {link.label}
-                  </Link>
+                  {link.isDisabled ? (
+                    <span
+                      className={`font-display font-bold text-lg uppercase ${linkClass} text-gray-400 cursor-not-allowed`}
+                    >
+                      {link.label}
+                    </span>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className={`font-display font-bold text-lg uppercase ${linkClass} hover:text-brand-gold transition-colors`}
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
