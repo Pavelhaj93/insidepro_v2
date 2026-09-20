@@ -26,7 +26,7 @@ type Project = {
   client?: string;
   slug: { current: string };
   coverImage?: SanityImage;
-  gallery?: SanityImage[];
+  cardImage?: SanityImage;
   excerpt?: string;
   categories?: Category[];
 };

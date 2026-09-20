@@ -59,7 +59,7 @@ const blocksProjection = groq`
     viewAllLabel,
     viewAllSlug,
     _type == "featuredWorksSection" => {
-      projects[]-> { _id, title, client, slug, coverImage { ${lqip} }, gallery[] { ${lqip} }, category, excerpt },
+      projects[]-> { _id, title, client, slug, coverImage { ${lqip} }, cardImage { ${lqip} }, category, excerpt },
     },
     // referenceWorksSection — "projects" is an explicit, ordered curation
     // picked in Studio; falls back to every project tagged with one of the
@@ -69,11 +69,11 @@ const blocksProjection = groq`
       "categories": categories[]-> { _id, title, "slug": slug.current, order, "videoUrl": video.asset->url },
       "projects": select(
         count(projects) > 0 => projects[]-> {
-          _id, title, client, slug, coverImage { ${lqip} }, gallery[] { ${lqip} }, excerpt,
+          _id, title, client, slug, coverImage { ${lqip} }, cardImage { ${lqip} }, excerpt,
           "categories": categories[]-> { _id, title, "slug": slug.current }
         },
         *[_type == "project" && references(^.categories[]._ref)] | order(publishedAt desc) {
-          _id, title, client, slug, coverImage { ${lqip} }, gallery[] { ${lqip} }, excerpt,
+          _id, title, client, slug, coverImage { ${lqip} }, cardImage { ${lqip} }, excerpt,
           "categories": categories[]-> { _id, title, "slug": slug.current }
         }
       ),

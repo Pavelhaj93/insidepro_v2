@@ -16,11 +16,18 @@ export const project = defineType({
     defineField({ name: 'slug', title: 'Slug', type: 'slug', options: { source: 'title' }, validation: Rule => Rule.required() }),
     defineField({ name: 'coverImage', title: 'Cover Image', type: 'image', options: { hotspot: true } }),
     defineField({
+      name: 'cardImage',
+      title: 'Card Image',
+      type: 'image',
+      options: { hotspot: true },
+      description: 'Single photo shown on this project\'s card in the homepage and /reference grids (falls back to Cover Image if empty)',
+    }),
+    defineField({
       name: 'gallery',
       title: 'Gallery',
       type: 'array',
       of: [{ type: 'image', options: { hotspot: true } }],
-      description: 'Extra images shown via the hover arrows on the homepage card (falls back to Cover Image if empty)',
+      description: 'Extra images shown in the case-study page\'s gallery section',
     }),
     defineField({
       name: 'behindTheScenesGallery',
