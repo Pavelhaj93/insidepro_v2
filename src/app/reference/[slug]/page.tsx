@@ -139,8 +139,19 @@ export default async function CaseStudyPage({ params }: Props) {
   const hasFilmTrailer = isFilm && Boolean(item.trailerVideo?.file?.asset?.url);
   const hasFilmGallery = isFilm && (item.gallery?.length ?? 0) > 0;
 
-  const filmTrailerMarker = "01";
-  const filmGalleryMarker = hasFilmTrailer ? "02" : "01";
+  // Sequential chapter numbering (01 O filmu / 02 Trailer / 03 Jak to
+  // vznikalo) that skips whichever of the three doesn't render, same
+  // principle as the project page's body/behind-the-scenes/result markers.
+  let filmChapterCount = 0;
+  const synopsisMarker = hasFilmSynopsis
+    ? String(++filmChapterCount).padStart(2, "0")
+    : undefined;
+  const trailerMarker = hasFilmTrailer
+    ? String(++filmChapterCount).padStart(2, "0")
+    : undefined;
+  const galleryMarker = hasFilmGallery
+    ? String(++filmChapterCount).padStart(2, "0")
+    : undefined;
 
   return (
     <main className="bg-brand-black text-brand-light">
@@ -206,7 +217,10 @@ export default async function CaseStudyPage({ params }: Props) {
           <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-12 items-start">
             <div className="flex flex-col gap-12 md:gap-16 max-w-2xl">
               {hasFilmSynopsis && (
-                <PortableText value={item.synopsis!} components={synopsisComponents} />
+                <div>
+                  <SectionMarkerHeading marker={synopsisMarker!} heading="O filmu" />
+                  <PortableText value={item.synopsis!} components={synopsisComponents} />
+                </div>
               )}
             </div>
 
@@ -281,7 +295,7 @@ export default async function CaseStudyPage({ params }: Props) {
       {hasFilmTrailer && (
         <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-16 md:pb-24">
           <div className="mx-auto max-w-7xl">
-            <SectionMarkerHeading marker={filmTrailerMarker} heading="Trailer" />
+            <SectionMarkerHeading marker={trailerMarker!} heading="Trailer" />
             <video
               src={item.trailerVideo!.file!.asset!.url}
               poster={
@@ -302,8 +316,8 @@ export default async function CaseStudyPage({ params }: Props) {
           <OutputGalleryMosaic
             images={item.gallery}
             title={item.title}
-            heading="Fotogalerie"
-            marker={filmGalleryMarker}
+            heading="Jak to vznikalo"
+            marker={galleryMarker}
           />
         )
       ) : (

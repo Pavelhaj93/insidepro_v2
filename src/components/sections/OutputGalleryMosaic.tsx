@@ -1,6 +1,10 @@
+"use client";
+
+import { useState } from "react";
 import { urlFor } from "@/sanity/lib/image";
 import { SanityImage } from "@/components/ui/SanityImage";
 import { SectionMarkerHeading } from "@/components/sections/SectionMarkerHeading";
+import { PhotoLightbox } from "@/components/ui/PhotoLightbox";
 
 type SanityImage = { asset: { _ref: string }; lqip?: string };
 
@@ -35,7 +39,9 @@ function isTileWide(index: number) {
 /**
  * The closing "more from this project" photo grid — matches the alternating
  * wide/narrow tile pattern already used on the /reference listing page,
- * instead of the plain uniform grid this used to be.
+ * instead of the plain uniform grid this used to be. Clicking a tile opens
+ * the same full-screen `PhotoLightbox` used by `BehindTheScenesFilmstrip`,
+ * with prev/next navigation across the rest of this gallery's photos.
  */
 export function OutputGalleryMosaic({
   images,
@@ -44,6 +50,8 @@ export function OutputGalleryMosaic({
   marker,
   heading = "Výsledek",
 }: Props) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
   if (!images?.length) return null;
 
   return (
@@ -55,9 +63,12 @@ export function OutputGalleryMosaic({
             const wide = isTileWide(index);
 
             return (
-              <div
+              <button
                 key={index}
-                className={`group relative overflow-hidden rounded-4xl bg-brand-dark ${
+                type="button"
+                onClick={() => setOpenIndex(index)}
+                aria-label={`Zobrazit fotku ${index + 1} z ${images.length} na celou obrazovku`}
+                className={`group relative block overflow-hidden rounded-4xl bg-brand-dark text-left cursor-pointer ${
                   wide ? "lg:col-span-2 aspect-4/3" : "aspect-4/3 lg:aspect-auto lg:h-full"
                 }`}
               >
@@ -68,11 +79,19 @@ export function OutputGalleryMosaic({
                   className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
                   blurDataURL={image.lqip}
                 />
-              </div>
+              </button>
             );
           })}
         </div>
       </div>
+
+      <PhotoLightbox
+        images={images}
+        title={title}
+        index={openIndex}
+        onClose={() => setOpenIndex(null)}
+        onNavigate={setOpenIndex}
+      />
     </section>
   );
 }
