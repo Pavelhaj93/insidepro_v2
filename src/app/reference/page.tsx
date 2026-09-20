@@ -1,16 +1,17 @@
 import { groq } from "next-sanity";
 import { client } from "@/sanity/lib/client";
-import { lqip, referencePageQuery } from "@/sanity/lib/queries";
+import { referencePageQuery, referenceItemFields } from "@/sanity/lib/queries";
 import { ReferenceWorksSection } from "@/components/sections/ReferenceWorksSection";
 
 // Fallback used only when there's no `page` document with slug "reference"
 // yet (or it has no Reference Works Section block configured) — shows every
-// category/project so the route never renders empty before Studio is set up.
+// category/project/film so the route never renders empty before Studio is
+// set up. Mirrors blocksProjection's referenceWorksSection branch in
+// src/sanity/lib/queries.ts exactly (keep both in sync).
 const FALLBACK_QUERY = groq`{
   "categories": *[_type == "category"] { _id, title, "slug": slug.current, order, "videoUrl": video.asset->url },
-  "projects": *[_type == "project"] | order(publishedAt desc) {
-    _id, title, client, slug, coverImage { ${lqip} }, gallery[] { ${lqip} }, excerpt,
-    "categories": categories[]-> { _id, title, "slug": slug.current }
+  "projects": *[_type in ["project", "film"]] | order(publishedAt desc) {
+    ${referenceItemFields}
   }
 }`;
 

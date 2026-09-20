@@ -6,6 +6,7 @@ type SanityImage = { asset: { _ref: string }; lqip?: string };
 
 type Project = {
   _id: string;
+  _type?: string;
   title: string;
   client?: string;
   slug: { current: string };
@@ -13,6 +14,10 @@ type Project = {
   cardImage?: SanityImage;
   category?: string;
   excerpt?: string;
+  /** Set on "film" items — a film is linkable once it has real case-study
+   * content (synopsis/gallery/trailer), instead of the hardcoded
+   * NON_LINKABLE_SLUGS list used for "project" items below. */
+  hasCaseStudy?: boolean;
 };
 
 type Props = {
@@ -53,7 +58,10 @@ export function ProjectCard({
   aspectClassName = "aspect-4/3",
   sizes = "(min-width: 768px) 50vw, 100vw",
 }: Props) {
-  const isLinkable = !NON_LINKABLE_SLUGS.has(project.slug.current);
+  const isLinkable =
+    project._type === "film"
+      ? Boolean(project.hasCaseStudy)
+      : !NON_LINKABLE_SLUGS.has(project.slug.current);
   const image = hasAsset(project.cardImage)
     ? project.cardImage
     : hasAsset(project.coverImage)

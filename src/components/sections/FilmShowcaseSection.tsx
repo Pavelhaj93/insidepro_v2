@@ -2,30 +2,26 @@ import Link from "next/link";
 import { urlFor } from "@/sanity/lib/image";
 import { SanityImage } from "@/components/ui/SanityImage";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
+import { FILM_STATUS_LABELS } from "@/lib/filmStatus";
+
+type SanityImage = { asset: { _ref: string }; lqip?: string };
 
 type Film = {
   _id: string;
   title: string;
   slug: { current: string };
-  coverImage?: { asset: { _ref: string }; lqip?: string };
+  coverImage?: SanityImage;
+  cardImage?: SanityImage;
   description?: string;
   director?: string;
   production?: string;
   coproducer?: string;
-  partners?: string;
+  partners?: string[];
   status?: string;
-  /** Set only when this film has a matching case-study project linked in
-   * Studio (`film.relatedProject`) — the card links to `/reference/{slug}`
-   * when present, and isn't clickable otherwise. */
-  relatedProjectSlug?: string;
-};
-
-const statusLabels: Record<string, string> = {
-  "in-development": "In Development",
-  "in-production": "In Production",
-  "in-post-production": "In Post-Production",
-  finishing: "Finishing",
-  released: "Released",
+  /** Set once this film has real case-study content (synopsis/gallery/
+   * trailer) — the card links to `/reference/{slug}` when true, and isn't
+   * clickable otherwise. */
+  hasCaseStudy?: boolean;
 };
 
 type Props = {
@@ -43,6 +39,17 @@ const metaFields: Array<{ key: MetaKey; label: string }> = [
   { key: "coproducer", label: "Koproducent" },
   { key: "partners", label: "Partneři projektu" },
 ];
+
+function hasAsset(
+  image?: SanityImage,
+): image is SanityImage & { asset: { _ref: string } } {
+  return Boolean(image?.asset?._ref);
+}
+
+function metaValue(film: Film, key: MetaKey): string | undefined {
+  const value = film[key];
+  return Array.isArray(value) ? value.join(", ") || undefined : value;
+}
 
 export function FilmShowcaseSection({
   label,
@@ -72,16 +79,22 @@ export function FilmShowcaseSection({
 
       <RevealStagger className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         {films.map((film) => {
+          const image = hasAsset(film.cardImage)
+            ? film.cardImage
+            : hasAsset(film.coverImage)
+              ? film.coverImage
+              : undefined;
+
           const cardContent = (
             <>
               <div className="relative aspect-4/5 overflow-hidden bg-brand-dark rounded-t-md">
-                {film.coverImage && (
+                {image && (
                   <SanityImage
-                    src={urlFor(film.coverImage).url()}
+                    src={urlFor(image).url()}
                     alt={film.title}
                     sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
                     className="object-cover object-center grayscale transition-all duration-700 ease-out group-hover:grayscale-0 motion-safe:group-hover:scale-105"
-                    blurDataURL={film.coverImage.lqip}
+                    blurDataURL={image.lqip}
                   />
                 )}
               </div>
@@ -93,20 +106,21 @@ export function FilmShowcaseSection({
                 <div className="h-px bg-brand-gold-light my-3" />
 
                 <div className="font-body text-sm text-brand-gold leading-relaxed space-y-1 flex-1">
-                  {metaFields.map(
-                    ({ key, label: metaLabel }) =>
-                      film[key] && (
+                  {metaFields.map(({ key, label: metaLabel }) => {
+                    const value = metaValue(film, key);
+                    return (
+                      value && (
                         <p key={key}>
-                          {metaLabel}:{" "}
-                          <span className="font-bold">{film[key]}</span>
+                          {metaLabel}: <span className="font-bold">{value}</span>
                         </p>
-                      ),
-                  )}
+                      )
+                    );
+                  })}
                 </div>
 
                 {film.status && (
                   <span className="font-body text-sm text-brand-light mt-4 pt-4 border-t border-brand-dark/60">
-                    {statusLabels[film.status] ?? film.status}
+                    {FILM_STATUS_LABELS[film.status] ?? film.status}
                   </span>
                 )}
               </div>
@@ -115,10 +129,9 @@ export function FilmShowcaseSection({
 
           return (
             <RevealItem key={film._id} className="h-full">
-              {film.relatedProjectSlug &&
-              film.relatedProjectSlug !== "beyond-tomorrow" ? (
+              {film.hasCaseStudy ? (
                 <Link
-                  href={`/reference/${film.relatedProjectSlug}`}
+                  href={`/reference/${film.slug.current}`}
                   className="group flex h-full flex-col"
                 >
                   {cardContent}

@@ -5,18 +5,27 @@ import {
 } from "@/sanity/lib/queries";
 import { NON_LINKABLE_SLUGS } from "@/components/sections/ProjectCard";
 
-export type OrderedProject = { _id: string; title: string; slug: string };
+export type OrderedProject = {
+  _id: string;
+  _type?: string;
+  title: string;
+  slug: string;
+  hasCaseStudy?: boolean;
+};
 
 type ReferenceWorksOrderResult = {
   blocks: { hasCategories: boolean; projects: OrderedProject[] } | null;
 } | null;
 
 /**
- * Same ordered project list shown on /reference (see
+ * Same ordered project/film list shown on /reference (see
  * src/app/reference/page.tsx), minus image/excerpt/category fields the nav
- * doesn't need and minus NON_LINKABLE_SLUGS (no case-study page to land on).
- * Mirrors reference/page.tsx's `hasBlockContent` derivation on purpose —
- * keep the two in sync if that cascade ever changes.
+ * doesn't need. "project" items are filtered by the NON_LINKABLE_SLUGS
+ * escape hatch (unchanged); "film" items are filtered by `hasCaseStudy`
+ * instead, since films become linkable once their case-study content is
+ * filled in rather than via a hardcoded slug list. Mirrors
+ * reference/page.tsx's `hasBlockContent` derivation on purpose — keep the
+ * two in sync if that cascade ever changes.
  */
 export async function getOrderedReferenceProjects(): Promise<OrderedProject[]> {
   const [page, allProjects] = await Promise.all([
@@ -27,7 +36,9 @@ export async function getOrderedReferenceProjects(): Promise<OrderedProject[]> {
   const hasBlockContent = Boolean(page?.blocks?.hasCategories);
   const projects = hasBlockContent ? page!.blocks!.projects : allProjects;
 
-  return projects.filter((p) => !NON_LINKABLE_SLUGS.has(p.slug));
+  return projects.filter((p) =>
+    p._type === "film" ? Boolean(p.hasCaseStudy) : !NON_LINKABLE_SLUGS.has(p.slug),
+  );
 }
 
 export type AdjacentProjects = { prev: OrderedProject; next: OrderedProject };

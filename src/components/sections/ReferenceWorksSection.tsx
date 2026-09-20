@@ -22,6 +22,7 @@ type Category = {
 
 type Project = {
   _id: string;
+  _type?: string;
   title: string;
   client?: string;
   slug: { current: string };
@@ -29,6 +30,9 @@ type Project = {
   cardImage?: SanityImage;
   excerpt?: string;
   categories?: Category[];
+  /** Set on "film" items — drives ProjectCard's linkability instead of the
+   * hardcoded NON_LINKABLE_SLUGS list used for "project" items. */
+  hasCaseStudy?: boolean;
 };
 
 type Props = {

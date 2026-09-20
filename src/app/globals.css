@@ -146,31 +146,6 @@
   transition: none;
 }
 
-/* Shimmer sweep for skeleton/placeholder blocks (case-study design POC, see
-   src/components/ui/Skeleton.tsx). A soft gold-bronze sweep over brand-dark,
-   not a generic gray pulse, so placeholders read as on-brand rather than a
-   stock loading state. Reduced-motion falls back to a flat fill in JS instead
-   of using this class at all. */
-@keyframes skeleton-shimmer {
-  0% {
-    background-position: -150% 0;
-  }
-  100% {
-    background-position: 150% 0;
-  }
-}
-
-.animate-skeleton-shimmer {
-  background-image: linear-gradient(
-    100deg,
-    var(--color-brand-dark) 40%,
-    var(--color-brand-gold-light) 50%,
-    var(--color-brand-dark) 60%
-  );
-  background-size: 250% 100%;
-  animation: skeleton-shimmer 1.8s ease-in-out infinite;
-}
-
 /* ─── Base ───────────────────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;

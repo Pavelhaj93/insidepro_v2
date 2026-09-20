@@ -14,10 +14,16 @@
 
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
+type ArrayOf<T> = Array<
+  T & {
+    _key: string;
+  }
+>;
+
 // Source: schema.json
 export type FeatureCard = {
   _type: "featureCard";
-  title?: string;
+  title: string;
   bullets?: Array<{
     text?: Array<{
       children?: Array<{
@@ -47,7 +53,7 @@ export type SanityImageAssetReference = {
 
 export type ClientItem = {
   _type: "clientItem";
-  name?: string;
+  name: string;
   logo?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -70,7 +76,7 @@ export type ClientItem = {
 export type ProcessStep = {
   _type: "processStep";
   number?: string;
-  title?: string;
+  title: string;
   description?: string;
   descriptionHighlight?: string;
 };
@@ -78,7 +84,7 @@ export type ProcessStep = {
 export type ServiceItem = {
   _type: "serviceItem";
   number?: string;
-  title?: string;
+  title: string;
   subtitle?: string;
   keywords?: Array<string>;
   description?: Array<{
@@ -101,7 +107,7 @@ export type ServiceItem = {
 
 export type Separator = {
   _type: "separator";
-  width?: "full" | "half";
+  width: "full" | "half";
 };
 
 export type TextBlock = {
@@ -178,7 +184,7 @@ export type FeatureCardsSection = {
 
 export type InfoBoxSection = {
   _type: "infoBoxSection";
-  headline?: Array<{
+  headline: Array<{
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -198,12 +204,12 @@ export type InfoBoxSection = {
 
 export type ImageSection = {
   _type: "imageSection";
-  image?: {
+  image: {
     asset?: SanityImageAssetReference;
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
-    alt?: string;
+    alt: string;
     _type: "image";
   };
 };
@@ -295,7 +301,7 @@ export type ProcessSection = {
 
 export type QuoteSection = {
   _type: "quoteSection";
-  largeHeadline?: string;
+  largeHeadline: string;
   largeHeadlineItalic?: string;
   quoteBoldText?: string;
   quoteRegularText?: string;
@@ -303,7 +309,7 @@ export type QuoteSection = {
 
 export type CtaSection = {
   _type: "ctaSection";
-  headline?: Array<{
+  headline: Array<{
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -344,11 +350,7 @@ export type ReferenceWorksSection = {
       _key: string;
     } & CategoryReference
   >;
-  projects?: Array<
-    {
-      _key: string;
-    } & ProjectReference
-  >;
+  projects?: ArrayOf<ProjectReference | FilmReference>;
 };
 
 export type FeaturedWorksSection = {
@@ -367,7 +369,7 @@ export type FeaturedWorksSection = {
 export type ZoomTextSection = {
   _type: "zoomTextSection";
   label?: string;
-  headline?: string;
+  headline: string;
   accentColor?:
     | "var(--color-brand-light)"
     | "var(--color-brand-gold)"
@@ -498,7 +500,7 @@ export type SplitVideoRevealSection = {
     _type: "block";
     _key: string;
   }>;
-  video?: {
+  video: {
     asset?: SanityFileAssetReference;
     media?: unknown;
     _type: "file";
@@ -568,8 +570,8 @@ export type Category = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  title?: string;
-  slug?: Slug;
+  title: string;
+  slug: Slug;
   order?: number;
   video?: {
     asset?: SanityFileAssetReference;
@@ -580,7 +582,7 @@ export type Category = {
 
 export type Slug = {
   _type: "slug";
-  current?: string;
+  current: string;
   source?: string;
 };
 
@@ -590,8 +592,8 @@ export type BrandLogo = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  name?: string;
-  image?: {
+  name: string;
+  image: {
     asset?: SanityImageAssetReference;
     media?: unknown;
     hotspot?: SanityImageHotspot;
@@ -603,18 +605,18 @@ export type BrandLogo = {
 
 export type SanityImageCrop = {
   _type: "sanity.imageCrop";
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
 };
 
 export type SanityImageHotspot = {
   _type: "sanity.imageHotspot";
-  x?: number;
-  y?: number;
-  height?: number;
-  width?: number;
+  x: number;
+  y: number;
+  height: number;
+  width: number;
 };
 
 export type Footer = {
@@ -639,15 +641,29 @@ export type Footer = {
   legalText?: string;
 };
 
+export type VideoReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "video";
+};
+
 export type Film = {
   _id: string;
   _type: "film";
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  title?: string;
-  slug?: Slug;
+  title: string;
+  slug: Slug;
   coverImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  cardImage?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
     hotspot?: SanityImageHotspot;
@@ -660,14 +676,44 @@ export type Film = {
   director?: string;
   production?: string;
   coproducer?: string;
-  partners?: string;
+  partners?: Array<string>;
   status?:
     | "in-development"
     | "in-production"
     | "in-post-production"
     | "finishing"
     | "released";
+  yearOfProduction?: string;
+  synopsis?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  gallery?: Array<{
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+    _key: string;
+  }>;
+  trailerVideo?: VideoReference;
+  categories?: Array<
+    {
+      _key: string;
+    } & CategoryReference
+  >;
   publishedAt?: string;
+  relatedProject?: ProjectReference;
 };
 
 export type TeamMember = {
@@ -676,7 +722,7 @@ export type TeamMember = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  name?: string;
+  name: string;
   role?: string;
   email?: string;
   phone?: string;
@@ -690,22 +736,16 @@ export type TeamMember = {
   order?: number;
 };
 
-export type VideoReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "video";
-};
-
 export type Project = {
   _id: string;
   _type: "project";
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  title?: string;
+  title: string;
   client?: string;
-  slug?: Slug;
+  websiteUrl?: string;
+  slug: Slug;
   coverImage?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -713,7 +753,22 @@ export type Project = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  cardImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
   gallery?: Array<{
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+    _key: string;
+  }>;
+  behindTheScenesGallery?: Array<{
     asset?: SanityImageAssetReference;
     media?: unknown;
     hotspot?: SanityImageHotspot;
@@ -767,8 +822,8 @@ export type Video = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  title?: string;
-  file?: {
+  title: string;
+  file: {
     asset?: SanityFileAssetReference;
     media?: unknown;
     _type: "file";
@@ -812,8 +867,8 @@ export type Post = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  title?: string;
-  slug?: Slug;
+  title: string;
+  slug: Slug;
   excerpt?: string;
   mainImage?: {
     asset?: SanityImageAssetReference;
@@ -860,9 +915,10 @@ export type Page = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  title?: string;
-  slug?: Slug;
+  title: string;
+  slug: Slug;
   isHomepage?: boolean;
+  isPublished?: boolean;
   blocks?: Array<
     | ({
         _key: string;
@@ -963,9 +1019,9 @@ export type SanityImagePalette = {
 
 export type SanityImageDimensions = {
   _type: "sanity.imageDimensions";
-  height?: number;
-  width?: number;
-  aspectRatio?: number;
+  height: number;
+  width: number;
+  aspectRatio: number;
 };
 
 export type SanityImageMetadata = {
@@ -991,14 +1047,14 @@ export type SanityFileAsset = {
   title?: string;
   description?: string;
   altText?: string;
-  sha1hash?: string;
-  extension?: string;
-  mimeType?: string;
-  size?: number;
-  assetId?: string;
+  sha1hash: string;
+  extension: string;
+  mimeType: string;
+  size: number;
+  assetId: string;
   uploadId?: string;
-  path?: string;
-  url?: string;
+  path: string;
+  url: string;
   source?: SanityAssetSourceData;
 };
 
@@ -1020,14 +1076,14 @@ export type SanityImageAsset = {
   title?: string;
   description?: string;
   altText?: string;
-  sha1hash?: string;
-  extension?: string;
-  mimeType?: string;
-  size?: number;
-  assetId?: string;
+  sha1hash: string;
+  extension: string;
+  mimeType: string;
+  size: number;
+  assetId: string;
   uploadId?: string;
-  path?: string;
-  url?: string;
+  path: string;
+  url: string;
   metadata?: SanityImageMetadata;
   source?: SanityAssetSourceData;
 };
@@ -1079,9 +1135,9 @@ export type AllSanitySchemaTypes =
   | SanityImageCrop
   | SanityImageHotspot
   | Footer
+  | VideoReference
   | Film
   | TeamMember
-  | VideoReference
   | Project
   | Video
   | Settings

@@ -5,6 +5,18 @@ import { groq } from "next-sanity";
 // crop) — see skills/sanity-best-practices/references/image.md.
 export const lqip = groq`..., "lqip": asset->metadata.lqip`;
 
+// Shared field set for a "project" or "film" document rendered as a card in
+// the /reference grid — normalizes the two shapes (film has "description"
+// where project has "excerpt", no "cardImage") into one object. Used by both
+// blocksProjection's referenceWorksSection branch and FALLBACK_QUERY in
+// src/app/reference/page.tsx — keep both call sites in sync.
+export const referenceItemFields = groq`
+  _type, _id, title, client, slug, coverImage { ${lqip} }, cardImage { ${lqip} },
+  "excerpt": select(_type == "film" => description, excerpt),
+  "categories": categories[]-> { _id, title, "slug": slug.current },
+  "hasCaseStudy": defined(synopsis) || count(gallery) > 0 || defined(trailerVideo)
+`;
+
 // ─── Settings ────────────────────────────────────────────────────────────────
 
 export const settingsQuery = groq`*[_type == "settings"][0] {
@@ -62,19 +74,19 @@ const blocksProjection = groq`
       projects[]-> { _id, title, client, slug, coverImage { ${lqip} }, cardImage { ${lqip} }, category, excerpt },
     },
     // referenceWorksSection — "projects" is an explicit, ordered curation
-    // picked in Studio; falls back to every project tagged with one of the
-    // selected categories when nothing's been curated yet.
+    // picked in Studio; falls back to every project/film tagged with one of
+    // the selected categories when nothing's been curated yet. Merges
+    // "project" and "film" documents into one normalized shape — keep this
+    // in sync with FALLBACK_QUERY in src/app/reference/page.tsx.
     allLabel,
     _type == "referenceWorksSection" => {
       "categories": categories[]-> { _id, title, "slug": slug.current, order, "videoUrl": video.asset->url },
       "projects": select(
         count(projects) > 0 => projects[]-> {
-          _id, title, client, slug, coverImage { ${lqip} }, cardImage { ${lqip} }, excerpt,
-          "categories": categories[]-> { _id, title, "slug": slug.current }
+          ${referenceItemFields}
         },
-        *[_type == "project" && references(^.categories[]._ref)] | order(publishedAt desc) {
-          _id, title, client, slug, coverImage { ${lqip} }, cardImage { ${lqip} }, excerpt,
-          "categories": categories[]-> { _id, title, "slug": slug.current }
+        *[_type in ["project", "film"] && references(^.categories[]._ref)] | order(publishedAt desc) {
+          ${referenceItemFields}
         }
       ),
     },
@@ -99,7 +111,10 @@ const blocksProjection = groq`
     lightBackground,
     // filmShowcaseSection
     introText,
-    films[]-> { _id, title, slug, coverImage { ${lqip} }, description, director, production, coproducer, partners, status, "relatedProjectSlug": relatedProject->slug.current },
+    films[]-> {
+      _id, title, slug, coverImage { ${lqip} }, cardImage { ${lqip} }, description, director, production, coproducer, partners, status,
+      "hasCaseStudy": defined(synopsis) || count(gallery) > 0 || defined(trailerVideo)
+    },
     // clientsSection
     supportLabel,
     layout,
@@ -175,9 +190,13 @@ export const referenceWorksOrderQuery = groq`*[_type == "page" && slug.current =
   "blocks": blocks[_type == "referenceWorksSection"][0] {
     "hasCategories": count(categories) > 0,
     "projects": select(
-      count(projects) > 0 => projects[]-> { _id, title, "slug": slug.current },
-      *[_type == "project" && references(^.categories[]._ref)] | order(publishedAt desc) {
-        _id, title, "slug": slug.current
+      count(projects) > 0 => projects[]-> {
+        _id, _type, title, "slug": slug.current,
+        "hasCaseStudy": defined(synopsis) || count(gallery) > 0 || defined(trailerVideo)
+      },
+      *[_type in ["project", "film"] && references(^.categories[]._ref)] | order(publishedAt desc) {
+        _id, _type, title, "slug": slug.current,
+        "hasCaseStudy": defined(synopsis) || count(gallery) > 0 || defined(trailerVideo)
       }
     )
   }
@@ -186,8 +205,9 @@ export const referenceWorksOrderQuery = groq`*[_type == "page" && slug.current =
 // Page-level fallback used when the "reference" page doc doesn't exist yet,
 // or its referenceWorksSection has no categories configured — mirrors
 // FALLBACK_QUERY in src/app/reference/page.tsx exactly (keep both in sync).
-export const allProjectsOrderQuery = groq`*[_type == "project"] | order(publishedAt desc) {
-  _id, title, "slug": slug.current
+export const allProjectsOrderQuery = groq`*[_type in ["project", "film"]] | order(publishedAt desc) {
+  _id, _type, title, "slug": slug.current,
+  "hasCaseStudy": defined(synopsis) || count(gallery) > 0 || defined(trailerVideo)
 }`;
 
 // ─── Team ─────────────────────────────────────────────────────────────────────
@@ -199,7 +219,39 @@ export const teamMembersQuery = groq`*[_type == "teamMember"] | order(order asc)
 // ─── Films ───────────────────────────────────────────────────────────────────
 
 export const filmsQuery = groq`*[_type == "film"] | order(publishedAt desc) {
-  _id, title, slug, coverImage, description, director, production, coproducer, partners, status
+  _id, title, slug, coverImage, cardImage, description, director, genre, country, production, coproducer, partners, status,
+  yearOfProduction, synopsis, gallery, trailerVideo,
+  "categories": categories[]-> { _id, title, "slug": slug.current }
+}`;
+
+// ─── Reference detail (case-study page, project OR film by slug) ────────────
+
+export const referenceDetailQuery = groq`*[(_type == "project" || _type == "film") && slug.current == $slug][0] {
+  _type,
+  _id,
+  title,
+  "slug": slug.current,
+  client,
+  websiteUrl,
+  coverImage { ${lqip} },
+  "categories": categories[]->title,
+  excerpt,
+  body,
+  gallery[] { ${lqip} },
+  behindTheScenesGallery[] { ${lqip} },
+  projectVideo-> { file { asset->{ url, mimeType } }, poster },
+  // film-only fields (undefined on "project" docs)
+  description,
+  yearOfProduction,
+  director,
+  genre,
+  country,
+  production,
+  coproducer,
+  partners,
+  status,
+  synopsis,
+  trailerVideo-> { file { asset->{ url, mimeType } }, poster }
 }`;
 
 // ─── Legacy (kept for compatibility) ─────────────────────────────────────────

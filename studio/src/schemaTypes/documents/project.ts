@@ -13,7 +13,22 @@ export const project = defineType({
       type: 'url',
       description: 'Company\'s website — shown as a "Visit website" link on the case-study hero',
     }),
-    defineField({ name: 'slug', title: 'Slug', type: 'slug', options: { source: 'title' }, validation: Rule => Rule.required() }),
+    defineField({
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      options: {
+        source: 'title',
+        isUnique: async (slug, context) => {
+          const { document, getClient } = context
+          const client = getClient({ apiVersion: '2024-01-01' })
+          const id = document?._id.replace(/^drafts\./, '')
+          const query = `!defined(*[(_type == "project" || _type == "film") && !(_id in [$draft, $published]) && slug.current == $slug][0]._id)`
+          return client.fetch(query, { draft: `drafts.${id}`, published: id, slug })
+        },
+      },
+      validation: Rule => Rule.required(),
+    }),
     defineField({ name: 'coverImage', title: 'Cover Image', type: 'image', options: { hotspot: true } }),
     defineField({
       name: 'cardImage',
