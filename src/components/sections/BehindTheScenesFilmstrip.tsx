@@ -64,7 +64,7 @@ function FilmFrameVisual({
           loader={sanityImageLoader}
           alt={`${title} — zákulisí ${index + 1}`}
           fill
-          sizes="(min-width: 640px) 28vw, 70vw"
+          sizes="(min-width: 640px) 34vw, 70vw"
           className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
           placeholder={image.lqip ? "blur" : "empty"}
           blurDataURL={image.lqip}
@@ -176,8 +176,25 @@ export function BehindTheScenesFilmstrip({ images, title, marker }: Props) {
         <HorizontalScrollCards
           items={images}
           itemKey={(image, index) => image.asset._ref || String(index)}
-          itemWidthVw={28}
-          gapVw={3}
+          itemWidthVw={34}
+          gapVw={4}
+          // Same entry/exit choreography as ClientShowcaseHorizontal: frames
+          // start off-screen right and slide to rest as the section scrolls
+          // into view (entryVw/restVw/entryProgress, startAt=1 so it begins
+          // as soon as the section starts entering rather than only once
+          // fully pinned). speedMultiplier<1 shortens the pinned scroll
+          // budget so the strip doesn't demand a full extra scroll's worth
+          // of "dead" pin time once the frames are done cycling, and
+          // endAt<1 lets the last frame's exit keep animating into the
+          // handoff to the next section instead of freezing at release —
+          // together, scrolling onward no longer waits for every frame to
+          // have fully cleared the screen first.
+          entryVw={70}
+          restVw={18}
+          entryProgress={0.18}
+          startAt={1}
+          endAt={0.35}
+          speedMultiplier={0.75}
           sidebarOffsetPx={96}
           className="bg-brand-black"
           labelClassName="pr-6 md:pr-10 lg:pr-24 lg:pl-24"

@@ -36,6 +36,25 @@ function isTileWide(index: number) {
   return isFirstInPair ? rowStartsWide : !rowStartsWide;
 }
 
+// A narrow tile normally stretches to match its wide row-mate's height via
+// CSS Grid's row-stretch (see the comment on `projectAspectClass` in
+// ReferenceWorksSection.tsx for the same pattern). With an odd photo count,
+// the last narrow tile ends up alone in its row with no wide row-mate to
+// stretch against — `lg:h-full` then resolves against an auto-height row
+// and collapses to ~0px, making that photo invisible on the page even
+// though it's still in the array (and reachable via the lightbox's prev/
+// next). Give a trailing solo tile a fixed portrait ratio instead (~2:3,
+// matching what a narrow tile stretched against a 4:3 wide row-mate would
+// have worked out to), so it still reads as a narrow "portrait" tile at lg
+// instead of a squat landscape crop.
+function tileAspectClass(index: number, total: number) {
+  if (isTileWide(index)) return "lg:col-span-2 aspect-4/3";
+  const isTrailingSolo = index === total - 1 && total % 2 === 1;
+  return isTrailingSolo
+    ? "aspect-4/3 lg:aspect-2/3"
+    : "aspect-4/3 lg:aspect-auto lg:h-full";
+}
+
 /**
  * The closing "more from this project" photo grid — matches the alternating
  * wide/narrow tile pattern already used on the /reference listing page,
@@ -59,29 +78,23 @@ export function OutputGalleryMosaic({
       <div className="mx-auto max-w-7xl">
         {marker && <SectionMarkerHeading marker={marker} heading={heading} />}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {images.map((image, index) => {
-            const wide = isTileWide(index);
-
-            return (
-              <button
-                key={index}
-                type="button"
-                onClick={() => setOpenIndex(index)}
-                aria-label={`Zobrazit fotku ${index + 1} z ${images.length} na celou obrazovku`}
-                className={`group relative block overflow-hidden rounded-4xl bg-brand-dark text-left cursor-pointer ${
-                  wide ? "lg:col-span-2 aspect-4/3" : "aspect-4/3 lg:aspect-auto lg:h-full"
-                }`}
-              >
-                <SanityImage
-                  src={urlFor(image).url()}
-                  alt={`${title} — ${startIndex + index + 1}`}
-                  sizes="(min-width: 768px) 50vw, 100vw"
-                  className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                  blurDataURL={image.lqip}
-                />
-              </button>
-            );
-          })}
+          {images.map((image, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => setOpenIndex(index)}
+              aria-label={`Zobrazit fotku ${index + 1} z ${images.length} na celou obrazovku`}
+              className={`group relative block overflow-hidden rounded-4xl bg-brand-dark text-left cursor-pointer ${tileAspectClass(index, images.length)}`}
+            >
+              <SanityImage
+                src={urlFor(image).url()}
+                alt={`${title} — ${startIndex + index + 1}`}
+                sizes="(min-width: 768px) 50vw, 100vw"
+                className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                blurDataURL={image.lqip}
+              />
+            </button>
+          ))}
         </div>
       </div>
 

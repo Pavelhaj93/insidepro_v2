@@ -125,8 +125,17 @@ export function ReferenceWorksSection({
   // instead (CSS Grid's default row-stretch, driven by the wide card's own
   // aspect-ratio). Below lg both cards are equal width, so the fixed ratio
   // stays on for a reliably real height regardless of what's next to it.
-  const projectAspectClass = (index: number) =>
-    isProjectWide(index) ? "aspect-4/3" : "aspect-4/3 lg:aspect-auto lg:h-full";
+  // Exception: when a category filter leaves an odd number of cards, the
+  // trailing narrow card ends up alone in its row with no wide row-mate to
+  // stretch against — `lg:h-full` then resolves against an auto-height row
+  // and collapses to ~0px, making that card invisible. Keep its own fixed
+  // ratio in that case instead.
+  const projectAspectClass = (index: number) => {
+    if (isProjectWide(index)) return "aspect-4/3";
+    const isTrailingSolo =
+      index === visibleProjects.length - 1 && visibleProjects.length % 2 === 1;
+    return isTrailingSolo ? "aspect-4/3" : "aspect-4/3 lg:aspect-auto lg:h-full";
+  };
 
   // Matches the grid above: 1 column below md, 2 columns md–lg, 3 columns
   // from lg — where a wide card spans 2/3 of the row and a narrow one 1/3 —
