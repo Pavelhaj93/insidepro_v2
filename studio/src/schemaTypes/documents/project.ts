@@ -13,14 +13,36 @@ export const project = defineType({
       type: 'url',
       description: 'Company\'s website — shown as a "Visit website" link on the case-study hero',
     }),
-    defineField({ name: 'slug', title: 'Slug', type: 'slug', options: { source: 'title' }, validation: Rule => Rule.required() }),
+    defineField({
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      options: {
+        source: 'title',
+        isUnique: async (slug, context) => {
+          const { document, getClient } = context
+          const client = getClient({ apiVersion: '2024-01-01' })
+          const id = document?._id.replace(/^drafts\./, '')
+          const query = `!defined(*[(_type == "project" || _type == "film") && !(_id in [$draft, $published]) && slug.current == $slug][0]._id)`
+          return client.fetch(query, { draft: `drafts.${id}`, published: id, slug })
+        },
+      },
+      validation: Rule => Rule.required(),
+    }),
     defineField({ name: 'coverImage', title: 'Cover Image', type: 'image', options: { hotspot: true } }),
+    defineField({
+      name: 'cardImage',
+      title: 'Card Image',
+      type: 'image',
+      options: { hotspot: true },
+      description: 'Single photo shown on this project\'s card in the homepage and /reference grids (falls back to Cover Image if empty)',
+    }),
     defineField({
       name: 'gallery',
       title: 'Gallery',
       type: 'array',
       of: [{ type: 'image', options: { hotspot: true } }],
-      description: 'Extra images shown via the hover arrows on the homepage card (falls back to Cover Image if empty)',
+      description: 'Extra images shown in the case-study page\'s gallery section',
     }),
     defineField({
       name: 'behindTheScenesGallery',
@@ -37,11 +59,11 @@ export const project = defineType({
       description: 'Plays on hover over this project\'s card in the homepage client showcase (falls back to Cover Image if empty)',
     }),
     defineField({
-      name: 'projectVideo',
-      title: 'Project Video (optional)',
-      type: 'reference',
-      to: [{ type: 'video' }],
-      description: 'Shown as a video player on this project\'s case-study page',
+      name: 'projectVideos',
+      title: 'Project Videos (optional)',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'video' }] }],
+      description: 'Shown as stacked video players on this project\'s case-study page',
     }),
     defineField({
       name: 'categories',

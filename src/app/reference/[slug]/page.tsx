@@ -1,114 +1,172 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { groq } from "next-sanity";
+import {
+  PortableText,
+  type PortableTextBlock,
+  type PortableTextComponents,
+} from "next-sanity";
 import { client } from "@/sanity/lib/client";
-import { lqip } from "@/sanity/lib/queries";
+import { referenceDetailQuery } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { SanityImage } from "@/components/ui/SanityImage";
 import { Badge } from "@/components/ui/Badge";
-import { CaseStudyExtendedNarrative } from "@/components/sections/CaseStudyExtendedNarrative";
 import { CaseStudyBodySections } from "@/components/sections/CaseStudyBodySections";
 import { BehindTheScenesFilmstrip } from "@/components/sections/BehindTheScenesFilmstrip";
 import { OutputGalleryMosaic } from "@/components/sections/OutputGalleryMosaic";
 import { SectionMarkerHeading } from "@/components/sections/SectionMarkerHeading";
+import { ProjectPrevNextNav } from "@/components/sections/ProjectPrevNextNav";
 import { GlobeIcon } from "@/components/icons/Globe";
 import { parseCaseStudySections } from "@/lib/caseStudyBody";
+import { getOrderedReferenceProjects, getAdjacentProjects } from "@/lib/projects";
+import { FILM_STATUS_LABELS } from "@/lib/filmStatus";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
-type SanityImage = { asset: { _ref: string }; lqip?: string };
+type SanityImageT = { asset: { _ref: string }; lqip?: string };
 
-type Project = {
-  _id: string;
-  title: string;
-  client?: string;
-  websiteUrl?: string;
-  slug: string;
-  coverImage?: SanityImage;
-  gallery?: SanityImage[];
-  behindTheScenesGallery?: SanityImage[];
-  excerpt?: string;
-  categories?: string[];
-  // Dereferenced `video` library document (see `project.projectVideo` in the
-  // Studio schema) — rendered as a plain <video> player below the synopsis.
-  projectVideo?: {
-    file?: { asset?: { url?: string; mimeType?: string } };
-    poster?: SanityImage;
-  };
-  // Unstructured Portable Text — see `parseCaseStudySections` for why this
-  // isn't typed any more precisely than "blocks with span children".
-  body?: { _type: string; children?: { _type: "span"; text?: string; marks?: string[] }[] }[];
+type VideoField = {
+  file?: { asset?: { url?: string; mimeType?: string } };
+  poster?: SanityImageT;
 };
 
-const PROJECT_QUERY = groq`*[_type == "project" && slug.current == $slug][0]{
-  _id, title, client, websiteUrl, "slug": slug.current,
-  coverImage { ${lqip} }, gallery[] { ${lqip} }, behindTheScenesGallery[] { ${lqip} },
-  excerpt, body,
-  "categories": categories[]->title,
-  projectVideo-> { file { asset->{ url, mimeType } }, poster }
-}`;
+type ReferenceItem = {
+  _type: "project" | "film";
+  _id: string;
+  title: string;
+  slug: string;
+  client?: string;
+  websiteUrl?: string;
+  coverImage?: SanityImageT;
+  categories?: string[];
+  excerpt?: string;
+  // Project-only fields — see `parseCaseStudySections` for why `body` isn't
+  // typed any more precisely than "blocks with span children".
+  body?: { _type: string; children?: { _type: "span"; text?: string; marks?: string[] }[] }[];
+  gallery?: SanityImageT[];
+  behindTheScenesGallery?: SanityImageT[];
+  projectVideos?: VideoField[];
+  // Film-only fields (undefined on "project" docs)
+  description?: string;
+  yearOfProduction?: string;
+  director?: string;
+  genre?: string;
+  country?: string;
+  production?: string;
+  coproducer?: string;
+  partners?: string[];
+  status?: string;
+  synopsis?: PortableTextBlock[];
+  trailerVideo?: VideoField;
+};
 
-// Rich case-study metadata hardcoded for this POC, keyed by slug — the real
-// `project` schema (studio/src/schemaTypes/documents/project.ts) has no
-// fields yet for year, industry, timeline, crew, or partners. Every other
-// project still gets a real page here, just with only the Sanity fields it
-// actually has (title/client/cover/excerpt), no synopsis or meta grid.
-const CASE_STUDY_DETAILS: Record<
-  string,
-  {
-    synopsis: string;
-    meta: { label: string; value: string }[];
-    partners: string[];
-  }
-> = {
-  yachak: {
-    synopsis:
-      "Agustin is a young shaman from the jungle, living at the edge of two worlds, who is trying to save the remnants of his declining culture. But his home is being plundered relentlessly. Will he manage to find balance between the two worlds in time? Is salvation even possible?",
-    meta: [
-      { label: "Rok", value: "2025 / 2026" },
-      { label: "Režie", value: "Jan Rajnoha" },
-      { label: "Země", value: "Česká republika, Ekvádor, USA" },
-      { label: "Žánr", value: "Celovečerní dokumentární film" },
-      { label: "Produkce", value: "Analog Vision s.r.o." },
-      { label: "Koproducent", value: "insidePRO" },
-    ],
-    partners: [
-      "Mendelova univerzita v Brně",
-      "United Nations (OSN)",
-      "Sigma",
-      "Sony",
-      "Dron Pro",
-      "Život postaru z.s.",
-    ],
+// Renders `film.synopsis` — the constrained "flowing prose" Portable Text
+// shape shared with richTextSection.body (block-only, Strong/Emphasis/Gold
+// marks, no lists/annotations), styled for this page's left-aligned
+// narrative column rather than RichTextSection's centered black box.
+const synopsisComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children }) => (
+      <p className="font-body text-lg leading-8 text-brand-light/80 mb-6 last:mb-0">
+        {children}
+      </p>
+    ),
+  },
+  marks: {
+    gold: ({ children }) => <span className="text-brand-gold">{children}</span>,
+    strong: ({ children }) => <strong className="font-extrabold">{children}</strong>,
+    em: ({ children }) => <em className="italic">{children}</em>,
   },
 };
 
 export default async function CaseStudyPage({ params }: Props) {
   const { slug } = await params;
-  const project: Project | null = await client.fetch(PROJECT_QUERY, { slug });
+  const [item, orderedProjects]: [
+    ReferenceItem | null,
+    Awaited<ReturnType<typeof getOrderedReferenceProjects>>,
+  ] = await Promise.all([
+    client.fetch(referenceDetailQuery, { slug }),
+    getOrderedReferenceProjects(),
+  ]);
 
-  if (!project) notFound();
+  if (!item) notFound();
 
-  const details = CASE_STUDY_DETAILS[slug];
-  const bodySections = parseCaseStudySections(project.body);
-  const leftoverGallery =
-    bodySections.length > 0
-      ? (project.gallery ?? []).slice(bodySections.length)
-      : (project.gallery ?? []);
+  const isFilm = item._type === "film";
+  const adjacentProjects = getAdjacentProjects(orderedProjects, slug);
+
+  const bodySections = isFilm ? [] : parseCaseStudySections(item.body);
+  const leftoverGallery = isFilm
+    ? []
+    : bodySections.length > 0
+      ? (item.gallery ?? []).slice(bodySections.length)
+      : (item.gallery ?? []);
+
+  // Chapter numbering after the 01/02 text sections stays sequential even
+  // when a project has no behind-the-scenes photos and/or no result video —
+  // each optional section only claims a number if it actually renders, so a
+  // project missing "Jak to vznikalo" jumps straight to "02 Výsledek"
+  // instead of leaving a gap at "02" or hardcoding "03"/"04".
+  const hasBehindTheScenes = !isFilm && (item.behindTheScenesGallery?.length ?? 0) > 0;
+  const resultVideos = isFilm
+    ? []
+    : (item.projectVideos ?? []).filter((video) => Boolean(video.file?.asset?.url));
+  const hasResultVideo = resultVideos.length > 0;
+  const hasResultPhotos = !isFilm && leftoverGallery.length > 0;
+  const showResultSection = hasResultVideo || hasResultPhotos;
+
+  const behindTheScenesMarker = String(bodySections.length + 1).padStart(2, "0");
+  const resultMarker = String(
+    bodySections.length + (hasBehindTheScenes ? 2 : 1),
+  ).padStart(2, "0");
+
+  const teaser = isFilm ? item.description : item.excerpt;
+
+  const filmMeta = isFilm
+    ? [
+        { label: "Rok", value: item.yearOfProduction },
+        { label: "Režie", value: item.director },
+        { label: "Země", value: item.country },
+        { label: "Žánr", value: item.genre },
+        { label: "Produkce", value: item.production },
+        { label: "Koproducent", value: item.coproducer },
+        {
+          label: "Status",
+          value: item.status ? (FILM_STATUS_LABELS[item.status] ?? item.status) : undefined,
+        },
+      ].filter((entry): entry is { label: string; value: string } => Boolean(entry.value))
+    : [];
+
+  const filmPartners = isFilm ? (item.partners ?? []) : [];
+  const hasFilmSynopsis = isFilm && Boolean(item.synopsis?.length);
+  const hasFilmTrailer = isFilm && Boolean(item.trailerVideo?.file?.asset?.url);
+  const hasFilmGallery = isFilm && (item.gallery?.length ?? 0) > 0;
+
+  // Sequential chapter numbering (01 O filmu / 02 Trailer / 03 Jak to
+  // vznikalo) that skips whichever of the three doesn't render, same
+  // principle as the project page's body/behind-the-scenes/result markers.
+  let filmChapterCount = 0;
+  const synopsisMarker = hasFilmSynopsis
+    ? String(++filmChapterCount).padStart(2, "0")
+    : undefined;
+  const trailerMarker = hasFilmTrailer
+    ? String(++filmChapterCount).padStart(2, "0")
+    : undefined;
+  const galleryMarker = hasFilmGallery
+    ? String(++filmChapterCount).padStart(2, "0")
+    : undefined;
 
   return (
     <main className="bg-brand-black text-brand-light">
       <section className="relative h-[70vh] min-h-125 w-full overflow-hidden">
-        {project.coverImage && (
+        {item.coverImage && (
           <SanityImage
-            src={urlFor(project.coverImage).url()}
-            alt={project.title}
+            src={urlFor(item.coverImage).url()}
+            alt={item.title}
             sizes="100vw"
             className="object-cover object-center lg:object-[center_30%]"
             priority
-            blurDataURL={project.coverImage.lqip}
+            blurDataURL={item.coverImage.lqip}
           />
         )}
         <div className="absolute inset-0 bg-linear-to-t from-brand-black via-brand-black/50 to-transparent" />
@@ -123,28 +181,28 @@ export default async function CaseStudyPage({ params }: Props) {
                 ← Reference
               </Link>
 
-              {project.categories && project.categories.length > 0 && (
+              {item.categories && item.categories.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {project.categories.map((category) => (
+                  {item.categories.map((category) => (
                     <Badge key={category}>{category}</Badge>
                   ))}
                 </div>
               )}
 
               <h1 className="font-display font-black uppercase text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-none text-brand-light">
-                {project.title}
+                {item.title}
               </h1>
 
-              {(details?.synopsis ?? project.excerpt) && (
+              {teaser && (
                 <p className="font-body text-lg sm:text-xl leading-8 text-brand-light/80 mt-4 max-w-2xl">
-                  {details?.synopsis ?? project.excerpt}
+                  {teaser}
                 </p>
               )}
             </div>
 
-            {project.websiteUrl && (
+            {item.websiteUrl && (
               <a
-                href={project.websiteUrl}
+                href={item.websiteUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="shrink-0 inline-flex items-center gap-2 font-display font-medium text-sm sm:text-base uppercase tracking-wide text-brand-gold hover:text-brand-light transition-colors"
@@ -157,34 +215,41 @@ export default async function CaseStudyPage({ params }: Props) {
         </div>
       </section>
 
-      {details && (
+      {isFilm && (filmMeta.length > 0 || hasFilmSynopsis || filmPartners.length > 0) && (
         <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 py-16 md:py-24">
           <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-12 items-start">
             <div className="flex flex-col gap-12 md:gap-16 max-w-2xl">
-              <CaseStudyExtendedNarrative />
+              {hasFilmSynopsis && (
+                <div>
+                  <SectionMarkerHeading marker={synopsisMarker!} heading="O filmu" />
+                  <PortableText value={item.synopsis!} components={synopsisComponents} />
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col gap-6 lg:sticky lg:top-32">
-              <dl className="grid grid-cols-2 gap-x-6 gap-y-6">
-                {details.meta.map((item) => (
-                  <div key={item.label}>
-                    <dt className="font-body text-xs tracking-widest uppercase text-brand-gold mb-1">
-                      {item.label}
-                    </dt>
-                    <dd className="font-display font-bold text-brand-light">
-                      {item.value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+              {filmMeta.length > 0 && (
+                <dl className="grid grid-cols-2 gap-x-6 gap-y-6">
+                  {filmMeta.map((entry) => (
+                    <div key={entry.label}>
+                      <dt className="font-body text-xs tracking-widest uppercase text-brand-gold mb-1">
+                        {entry.label}
+                      </dt>
+                      <dd className="font-display font-bold text-brand-light">
+                        {entry.value}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
 
-              {details.partners.length > 0 && (
+              {filmPartners.length > 0 && (
                 <div>
                   <p className="font-body text-xs tracking-widest uppercase text-brand-gold mb-2">
                     Partneři projektu
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {details.partners.map((partner) => (
+                    {filmPartners.map((partner) => (
                       <Badge key={partner}>{partner}</Badge>
                     ))}
                   </div>
@@ -195,28 +260,51 @@ export default async function CaseStudyPage({ params }: Props) {
         </section>
       )}
 
-      {bodySections.length > 0 && (
+      {!isFilm && bodySections.length > 0 && (
         <CaseStudyBodySections
           sections={bodySections}
-          gallery={project.gallery}
-          title={project.title}
+          gallery={item.gallery}
+          title={item.title}
         />
       )}
 
-      <BehindTheScenesFilmstrip
-        images={project.behindTheScenesGallery}
-        title={project.title}
-      />
+      {!isFilm && hasBehindTheScenes && (
+        <BehindTheScenesFilmstrip
+          images={item.behindTheScenesGallery}
+          title={item.title}
+          marker={behindTheScenesMarker}
+        />
+      )}
 
-      {project.projectVideo?.file?.asset?.url && (
+      {hasResultVideo && (
         <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-16 md:pb-24">
           <div className="mx-auto max-w-7xl">
-            <SectionMarkerHeading marker="04" heading="Výsledek" />
+            <SectionMarkerHeading marker={resultMarker} heading="Výsledek" />
+            <div className="flex flex-col gap-6 md:gap-8">
+              {resultVideos.map((video, index) => (
+                <video
+                  key={index}
+                  src={video.file!.asset!.url}
+                  poster={video.poster ? urlFor(video.poster).width(1920).url() : undefined}
+                  controls
+                  playsInline
+                  className="aspect-video w-full rounded-4xl bg-brand-dark"
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {hasFilmTrailer && (
+        <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-16 md:pb-24">
+          <div className="mx-auto max-w-7xl">
+            <SectionMarkerHeading marker={trailerMarker!} heading="Trailer" />
             <video
-              src={project.projectVideo.file.asset.url}
+              src={item.trailerVideo!.file!.asset!.url}
               poster={
-                project.projectVideo.poster
-                  ? urlFor(project.projectVideo.poster).width(1920).url()
+                item.trailerVideo?.poster
+                  ? urlFor(item.trailerVideo.poster).width(1920).url()
                   : undefined
               }
               controls
@@ -227,11 +315,27 @@ export default async function CaseStudyPage({ params }: Props) {
         </section>
       )}
 
-      <OutputGalleryMosaic
-        images={leftoverGallery}
-        title={project.title}
-        startIndex={bodySections.length}
-      />
+      {isFilm ? (
+        hasFilmGallery && (
+          <OutputGalleryMosaic
+            images={item.gallery}
+            title={item.title}
+            heading="Jak to vznikalo"
+            marker={galleryMarker}
+          />
+        )
+      ) : (
+        <OutputGalleryMosaic
+          images={leftoverGallery}
+          title={item.title}
+          startIndex={bodySections.length}
+          marker={!hasResultVideo && showResultSection ? resultMarker : undefined}
+        />
+      )}
+
+      {adjacentProjects && (
+        <ProjectPrevNextNav prev={adjacentProjects.prev} next={adjacentProjects.next} />
+      )}
     </main>
   );
 }

@@ -9,7 +9,7 @@ type Project = {
   client?: string;
   slug: { current: string };
   coverImage?: { asset: { _ref: string } };
-  gallery?: { asset: { _ref: string } }[];
+  cardImage?: { asset: { _ref: string } };
   category?: string;
   excerpt?: string;
 };

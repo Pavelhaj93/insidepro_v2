@@ -60,7 +60,12 @@ export function SmoothScrollProvider({
   const reduceMotion = useReducedMotion();
 
   if (reduceMotion) {
-    return <>{children}</>;
+    return (
+      <>
+        <ScrollResetOnNavigate />
+        {children}
+      </>
+    );
   }
 
   return (

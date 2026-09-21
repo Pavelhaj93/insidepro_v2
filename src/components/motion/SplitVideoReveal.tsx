@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useLenis } from "lenis/react";
 import {
   PortableText,
   type PortableTextBlock,
@@ -10,6 +11,9 @@ import {
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { HeroBackgroundVideo } from "@/components/motion/HeroBackgroundVideo";
+import { MagneticButton } from "@/components/motion/MagneticButton";
+import { BrandButton } from "@/components/ui/BrandButton";
+import { scrollToAnchor } from "@/lib/scrollToAnchor";
 
 type SplitVideoRevealProps = {
   kicker?: string;
@@ -19,6 +23,8 @@ type SplitVideoRevealProps = {
   videoSrc: string;
   videoMimeType?: string;
   mobileVideoSrc?: string;
+  buttonLabel?: string;
+  buttonLink?: string;
   /** Scroll distance (vh) over which the panel/corner slide apart. */
   revealVh?: number;
   /** Extra scroll (vh) to hold the fully-revealed video before the next section can start covering it. */
@@ -72,6 +78,8 @@ export function SplitVideoReveal({
   videoSrc,
   videoMimeType,
   mobileVideoSrc,
+  buttonLabel,
+  buttonLink,
   revealVh = 150,
   holdVh = 20,
   className,
@@ -82,6 +90,18 @@ export function SplitVideoReveal({
   // corner card's own slide entirely — different enough from CSS breakpoint
   // tweaks that it needs a real JS check, not just responsive classes.
   const isMobile = useIsMobile();
+  const lenis = useLenis();
+
+  // The CTA button's `buttonLink` is typically an in-page anchor (e.g.
+  // "#home-cta-footer") — a plain native anchor jump gets fought by Lenis
+  // (see scrollToAnchor's own comment), so anchor links are intercepted and
+  // routed through Lenis instead. A full URL/path is left alone as a normal
+  // link.
+  function handleCtaClick(e: React.MouseEvent) {
+    if (!buttonLink?.startsWith("#")) return;
+    e.preventDefault();
+    scrollToAnchor(lenis, buttonLink);
+  }
 
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
@@ -93,6 +113,37 @@ export function SplitVideoReveal({
   // resolves to the same fraction regardless of actual viewport height.
   const totalVh = revealVh + holdVh + HANDOFF_VH;
   const revealEnd = revealVh / totalVh;
+
+  // Whether the next section (ServicesAccordionScroll's `mt-[-100vh]` pull)
+  // has fully covered this still-pinned video. Deriving this from
+  // scrollYProgress would require knowing exactly how Lenis's smoothed
+  // scroll maps to framer's [0,1] range, which doesn't line up cleanly with
+  // real pixel positions — checking the actual DOM geometry of whatever
+  // sits right after this section is exact and scroll-library-agnostic:
+  // once its top edge reaches the top of the viewport, it (being taller
+  // than one viewport) necessarily covers the video completely. The video
+  // stays geometrically inside the viewport this whole time, so an
+  // IntersectionObserver alone can't detect any of this.
+  const [covered, setCovered] = useState(false);
+  useEffect(() => {
+    const next = wrapperRef.current?.nextElementSibling;
+    if (!next) return;
+
+    let ticking = false;
+    const checkCovered = () => {
+      ticking = false;
+      setCovered(next.getBoundingClientRect().top <= 0);
+    };
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(checkCovered);
+    };
+
+    checkCovered();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const panelX = useTransform(scrollYProgress, [0, revealEnd], ["0%", "-100%"]);
   const panelY = useTransform(scrollYProgress, [0, revealEnd], ["0%", "-100%"]);
@@ -147,6 +198,19 @@ export function SplitVideoReveal({
                   {subtitle}
                 </p>
               )}
+              {buttonLabel && buttonLink && (
+                <div className="inline-block mt-6">
+                  <MagneticButton>
+                    <BrandButton
+                      href={buttonLink}
+                      onClick={handleCtaClick}
+                      variant="gold"
+                    >
+                      {buttonLabel}
+                    </BrandButton>
+                  </MagneticButton>
+                </div>
+              )}
             </div>
           </div>
           {cornerHeadline && (
@@ -177,6 +241,7 @@ export function SplitVideoReveal({
           mimeType={videoMimeType}
           mobileSrc={mobileVideoSrc}
           timecodeClassName="pointer-events-none absolute bottom-10 left-4 top-auto right-auto z-20 flex flex-col items-start gap-1.5 rounded-xl bg-black/50 px-3 py-2 backdrop-blur-sm sm:top-4 sm:right-4 sm:bottom-auto sm:left-auto sm:items-end md:top-6 md:right-6"
+          forcePause={covered}
         />
         {/* <div className="absolute inset-0 z-0 bg-white" /> */}
 
@@ -205,6 +270,19 @@ export function SplitVideoReveal({
               <p className="font-display font-bold uppercase text-sm leading-snug text-brand-light/80 sm:text-xl">
                 {subtitle}
               </p>
+            )}
+            {buttonLabel && buttonLink && (
+              <div className="inline-block mt-4 sm:mt-6">
+                <MagneticButton>
+                  <BrandButton
+                    href={buttonLink}
+                    onClick={handleCtaClick}
+                    variant="gold"
+                  >
+                    {buttonLabel}
+                  </BrandButton>
+                </MagneticButton>
+              </div>
             )}
           </div>
           {/*

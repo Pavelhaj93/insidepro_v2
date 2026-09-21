@@ -12,6 +12,7 @@ export const page = defineType({
     defineField({ name: 'title', title: 'Title', type: 'string', validation: Rule => Rule.required(), group: 'content' }),
     defineField({ name: 'slug', title: 'Slug', type: 'slug', options: { source: 'title' }, validation: Rule => Rule.required(), group: 'content' }),
     defineField({ name: 'isHomepage', title: 'Is Homepage', type: 'boolean', initialValue: false, description: 'Mark this page as the homepage (only one page should have this enabled)', group: 'content' }),
+    defineField({ name: 'isPublished', title: 'Published', type: 'boolean', initialValue: true, description: 'Turn off to keep this page out of the live site and out of the build — its content stays saved here, it just won’t be reachable at its URL until you switch this back on.', group: 'content' }),
     defineField({
       name: 'blocks',
       title: 'Page Blocks',
@@ -40,6 +41,7 @@ export const page = defineType({
         { type: 'logoWallSection' },
         { type: 'textBlock' },
         { type: 'separator' },
+        { type: 'contactFormSection' },
       ],
     }),
     defineField({ name: 'seoTitle', title: 'SEO Title', type: 'string', group: 'seo' }),
@@ -47,9 +49,10 @@ export const page = defineType({
     defineField({ name: 'seoImage', title: 'OG Image', type: 'image', group: 'seo' }),
   ],
   preview: {
-    select: { title: 'title', subtitle: 'slug.current', isHomepage: 'isHomepage' },
-    prepare({ title, subtitle, isHomepage }) {
-      return { title: isHomepage ? `🏠 ${title}` : title, subtitle: `/${subtitle}` }
+    select: { title: 'title', subtitle: 'slug.current', isHomepage: 'isHomepage', isPublished: 'isPublished' },
+    prepare({ title, subtitle, isHomepage, isPublished }) {
+      const prefix = isHomepage ? '🏠 ' : isPublished === false ? '🚫 ' : ''
+      return { title: `${prefix}${title}`, subtitle: `/${subtitle}` }
     },
   },
 })

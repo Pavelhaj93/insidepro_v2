@@ -14,6 +14,12 @@
 
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
+type ArrayOf<T> = Array<
+  T & {
+    _key: string;
+  }
+>;
+
 // Source: schema.json
 export type FeatureCard = {
   _type: "featureCard";
@@ -97,6 +103,14 @@ export type ServiceItem = {
   }>;
   linkLabel?: string;
   link?: string;
+};
+
+export type ContactFormSection = {
+  _type: "contactFormSection";
+  headingLine1?: string;
+  headingLine2?: string;
+  introText?: string;
+  successMessage?: string;
 };
 
 export type Separator = {
@@ -344,11 +358,7 @@ export type ReferenceWorksSection = {
       _key: string;
     } & CategoryReference
   >;
-  projects?: Array<
-    {
-      _key: string;
-    } & ProjectReference
-  >;
+  projects?: ArrayOf<ProjectReference | FilmReference>;
 };
 
 export type FeaturedWorksSection = {
@@ -515,6 +525,8 @@ export type SplitVideoRevealSection = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  buttonLabel?: string;
+  buttonLink?: string;
 };
 
 export type HeroSection = {
@@ -639,6 +651,13 @@ export type Footer = {
   legalText?: string;
 };
 
+export type VideoReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "video";
+};
+
 export type Film = {
   _id: string;
   _type: "film";
@@ -654,20 +673,57 @@ export type Film = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  cardImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
   description?: string;
   genre?: string;
   country?: string;
   director?: string;
   production?: string;
   coproducer?: string;
-  partners?: string;
+  partners?: Array<string>;
   status?:
     | "in-development"
     | "in-production"
     | "in-post-production"
     | "finishing"
     | "released";
+  yearOfProduction?: string;
+  synopsis?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  gallery?: Array<{
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+    _key: string;
+  }>;
+  trailerVideo?: VideoReference;
+  categories?: Array<
+    {
+      _key: string;
+    } & CategoryReference
+  >;
   publishedAt?: string;
+  relatedProject?: ProjectReference;
 };
 
 export type TeamMember = {
@@ -690,13 +746,6 @@ export type TeamMember = {
   order?: number;
 };
 
-export type VideoReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "video";
-};
-
 export type Project = {
   _id: string;
   _type: "project";
@@ -705,8 +754,16 @@ export type Project = {
   _rev: string;
   title?: string;
   client?: string;
+  websiteUrl?: string;
   slug?: Slug;
   coverImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  cardImage?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
     hotspot?: SanityImageHotspot;
@@ -721,8 +778,20 @@ export type Project = {
     _type: "image";
     _key: string;
   }>;
+  behindTheScenesGallery?: Array<{
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+    _key: string;
+  }>;
   hoverVideo?: VideoReference;
-  projectVideo?: VideoReference;
+  projectVideos?: Array<
+    {
+      _key: string;
+    } & VideoReference
+  >;
   categories?: Array<
     {
       _key: string;
@@ -863,6 +932,7 @@ export type Page = {
   title?: string;
   slug?: Slug;
   isHomepage?: boolean;
+  isPublished?: boolean;
   blocks?: Array<
     | ({
         _key: string;
@@ -930,6 +1000,9 @@ export type Page = {
     | ({
         _key: string;
       } & Separator)
+    | ({
+        _key: string;
+      } & ContactFormSection)
   >;
   seoTitle?: string;
   seoDescription?: string;
@@ -1045,6 +1118,7 @@ export type AllSanitySchemaTypes =
   | ClientItem
   | ProcessStep
   | ServiceItem
+  | ContactFormSection
   | Separator
   | TextBlock
   | BrandLogoReference
@@ -1079,9 +1153,9 @@ export type AllSanitySchemaTypes =
   | SanityImageCrop
   | SanityImageHotspot
   | Footer
+  | VideoReference
   | Film
   | TeamMember
-  | VideoReference
   | Project
   | Video
   | Settings

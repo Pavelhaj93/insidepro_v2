@@ -8,7 +8,7 @@ type Variant = "gold" | "light";
 type Props = {
   children: ReactNode;
   href?: string;
-  onClick?: MouseEventHandler<HTMLButtonElement>;
+  onClick?: MouseEventHandler<HTMLElement>;
   type?: "button" | "submit";
   variant?: Variant;
   className?: string;
@@ -16,7 +16,8 @@ type Props = {
 
 const VARIANT_CLASSES: Record<Variant, string> = {
   gold: "border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-black",
-  light: "border-brand-light text-brand-light hover:bg-brand-light hover:text-brand-black",
+  light:
+    "border-brand-light text-brand-light hover:bg-brand-light hover:text-brand-black",
 };
 
 /**
@@ -43,14 +44,22 @@ export function BrandButton({
 
   if (href) {
     return (
-      <Link href={href} className={classes}>
+      <Link
+        href={href}
+        className={classes}
+        onClick={onClick as MouseEventHandler<HTMLAnchorElement>}
+      >
         {children}
       </Link>
     );
   }
 
   return (
-    <button type={type} onClick={onClick} className={classes}>
+    <button
+      type={type}
+      onClick={onClick as MouseEventHandler<HTMLButtonElement>}
+      className={classes}
+    >
       {children}
     </button>
   );

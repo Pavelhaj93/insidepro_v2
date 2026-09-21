@@ -1,5 +1,10 @@
+"use client";
+
+import { useState } from "react";
 import { urlFor } from "@/sanity/lib/image";
 import { SanityImage } from "@/components/ui/SanityImage";
+import { SectionMarkerHeading } from "@/components/sections/SectionMarkerHeading";
+import { PhotoLightbox } from "@/components/ui/PhotoLightbox";
 
 type SanityImage = { asset: { _ref: string }; lqip?: string };
 
@@ -9,6 +14,16 @@ type Props = {
   /** Offset for generated alt text, so numbering continues after any photos
    * already shown earlier on the page (e.g. the 01/02 text+image sections). */
   startIndex?: number;
+  /** When set, renders a "NN / heading" chapter heading above the grid —
+   * passed only when this gallery stands in for the result section (i.e.
+   * the project has no result video, so these photos ARE the result). When
+   * a video result section already exists elsewhere on the page, this is
+   * left unset and the grid renders as an unlabeled "more from this
+   * project" bonus gallery instead. */
+  marker?: string;
+  /** Heading shown next to `marker` — defaults to "Výsledek" (the project
+   * case-study convention); film case studies pass "Fotogalerie" instead. */
+  heading?: string;
 };
 
 // Same alternating wide/narrow pattern as the /reference listing grid
@@ -21,26 +36,55 @@ function isTileWide(index: number) {
   return isFirstInPair ? rowStartsWide : !rowStartsWide;
 }
 
+// A narrow tile normally stretches to match its wide row-mate's height via
+// CSS Grid's row-stretch (see the comment on `projectAspectClass` in
+// ReferenceWorksSection.tsx for the same pattern). With an odd photo count,
+// the last narrow tile ends up alone in its row with no wide row-mate to
+// stretch against — `lg:h-full` then resolves against an auto-height row
+// and collapses to ~0px, making that photo invisible on the page even
+// though it's still in the array (and reachable via the lightbox's prev/
+// next). Give a trailing solo tile a fixed portrait ratio instead (~2:3,
+// matching what a narrow tile stretched against a 4:3 wide row-mate would
+// have worked out to), so it still reads as a narrow "portrait" tile at lg
+// instead of a squat landscape crop.
+function tileAspectClass(index: number, total: number) {
+  if (isTileWide(index)) return "lg:col-span-2 aspect-4/3";
+  const isTrailingSolo = index === total - 1 && total % 2 === 1;
+  return isTrailingSolo
+    ? "aspect-4/3 lg:aspect-2/3"
+    : "aspect-4/3 lg:aspect-auto lg:h-full";
+}
+
 /**
  * The closing "more from this project" photo grid — matches the alternating
  * wide/narrow tile pattern already used on the /reference listing page,
- * instead of the plain uniform grid this used to be.
+ * instead of the plain uniform grid this used to be. Clicking a tile opens
+ * the same full-screen `PhotoLightbox` used by `BehindTheScenesFilmstrip`,
+ * with prev/next navigation across the rest of this gallery's photos.
  */
-export function OutputGalleryMosaic({ images, title, startIndex = 0 }: Props) {
+export function OutputGalleryMosaic({
+  images,
+  title,
+  startIndex = 0,
+  marker,
+  heading = "Výsledek",
+}: Props) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
   if (!images?.length) return null;
 
   return (
     <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-24">
-      <div className="mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {images.map((image, index) => {
-          const wide = isTileWide(index);
-
-          return (
-            <div
+      <div className="mx-auto max-w-7xl">
+        {marker && <SectionMarkerHeading marker={marker} heading={heading} />}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {images.map((image, index) => (
+            <button
               key={index}
-              className={`group relative overflow-hidden rounded-4xl bg-brand-dark ${
-                wide ? "lg:col-span-2 aspect-4/3" : "aspect-4/3 lg:aspect-auto lg:h-full"
-              }`}
+              type="button"
+              onClick={() => setOpenIndex(index)}
+              aria-label={`Zobrazit fotku ${index + 1} z ${images.length} na celou obrazovku`}
+              className={`group relative block overflow-hidden rounded-4xl bg-brand-dark text-left cursor-pointer ${tileAspectClass(index, images.length)}`}
             >
               <SanityImage
                 src={urlFor(image).url()}
@@ -49,10 +93,18 @@ export function OutputGalleryMosaic({ images, title, startIndex = 0 }: Props) {
                 className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
                 blurDataURL={image.lqip}
               />
-            </div>
-          );
-        })}
+            </button>
+          ))}
+        </div>
       </div>
+
+      <PhotoLightbox
+        images={images}
+        title={title}
+        index={openIndex}
+        onClose={() => setOpenIndex(null)}
+        onNavigate={setOpenIndex}
+      />
     </section>
   );
 }

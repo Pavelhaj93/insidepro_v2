@@ -165,7 +165,13 @@ function ClientCard({
   );
 }
 
-function ClientCardStatic({ item, index }: { item: ClientItem; index: number }) {
+function ClientCardStatic({
+  item,
+  index,
+}: {
+  item: ClientItem;
+  index: number;
+}) {
   const image = (
     <div className="relative aspect-4/3 w-full overflow-hidden rounded-3xl bg-brand-dark">
       {item.backgroundImage ? (

@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { motion } from "framer-motion";
 import AutoScroll from "embla-carousel-auto-scroll";
 import { sanityImageLoader, urlFor } from "@/sanity/lib/image";
 import {
@@ -13,12 +12,18 @@ import {
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { SectionMarkerHeading } from "@/components/sections/SectionMarkerHeading";
+import { PhotoLightbox } from "@/components/ui/PhotoLightbox";
 
 type SanityImage = { asset: { _ref: string }; lqip?: string };
 
 type Props = {
   images?: SanityImage[];
   title: string;
+  /** Chapter number for this section's heading — computed by the caller so
+   * numbering stays sequential when earlier/later optional sections are
+   * absent (e.g. becomes "02" instead of "03" when there's only one text
+   * section above it). */
+  marker: string;
 };
 
 const PERFORATIONS = Array.from({ length: 8 });
@@ -59,7 +64,7 @@ function FilmFrameVisual({
           loader={sanityImageLoader}
           alt={`${title} — zákulisí ${index + 1}`}
           fill
-          sizes="(min-width: 640px) 28vw, 70vw"
+          sizes="(min-width: 640px) 34vw, 70vw"
           className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
           placeholder={image.lqip ? "blur" : "empty"}
           blurDataURL={image.lqip}
@@ -104,113 +109,6 @@ function FilmFrame({
   );
 }
 
-function Lightbox({
-  images,
-  title,
-  index,
-  onClose,
-  onNavigate,
-}: {
-  images: SanityImage[];
-  title: string;
-  index: number;
-  onClose: () => void;
-  onNavigate: (index: number) => void;
-}) {
-  const reduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    const previousOverflow = document.documentElement.style.overflow;
-    document.documentElement.style.overflow = "hidden";
-    return () => {
-      document.documentElement.style.overflow = previousOverflow;
-    };
-  }, []);
-
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight") onNavigate((index + 1) % images.length);
-      if (e.key === "ArrowLeft") onNavigate((index - 1 + images.length) % images.length);
-    }
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [index, images, onClose, onNavigate]);
-
-  const image = images[index];
-
-  return (
-    <motion.div
-      role="dialog"
-      aria-modal="true"
-      aria-label={`${title} — zákulisí, fotka ${index + 1} z ${images.length}`}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-brand-black/95 p-6 backdrop-blur-sm"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: reduceMotion ? 0 : 0.2 }}
-    >
-      <button
-        type="button"
-        onClick={onClose}
-        aria-label="Zavřít"
-        className="absolute top-6 right-6 flex h-11 w-11 items-center justify-center rounded-full border border-brand-light/20 text-brand-light transition-colors hover:border-brand-gold hover:text-brand-gold"
-      >
-        <X size={20} />
-      </button>
-
-      {images.length > 1 && (
-        <button
-          type="button"
-          onClick={() => onNavigate((index - 1 + images.length) % images.length)}
-          aria-label="Předchozí fotka"
-          className="absolute left-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-brand-light/20 text-brand-light transition-colors hover:border-brand-gold hover:text-brand-gold sm:left-8"
-        >
-          <ChevronLeft size={22} />
-        </button>
-      )}
-
-      <motion.div
-        key={index}
-        initial={{ opacity: 0, scale: reduceMotion ? 1 : 0.96 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: reduceMotion ? 1 : 0.96 }}
-        transition={{ duration: reduceMotion ? 0 : 0.2 }}
-        className="relative aspect-4/3 w-full max-w-4xl"
-      >
-        <Image
-          src={urlFor(image).url()}
-          loader={sanityImageLoader}
-          alt={`${title} — zákulisí ${index + 1}`}
-          fill
-          sizes="90vw"
-          className="object-contain"
-          placeholder={image.lqip ? "blur" : "empty"}
-          blurDataURL={image.lqip}
-        />
-      </motion.div>
-
-      {images.length > 1 && (
-        <button
-          type="button"
-          onClick={() => onNavigate((index + 1) % images.length)}
-          aria-label="Další fotka"
-          className="absolute right-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-brand-light/20 text-brand-light transition-colors hover:border-brand-gold hover:text-brand-gold sm:right-8"
-        >
-          <ChevronRight size={22} />
-        </button>
-      )}
-
-      <p className="absolute bottom-6 left-1/2 -translate-x-1/2 font-body text-sm tracking-widest text-brand-light/60">
-        {String(index + 1).padStart(2, "0")} / {String(images.length).padStart(2, "0")}
-      </p>
-    </motion.div>
-  );
-}
-
 /**
  * "Behind the scenes" production-photo gallery for the case-study page —
  * a physical-filmstrip-styled reel that scrubs horizontally as the page is
@@ -218,7 +116,7 @@ function Lightbox({
  * primitive, same as the homepage's `ClientShowcaseHorizontal`), and opens
  * a full-screen lightbox on click.
  */
-export function BehindTheScenesFilmstrip({ images, title }: Props) {
+export function BehindTheScenesFilmstrip({ images, title, marker }: Props) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const reduceMotion = useReducedMotion();
 
@@ -240,14 +138,14 @@ export function BehindTheScenesFilmstrip({ images, title }: Props) {
 
   const heading = (
     <div className="max-w-7xl mx-auto">
-      <SectionMarkerHeading marker="03" heading="Jak to vznikalo" className="mb-0" />
+      <SectionMarkerHeading marker={marker} heading="Jak to vznikalo" className="mb-0" />
     </div>
   );
 
   return (
     <>
       <section className="bg-brand-black px-6 py-16 sm:hidden">
-        <SectionMarkerHeading marker="03" heading="Jak to vznikalo" className="mb-10" />
+        <SectionMarkerHeading marker={marker} heading="Jak to vznikalo" className="mb-10" />
         <Carousel
           opts={mobileOpts}
           plugins={mobilePlugins}
@@ -278,8 +176,25 @@ export function BehindTheScenesFilmstrip({ images, title }: Props) {
         <HorizontalScrollCards
           items={images}
           itemKey={(image, index) => image.asset._ref || String(index)}
-          itemWidthVw={28}
-          gapVw={3}
+          itemWidthVw={34}
+          gapVw={4}
+          // Same entry/exit choreography as ClientShowcaseHorizontal: frames
+          // start off-screen right and slide to rest as the section scrolls
+          // into view (entryVw/restVw/entryProgress, startAt=1 so it begins
+          // as soon as the section starts entering rather than only once
+          // fully pinned). speedMultiplier<1 shortens the pinned scroll
+          // budget so the strip doesn't demand a full extra scroll's worth
+          // of "dead" pin time once the frames are done cycling, and
+          // endAt<1 lets the last frame's exit keep animating into the
+          // handoff to the next section instead of freezing at release —
+          // together, scrolling onward no longer waits for every frame to
+          // have fully cleared the screen first.
+          entryVw={70}
+          restVw={18}
+          entryProgress={0.18}
+          startAt={1}
+          endAt={0.35}
+          speedMultiplier={0.75}
           sidebarOffsetPx={96}
           className="bg-brand-black"
           labelClassName="pr-6 md:pr-10 lg:pr-24 lg:pl-24"
@@ -290,17 +205,13 @@ export function BehindTheScenesFilmstrip({ images, title }: Props) {
         />
       </div>
 
-      <AnimatePresence>
-        {openIndex !== null && (
-          <Lightbox
-            images={images}
-            title={title}
-            index={openIndex}
-            onClose={() => setOpenIndex(null)}
-            onNavigate={setOpenIndex}
-          />
-        )}
-      </AnimatePresence>
+      <PhotoLightbox
+        images={images}
+        title={title}
+        index={openIndex}
+        onClose={() => setOpenIndex(null)}
+        onNavigate={setOpenIndex}
+      />
     </>
   );
 }

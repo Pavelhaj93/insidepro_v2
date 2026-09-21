@@ -85,6 +85,19 @@ export const splitVideoRevealSection = defineType({
       options: { hotspot: true },
       description: 'Shown instantly while the video loads in behind it.',
     }),
+    defineField({
+      name: 'buttonLabel',
+      title: 'Button Label (optional)',
+      type: 'string',
+      initialValue: 'Kontakt',
+    }),
+    defineField({
+      name: 'buttonLink',
+      title: 'Button Link (optional)',
+      type: 'string',
+      initialValue: '#kontakt',
+      description: 'In-page anchor (e.g. #kontakt) or a full URL/path.',
+    }),
   ],
   preview: {
     select: { title: 'headline', media: 'posterImage' },

@@ -19,8 +19,8 @@ export const referenceWorksSection = defineType({
       name: 'projects',
       title: 'Projects',
       type: 'array',
-      of: [{ type: 'reference', to: [{ type: 'project' }] }],
-      description: 'Pick and order which projects appear on the Reference page. Leave empty to show every project tagged with one of the Categories above instead.',
+      of: [{ type: 'reference', to: [{ type: 'project' }, { type: 'film' }] }],
+      description: 'Pick and order which projects/films appear on the Reference page. Leave empty to show every project/film tagged with one of the Categories above instead.',
     }),
   ],
   preview: {
