@@ -183,10 +183,11 @@ export function HomeCtaFooter({
                   alt={logoText ?? "insidePRO"}
                   width={160}
                   height={40}
-                  // The uploaded mark is white — force it to black on the
-                  // homepage's light background instead of shipping a second
-                  // dark-colored asset just for this one inverted case.
-                  className={`h-10 w-auto sm:h-12 ${invert ? "" : "brightness-0"}`}
+                  // Force the mark's color from CSS so one uploaded asset works
+                  // on both footers regardless of its own color: brightness-0
+                  // flattens it to black (light homepage footer), and adding
+                  // invert flips that to white (dark footer everywhere else).
+                  className={`h-10 w-auto sm:h-12 ${invert ? "brightness-0 invert" : "brightness-0"}`}
                   placeholder={logo.lqip ? "blur" : "empty"}
                   blurDataURL={logo.lqip}
                 />

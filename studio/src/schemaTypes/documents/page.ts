@@ -51,7 +51,7 @@ export const page = defineType({
   preview: {
     select: { title: 'title', subtitle: 'slug.current', isHomepage: 'isHomepage', isPublished: 'isPublished' },
     prepare({ title, subtitle, isHomepage, isPublished }) {
-      const prefix = isHomepage ? '🏠 ' : isPublished === false ? '🚫 ' : ''
+      const prefix = isHomepage ? '🏠 ' : isPublished !== true ? '🚫 ' : ''
       return { title: `${prefix}${title}`, subtitle: `/${subtitle}` }
     },
   },
