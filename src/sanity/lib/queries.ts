@@ -158,13 +158,16 @@ export const homepageQuery = groq`*[_type == "page" && isHomepage == true][0] {
   ${blocksProjection}
 }`;
 
-export const pageBySlugQuery = groq`*[_type == "page" && slug.current == $slug][0] {
-  _id, title, slug, seoTitle, seoDescription, seoImage, isPublished,
+// Visibility is opt-in: only `isPublished == true` goes live. Studio renders an
+// unset boolean as "off", so treating unset as published (the old `!= false`
+// check) left pages the editor saw as switched off still reachable.
+export const pageBySlugQuery = groq`*[_type == "page" && slug.current == $slug && isPublished == true][0] {
+  _id, title, slug, seoTitle, seoDescription, seoImage,
   ${blocksProjection}
 }`;
 
-export const pagesQuery = groq`*[_type == "page"] | order(_createdAt desc) {
-  _id, title, slug, isHomepage, isPublished
+export const pagesQuery = groq`*[_type == "page" && isPublished == true && isHomepage != true && defined(slug.current)] | order(_createdAt desc) {
+  _id, title, slug, _updatedAt
 }`;
 
 // Used by the showcase /reference route to pull its Reference Works Section

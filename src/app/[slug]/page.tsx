@@ -11,19 +11,14 @@ type Props = {
 }
 
 export async function generateStaticParams() {
-  const pages = await client.fetch(pagesQuery)
-  return pages
-    .filter(
-      (p: { isHomepage?: boolean; isPublished?: boolean; slug?: { current: string } }) =>
-        !p.isHomepage && p.isPublished !== false && p.slug?.current,
-    )
-    .map((p: { slug: { current: string } }) => ({ slug: p.slug.current }))
+  const pages: { slug: { current: string } }[] = await client.fetch(pagesQuery)
+  return pages.map((p) => ({ slug: p.slug.current }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const page = await client.fetch(pageBySlugQuery, { slug })
-  if (!page) return {}
+  if (!page) return { robots: { index: false, follow: false } }
   return {
     title: page.seoTitle ?? page.title,
     description: page.seoDescription,
@@ -32,13 +27,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function DynamicPage({ params }: Props) {
   const { slug } = await params
+  // pageBySlugQuery only matches pages with isPublished == true, so an
+  // unpublished page resolves to null here. Next still renders unknown [slug]
+  // params on demand (dynamicParams defaults to true), which makes this guard
+  // what actually 404s a direct visit to a hidden page's URL.
   const page = await client.fetch(pageBySlugQuery, { slug })
-
-  // isPublished === false keeps the page out of generateStaticParams above,
-  // but Next still serves unknown [slug] params on demand (dynamicParams
-  // defaults to true) — this guard is what actually makes a direct visit to
-  // its URL 404 instead of falling through to a live render.
-  if (!page || page.isPublished === false) notFound()
+  if (!page) notFound()
 
   return (
     <main>
