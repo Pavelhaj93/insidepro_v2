@@ -12,7 +12,7 @@ import {
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { SectionMarkerHeading } from "@/components/sections/SectionMarkerHeading";
-import { PhotoLightbox } from "@/components/ui/PhotoLightbox";
+import { PhotoLightbox, preloadLightboxImage } from "@/components/ui/PhotoLightbox";
 
 type SanityImage = { asset: { _ref: string }; lqip?: string };
 
@@ -65,7 +65,7 @@ function FilmFrameVisual({
           alt={`${title} — zákulisí ${index + 1}`}
           fill
           sizes="(min-width: 640px) 34vw, 70vw"
-          className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+          className="object-cover object-center"
           placeholder={image.lqip ? "blur" : "empty"}
           blurDataURL={image.lqip}
         />
@@ -93,14 +93,17 @@ function FilmFrame({
   title: string;
   onOpen: (index: number) => void;
 }) {
-  const rotation = index % 2 === 0 ? -1.5 : 1.5;
-
+  // Same calm treatment as the homepage's ClientShowcaseHorizontal: only the
+  // scroll-driven depth scale/opacity moves the frame — no tilt and no hover
+  // scale. Frames slide under a resting cursor while the page scrolls, so a
+  // hover transform kept toggling on/off and fighting the depth scale.
   return (
     <motion.button
       type="button"
       onClick={() => onOpen(index)}
-      style={{ scale: depthScale, opacity: depthOpacity, rotate: rotation }}
-      whileHover={{ rotate: 0, scale: 1.03 }}
+      onPointerEnter={(e) => e.pointerType === "mouse" && preloadLightboxImage(item)}
+      onFocus={() => preloadLightboxImage(item)}
+      style={{ scale: depthScale, opacity: depthOpacity }}
       className="group block w-full cursor-pointer text-left"
       aria-label={`Zobrazit fotku ${index + 1} z ${total} na celou obrazovku`}
     >
@@ -138,14 +141,14 @@ export function BehindTheScenesFilmstrip({ images, title, marker }: Props) {
 
   const heading = (
     <div className="max-w-7xl mx-auto">
-      <SectionMarkerHeading marker={marker} heading="Jak to vznikalo" className="mb-0" />
+      <SectionMarkerHeading marker={marker} heading="Behind the scenes" className="mb-0" />
     </div>
   );
 
   return (
     <>
       <section className="bg-brand-black px-6 py-16 sm:hidden">
-        <SectionMarkerHeading marker={marker} heading="Jak to vznikalo" className="mb-10" />
+        <SectionMarkerHeading marker={marker} heading="Behind the scenes" className="mb-10" />
         <Carousel
           opts={mobileOpts}
           plugins={mobilePlugins}
