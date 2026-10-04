@@ -7,6 +7,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { Badge } from "@/components/ui/Badge";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { EASE_OUT_EXPO } from "@/lib/motion";
+import { urlFor } from "@/sanity/lib/image";
 
 type SanityImage = { asset: { _ref: string } };
 
@@ -18,6 +19,8 @@ type Category = {
   order?: number;
   /** Set only on categories with no projects of their own (e.g. Showreel) — see `activeCategory` below. */
   videoUrl?: string;
+  /** Poster image URL of the referenced Video library document, if it has one. */
+  videoPoster?: string;
 };
 
 type Project = {
@@ -196,6 +199,11 @@ export function ReferenceWorksSection({
           <video
             key={activeCategory._id}
             src={activeCategory.videoUrl}
+            poster={
+              activeCategory.videoPoster
+                ? urlFor(activeCategory.videoPoster).width(1920).url()
+                : undefined
+            }
             controls
             className="aspect-video w-full rounded-4xl bg-brand-dark"
           />

@@ -80,7 +80,7 @@ const blocksProjection = groq`
     // in sync with FALLBACK_QUERY in src/app/reference/page.tsx.
     allLabel,
     _type == "referenceWorksSection" => {
-      "categories": categories[]-> { _id, title, "slug": slug.current, order, "videoUrl": video.asset->url },
+      "categories": categories[]-> { _id, title, "slug": slug.current, order, "videoUrl": coalesce(featuredVideo->file.asset->url, video.asset->url), "videoPoster": featuredVideo->poster.asset->url },
       "projects": select(
         count(projects) > 0 => projects[]-> {
           ${referenceItemFields}

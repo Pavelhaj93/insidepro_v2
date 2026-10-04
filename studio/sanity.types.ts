@@ -574,6 +574,13 @@ export type HeroSection = {
   showSocialIcons?: boolean;
 };
 
+export type VideoReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "video";
+};
+
 export type Category = {
   _id: string;
   _type: "category";
@@ -583,6 +590,7 @@ export type Category = {
   title?: string;
   slug?: Slug;
   order?: number;
+  featuredVideo?: VideoReference;
   video?: {
     asset?: SanityFileAssetReference;
     media?: unknown;
@@ -649,13 +657,6 @@ export type Footer = {
   phone?: string;
   copyrightText?: string;
   legalText?: string;
-};
-
-export type VideoReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "video";
 };
 
 export type Film = {
@@ -1147,13 +1148,13 @@ export type AllSanitySchemaTypes =
   | SanityFileAssetReference
   | SplitVideoRevealSection
   | HeroSection
+  | VideoReference
   | Category
   | Slug
   | BrandLogo
   | SanityImageCrop
   | SanityImageHotspot
   | Footer
-  | VideoReference
   | Film
   | TeamMember
   | Project
