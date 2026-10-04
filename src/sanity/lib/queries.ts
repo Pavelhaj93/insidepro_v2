@@ -80,7 +80,7 @@ const blocksProjection = groq`
     // in sync with FALLBACK_QUERY in src/app/reference/page.tsx.
     allLabel,
     _type == "referenceWorksSection" => {
-      "categories": categories[]-> { _id, title, "slug": slug.current, order, "videoPlaybackId": featuredVideo->muxVideo.asset->playbackId, "videoPoster": featuredVideo->poster.asset->url },
+      "categories": categories[]-> { _id, title, "slug": slug.current, order, "videoPlaybackId": featuredVideo->muxVideo.asset->playbackId, "videoThumbTime": featuredVideo->muxVideo.asset->thumbTime, "videoPoster": featuredVideo->poster.asset->url },
       "projects": select(
         count(projects) > 0 => projects[]-> {
           ${referenceItemFields}
@@ -247,7 +247,7 @@ export const referenceDetailQuery = groq`*[(_type == "project" || _type == "film
   body,
   gallery[] { ${lqip} },
   behindTheScenesGallery[] { ${lqip} },
-  projectVideos[]-> { "playbackId": muxVideo.asset->playbackId, poster },
+  projectVideos[]-> { "playbackId": muxVideo.asset->playbackId, "thumbTime": muxVideo.asset->thumbTime, poster },
   // film-only fields (undefined on "project" docs)
   description,
   yearOfProduction,
@@ -259,7 +259,7 @@ export const referenceDetailQuery = groq`*[(_type == "project" || _type == "film
   partners,
   status,
   synopsis,
-  trailerVideo-> { "playbackId": muxVideo.asset->playbackId, poster }
+  trailerVideo-> { "playbackId": muxVideo.asset->playbackId, "thumbTime": muxVideo.asset->thumbTime, poster }
 }`;
 
 // ─── Legacy (kept for compatibility) ─────────────────────────────────────────
