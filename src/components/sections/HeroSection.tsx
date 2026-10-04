@@ -7,13 +7,14 @@ import { HeroBackgroundVideo } from "@/components/motion/HeroBackgroundVideo";
 import { PageIntroCurtain } from "@/components/motion/PageIntroCurtain";
 import { HeroHeadline } from "./HeroHeadline";
 import { client } from "@/sanity/lib/client";
+import { muxMp4Url } from "@/sanity/lib/mux";
 import { settingsQuery } from "@/sanity/lib/queries";
 
 type Props = {
   backgroundImage?: { asset: { _ref: string }; lqip?: string };
   backgroundImageMobile?: { asset: { _ref: string }; lqip?: string };
-  backgroundVideo?: { asset?: { url?: string; mimeType?: string } };
-  backgroundVideoMobile?: { asset?: { url?: string; mimeType?: string } };
+  backgroundVideoPlaybackId?: string;
+  backgroundVideoMobilePlaybackId?: string;
   headline?: PortableTextBlock[];
   subtitle?: string;
   showScrollIndicator?: boolean;
@@ -23,14 +24,15 @@ type Props = {
 export async function HeroSection({
   backgroundImage,
   backgroundImageMobile,
-  backgroundVideo,
-  backgroundVideoMobile,
+  backgroundVideoPlaybackId,
+  backgroundVideoMobilePlaybackId,
   headline,
   subtitle,
   showScrollIndicator = true,
   showSocialIcons = false,
 }: Props) {
-  const hasVideo = Boolean(backgroundVideo?.asset?.url);
+  const videoSrc = muxMp4Url(backgroundVideoPlaybackId);
+  const hasVideo = Boolean(videoSrc);
 
   const socialLinks = showSocialIcons
     ? ((await client.fetch(settingsQuery))?.socialLinks ?? null)
@@ -63,16 +65,14 @@ export async function HeroSection({
       )}
 
       {/* Background video — plays on top of the image once ready */}
-      {backgroundVideo?.asset?.url && (
+      {videoSrc && (
         <HeroBackgroundVideo
-          src={backgroundVideo.asset.url}
-          mimeType={backgroundVideo.asset.mimeType}
-          mobileSrc={backgroundVideoMobile?.asset?.url}
-          mobileMimeType={backgroundVideoMobile?.asset?.mimeType}
+          src={videoSrc}
+          mobileSrc={muxMp4Url(backgroundVideoMobilePlaybackId)}
         />
       )}
 
-      {backgroundImage || backgroundVideo?.asset?.url ? (
+      {backgroundImage || hasVideo ? (
         <div className="absolute inset-0 bg-linear-to-b from-brand-black/40 via-brand-black/20 to-brand-black/70" />
       ) : (
         <div className="absolute inset-0 bg-brand-black" />

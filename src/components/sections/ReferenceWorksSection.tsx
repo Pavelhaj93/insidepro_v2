@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/Badge";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { EASE_OUT_EXPO } from "@/lib/motion";
 import { urlFor } from "@/sanity/lib/image";
+import { MuxVideoPlayer } from "@/components/media/MuxVideoPlayer";
 
 type SanityImage = { asset: { _ref: string } };
 
@@ -18,7 +19,7 @@ type Category = {
   /** Tab order on the Reference page (lower = first) — set in Sanity on the category document. */
   order?: number;
   /** Set only on categories with no projects of their own (e.g. Showreel) — see `activeCategory` below. */
-  videoUrl?: string;
+  videoPlaybackId?: string;
   /** Poster image URL of the referenced Video library document, if it has one. */
   videoPoster?: string;
 };
@@ -83,7 +84,7 @@ export function ReferenceWorksSection({
   const usedCategories = categories
     .filter(
       (category) =>
-        Boolean(category.videoUrl) ||
+        Boolean(category.videoPlaybackId) ||
         projects.some((project) =>
           project.categories?.some((c) => c._id === category._id),
         ),
@@ -96,7 +97,7 @@ export function ReferenceWorksSection({
 
       // Tie-break: video categories (Showreel) sort last among equals —
       // they're a special "extra" tab, not a regular project category.
-      return Number(Boolean(a.videoUrl)) - Number(Boolean(b.videoUrl));
+      return Number(Boolean(a.videoPlaybackId)) - Number(Boolean(b.videoPlaybackId));
     });
 
   const activeCategory = usedCategories.find(
@@ -182,30 +183,29 @@ export function ReferenceWorksSection({
             >
               <Badge
                 active={activeId === category._id}
-                accent={Boolean(category.videoUrl)}
-                className={category.videoUrl ? "gap-1.5" : undefined}
+                accent={Boolean(category.videoPlaybackId)}
+                className={category.videoPlaybackId ? "gap-1.5" : undefined}
               >
-                {category.videoUrl && <PlayIcon />}
+                {category.videoPlaybackId && <PlayIcon />}
                 {category.title}
               </Badge>
             </button>
           ))}
         </Reveal>
 
-        {activeCategory?.videoUrl ? (
+        {activeCategory?.videoPlaybackId ? (
           // Categories carrying their own video (e.g. Showreel) show that
           // video full-width instead of the project grid — different
           // content entirely, not just a different filter of the same grid.
-          <video
+          <MuxVideoPlayer
             key={activeCategory._id}
-            src={activeCategory.videoUrl}
+            playbackId={activeCategory.videoPlaybackId}
+            title={activeCategory.title}
             poster={
               activeCategory.videoPoster
                 ? urlFor(activeCategory.videoPoster).width(1920).url()
                 : undefined
             }
-            controls
-            className="aspect-video w-full rounded-4xl bg-brand-dark"
           />
         ) : (
           <>

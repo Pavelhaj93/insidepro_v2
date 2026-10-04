@@ -2,6 +2,7 @@ import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
 import { visionTool } from '@sanity/vision'
 import { presentationTool } from 'sanity/presentation'
+import { muxInput } from 'sanity-plugin-mux-input'
 import { schemaTypes } from './src/schemaTypes'
 import { structure, SINGLETON_TYPES } from './structure'
 
@@ -19,6 +20,13 @@ export default defineConfig({
     }),
     structureTool({ structure }),
     visionTool(),
+    // basic quality is free to encode on Mux; 'highest' static MP4 feeds the
+    // muted loop players (hero, split reveal, hover) that use a plain <video>.
+    muxInput({
+      video_quality: 'basic',
+      max_resolution_tier: '2160p',
+      static_renditions: ['highest'],
+    }),
   ],
   schema: { types: schemaTypes },
   document: {
