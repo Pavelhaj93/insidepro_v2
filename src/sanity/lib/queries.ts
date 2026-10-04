@@ -175,6 +175,7 @@ export const pagesQuery = groq`*[_type == "page" && isPublished == true && isHom
 // `page` document with that same slug — reuses the same `blocksProjection`
 // the generic page-builder pipeline uses, so the two never drift apart.
 export const referencePageQuery = groq`*[_type == "page" && slug.current == "reference"][0] {
+  seoTitle, seoDescription,
   ${blocksProjection}
 }`;
 

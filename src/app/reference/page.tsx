@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { groq } from "next-sanity";
 import { client } from "@/sanity/lib/client";
 import { referencePageQuery, referenceItemFields } from "@/sanity/lib/queries";
@@ -18,6 +19,14 @@ const FALLBACK_QUERY = groq`{
 type Props = {
   searchParams: Promise<{ category?: string }>;
 };
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await client.fetch(referencePageQuery);
+  return {
+    title: page?.seoTitle ?? "Reference | insidePRO",
+    description: page?.seoDescription ?? undefined,
+  };
+}
 
 /**
  * Showcase reference/works page — the `VerticalSidebar` nav comes from the
