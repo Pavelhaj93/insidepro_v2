@@ -9,6 +9,7 @@ import { client } from "@/sanity/lib/client";
 import { referenceDetailQuery } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { SanityImage } from "@/components/ui/SanityImage";
+import { MuxVideoPlayer } from "@/components/media/MuxVideoPlayer";
 import { Badge } from "@/components/ui/Badge";
 import { CaseStudyBodySections } from "@/components/sections/CaseStudyBodySections";
 import { BehindTheScenesFilmstrip } from "@/components/sections/BehindTheScenesFilmstrip";
@@ -27,7 +28,7 @@ type Props = {
 type SanityImageT = { asset: { _ref: string }; lqip?: string };
 
 type VideoField = {
-  file?: { asset?: { url?: string; mimeType?: string } };
+  playbackId?: string;
   poster?: SanityImageT;
 };
 
@@ -110,7 +111,9 @@ export default async function CaseStudyPage({ params }: Props) {
   const hasBehindTheScenes = !isFilm && (item.behindTheScenesGallery?.length ?? 0) > 0;
   const resultVideos = isFilm
     ? []
-    : (item.projectVideos ?? []).filter((video) => Boolean(video.file?.asset?.url));
+    : (item.projectVideos ?? []).filter(
+        (video): video is VideoField & { playbackId: string } => Boolean(video.playbackId),
+      );
   const hasResultVideo = resultVideos.length > 0;
   const hasResultPhotos = !isFilm && leftoverGallery.length > 0;
   const showResultSection = hasResultVideo || hasResultPhotos;
@@ -139,7 +142,8 @@ export default async function CaseStudyPage({ params }: Props) {
 
   const filmPartners = isFilm ? (item.partners ?? []) : [];
   const hasFilmSynopsis = isFilm && Boolean(item.synopsis?.length);
-  const hasFilmTrailer = isFilm && Boolean(item.trailerVideo?.file?.asset?.url);
+  const trailerPlaybackId = isFilm ? item.trailerVideo?.playbackId : undefined;
+  const hasFilmTrailer = Boolean(trailerPlaybackId);
   const hasFilmGallery = isFilm && (item.gallery?.length ?? 0) > 0;
 
   // Sequential chapter numbering (01 O filmu / 02 Behind the scenes /
@@ -283,13 +287,11 @@ export default async function CaseStudyPage({ params }: Props) {
             <SectionMarkerHeading marker={resultMarker} heading="Výstupy" />
             <div className="flex flex-col gap-6 md:gap-8">
               {resultVideos.map((video, index) => (
-                <video
-                  key={index}
-                  src={video.file!.asset!.url}
+                <MuxVideoPlayer
+                  key={`${video.playbackId}-${index}`}
+                  playbackId={video.playbackId}
+                  title={item.title}
                   poster={video.poster ? urlFor(video.poster).width(1920).url() : undefined}
-                  controls
-                  playsInline
-                  className="aspect-video w-full rounded-4xl bg-brand-dark"
                 />
               ))}
             </div>
@@ -315,20 +317,18 @@ export default async function CaseStudyPage({ params }: Props) {
         />
       )}
 
-      {hasFilmTrailer && (
+      {trailerPlaybackId && (
         <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-16 md:pb-24">
           <div className="mx-auto max-w-7xl">
             <SectionMarkerHeading marker={trailerMarker!} heading="Trailer" />
-            <video
-              src={item.trailerVideo!.file!.asset!.url}
+            <MuxVideoPlayer
+              playbackId={trailerPlaybackId}
+              title={`${item.title} — Trailer`}
               poster={
                 item.trailerVideo?.poster
                   ? urlFor(item.trailerVideo.poster).width(1920).url()
                   : undefined
               }
-              controls
-              playsInline
-              className="aspect-video w-full rounded-4xl bg-brand-dark"
             />
           </div>
         </section>

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { urlFor, sanityImageLoader } from "@/sanity/lib/image";
+import { muxMp4Url } from "@/sanity/lib/mux";
 import {
   HorizontalScrollCards,
   type HorizontalCardRenderArgs,
@@ -23,7 +24,7 @@ type ClientItem = {
   // dereferenced `video` library document (see `project.hoverVideo` in the
   // Studio schema). Plays over the card's image on hover, desktop/tablet
   // only (see ClientCard below).
-  hoverVideo?: { file?: { asset?: { url?: string; mimeType?: string } } };
+  hoverVideo?: { playbackId?: string };
 };
 
 type Props = {
@@ -50,7 +51,7 @@ function ClientCard({
   depthOpacity,
 }: HorizontalCardRenderArgs<ClientItem>) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const hoverVideoUrl = item.hoverVideo?.file?.asset?.url;
+  const hoverVideoUrl = muxMp4Url(item.hoverVideo?.playbackId);
 
   const image = (
     <div className="relative aspect-4/3 w-full overflow-hidden rounded-3xl bg-brand-dark">

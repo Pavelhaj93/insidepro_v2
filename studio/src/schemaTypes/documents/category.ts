@@ -27,7 +27,7 @@ export const category = defineType({
       type: 'file',
       options: { accept: 'video/*' },
       description:
-        'Deprecated — superseded by "Video" above, which picks from the Video library instead of a one-off upload. Still used as a fallback while "Video" is empty; clear it once "Video" is set.',
+        'Deprecated — superseded by "Video" above. No longer shown on the site; the Mux migration copies it into a Video library entry and sets "Video". Clear it once the migration is verified.',
       hidden: ({ document }) => !document?.video,
     }),
   ],

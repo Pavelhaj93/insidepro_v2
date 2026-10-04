@@ -40,8 +40,8 @@ const blocksProjection = groq`
     // heroSection
     backgroundImage { ${lqip} },
     backgroundImageMobile { ${lqip} },
-    backgroundVideo { asset->{ url, mimeType } },
-    backgroundVideoMobile { asset->{ url, mimeType } },
+    "backgroundVideoPlaybackId": backgroundMuxVideo.asset->playbackId,
+    "backgroundVideoMobilePlaybackId": backgroundMuxVideoMobile.asset->playbackId,
     headline,
     subtitle,
     showScrollIndicator,
@@ -49,8 +49,8 @@ const blocksProjection = groq`
     // splitVideoRevealSection
     kicker,
     cornerHeadline,
-    video { asset->{ url, mimeType } },
-    mobileVideo { asset->{ url, mimeType } },
+    "videoPlaybackId": muxVideo.asset->playbackId,
+    "mobileVideoPlaybackId": mobileMuxVideo.asset->playbackId,
     posterImage,
     // servicesListSection / servicesAccordionSection
     label,
@@ -80,7 +80,7 @@ const blocksProjection = groq`
     // in sync with FALLBACK_QUERY in src/app/reference/page.tsx.
     allLabel,
     _type == "referenceWorksSection" => {
-      "categories": categories[]-> { _id, title, "slug": slug.current, order, "videoUrl": coalesce(featuredVideo->file.asset->url, video.asset->url), "videoPoster": featuredVideo->poster.asset->url },
+      "categories": categories[]-> { _id, title, "slug": slug.current, order, "videoPlaybackId": featuredVideo->muxVideo.asset->playbackId, "videoPoster": featuredVideo->poster.asset->url },
       "projects": select(
         count(projects) > 0 => projects[]-> {
           ${referenceItemFields}
@@ -126,7 +126,7 @@ const blocksProjection = groq`
         body,
         "tagline": excerpt,
         "slug": slug.current,
-        hoverVideo-> { file { asset->{ url, mimeType } } },
+        hoverVideo-> { "playbackId": muxVideo.asset->playbackId },
       },
     },
     // imageSection
@@ -247,7 +247,7 @@ export const referenceDetailQuery = groq`*[(_type == "project" || _type == "film
   body,
   gallery[] { ${lqip} },
   behindTheScenesGallery[] { ${lqip} },
-  projectVideos[]-> { file { asset->{ url, mimeType } }, poster },
+  projectVideos[]-> { "playbackId": muxVideo.asset->playbackId, poster },
   // film-only fields (undefined on "project" docs)
   description,
   yearOfProduction,
@@ -259,7 +259,7 @@ export const referenceDetailQuery = groq`*[(_type == "project" || _type == "film
   partners,
   status,
   synopsis,
-  trailerVideo-> { file { asset->{ url, mimeType } }, poster }
+  trailerVideo-> { "playbackId": muxVideo.asset->playbackId, poster }
 }`;
 
 // ─── Legacy (kept for compatibility) ─────────────────────────────────────────

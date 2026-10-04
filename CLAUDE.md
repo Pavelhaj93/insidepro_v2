@@ -37,7 +37,8 @@ contact form. All page content is a Sanity page builder (`page.blocks`).
 ## Sanity
 - projectId `4mvdpq34`, dataset `production`, apiVersion `2024-01-01`
 - Studio title "insidePRO"; plugins: presentationTool (preview origin `SANITY_STUDIO_PREVIEW_ORIGIN`,
-  draft mode `/api/draft-mode/enable`), structureTool, visionTool
+  draft mode `/api/draft-mode/enable`), structureTool, visionTool, muxInput (`sanity-plugin-mux-input`;
+  its Mux token lives in the dataset doc `secrets.mux`, entered via Studio → Videos → Configure plugin)
 - Singletons `settings`, `footer` (fixed IDs, no duplicate/delete, hidden from "create new")
 - Documents: `page`, `project`, `film`, `teamMember`, `brandLogo`, `category`, `video`, `post`, `settings`, `footer`
 - Blocks: hero, splitVideoReveal, servicesList, servicesAccordion, whoWeAre, zoomText, featuredWorks,
@@ -48,10 +49,14 @@ contact form. All page content is a Sanity page builder (`page.blocks`).
 ## Env vars (names only)
 - Next: `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `SANITY_API_READ_TOKEN`,
   `NEXT_PUBLIC_BASE_URL`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL` (optional)
-- Scripts: `SANITY_API_WRITE_TOKEN`
+- Scripts: `SANITY_API_WRITE_TOKEN`; `MUX_TOKEN_ID`, `MUX_TOKEN_SECRET` (`scripts/migrate-videos-to-mux.mjs`)
 - Studio: `SANITY_STUDIO_PROJECT_ID`, `SANITY_STUDIO_DATASET`, `SANITY_STUDIO_PREVIEW_ORIGIN` (all have defaults)
 
 ## Gotchas / conventions
+- `next build` type-checks `studio/` too (root tsconfig includes `**/*.ts`), but Vercel installs only the
+  root `package.json`. Every package `studio/sanity.config.ts` / schemas import must therefore also be a
+  root dependency (`sanity`, `@sanity/vision`, `sanity-plugin-mux-input`) — a local build passes anyway
+  because `studio/node_modules` exists on disk.
 - Schemas live ONLY in `studio/src/schemaTypes/` (old `src/sanity/schemaTypes/` was removed as dead code;
   the README is outdated — it still says Next 15 and Studio at `/studio`).
 - Pages are live only when `isPublished == true` (filtered in GROQ). Unset boolean looks "off" in Studio
@@ -63,6 +68,12 @@ contact form. All page content is a Sanity page builder (`page.blocks`).
 - Contact form sends to `footer.email` from Sanity (single source of truth); fails closed (500) without
   `RESEND_API_KEY` or `footer.email`.
 - Project cards use `cardImage` (fallback `coverImage`); `gallery` is case-study only.
+- Video is hosted on Mux, not the Sanity CDN (Sanity bandwidth quota). Fields are `mux.video`
+  (`video.muxVideo`, `heroSection.backgroundMuxVideo(Mobile)`, `splitVideoRevealSection.muxVideo` /
+  `mobileMuxVideo`); queries project a flat `playbackId`. Videos with controls render via
+  `components/media/MuxVideoPlayer` (HLS); muted loops keep a plain `<video>` fed by `muxMp4Url()`
+  (`sanity/lib/mux.ts`, static `highest.mp4`). Old `file` fields are hidden legacy — delete them once
+  the Mux migration is verified in production.
 - `FilmShowcaseSection` deliberately does not link the `beyond-tomorrow` related project.
 - Next View Transitions are turned off (scroll reset handled by `ScrollResetOnNavigate`).
 - Respect `useReducedMotion` / `useWebGLSupport` when adding motion or WebGL.

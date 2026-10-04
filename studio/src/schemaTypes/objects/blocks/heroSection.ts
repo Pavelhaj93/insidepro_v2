@@ -36,20 +36,34 @@ export const heroSection = defineType({
         "Optional portrait-framed poster used on narrow screens instead of cropping the desktop image. Falls back to the image above if left empty.",
     }),
     defineField({
-      name: "backgroundVideo",
+      name: "backgroundMuxVideo",
       title: "Background Video (optional)",
+      type: "mux.video",
+      description:
+        "Short, muted, looping background clip, landscape framing (e.g. 16:9). Used on all screens unless a mobile-specific clip is set below. Hosted on Mux — when uploading, set max resolution to 1080p, the loop downloads in full on every visit. If empty, the background image is used alone.",
+    }),
+    defineField({
+      name: "backgroundMuxVideoMobile",
+      title: "Background Video — Mobile (optional)",
+      type: "mux.video",
+      description:
+        "Optional portrait-framed clip (e.g. 9:16), swapped in automatically on narrow screens instead of cropping the desktop video. Falls back to the video above if left empty.",
+    }),
+    defineField({
+      name: "backgroundVideo",
+      title: "Background Video (legacy)",
       type: "file",
       options: { accept: "video/mp4,video/webm" },
-      description:
-        "Short, muted, looping background clip, landscape framing (e.g. 16:9). Used on all screens unless a mobile-specific clip is set below. Compress before uploading — see docs/features for the recommended ffmpeg command. If empty, the background image is used alone.",
+      description: "Pre-Mux upload, kept only until the Mux migration is verified in production.",
+      hidden: true,
     }),
     defineField({
       name: "backgroundVideoMobile",
-      title: "Background Video — Mobile (optional)",
+      title: "Background Video — Mobile (legacy)",
       type: "file",
       options: { accept: "video/mp4,video/webm" },
-      description:
-        "Optional portrait-framed clip (e.g. 9:16), swapped in automatically on narrow screens instead of cropping the desktop video. Falls back to the video above if left empty.",
+      description: "Pre-Mux upload, kept only until the Mux migration is verified in production.",
+      hidden: true,
     }),
     defineField({
       name: "headline",

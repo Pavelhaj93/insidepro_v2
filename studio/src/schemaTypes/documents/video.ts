@@ -13,11 +13,19 @@ export const video = defineType({
       validation: Rule => Rule.required(),
     }),
     defineField({
+      name: 'muxVideo',
+      title: 'Video',
+      type: 'mux.video',
+      description: 'Uploaded to and streamed from Mux, not the Sanity CDN.',
+      validation: Rule => Rule.required(),
+    }),
+    defineField({
       name: 'file',
-      title: 'Video File',
+      title: 'Video File (legacy)',
       type: 'file',
       options: { accept: 'video/mp4,video/webm,video/quicktime' },
-      validation: Rule => Rule.required(),
+      description: 'Pre-Mux upload, kept only until the Mux migration is verified in production.',
+      hidden: true,
     }),
     defineField({
       name: 'poster',

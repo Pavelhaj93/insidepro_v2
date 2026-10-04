@@ -23,6 +23,7 @@ import { WhoWeAreSection } from "@/components/home/WhoWeAreSection";
 import { ClientShowcaseHorizontal } from "@/components/home/ClientShowcaseHorizontal";
 import { LogoCarousel } from "@/components/home/LogoCarousel";
 import { TeamShowcaseSection } from "@/components/home/TeamShowcaseSection";
+import { muxMp4Url } from "@/sanity/lib/mux";
 
 type SectionRendererProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -39,7 +40,9 @@ export function SectionRenderer({ blocks, settings }: SectionRendererProps) {
         switch (block._type) {
           case "heroSection":
             return <HeroSection key={block._key} {...block} />;
-          case "splitVideoRevealSection":
+          case "splitVideoRevealSection": {
+            const videoSrc = muxMp4Url(block.videoPlaybackId);
+            if (!videoSrc) return null;
             return (
               <SplitVideoReveal
                 key={block._key}
@@ -47,13 +50,13 @@ export function SectionRenderer({ blocks, settings }: SectionRendererProps) {
                 headline={block.headline}
                 subtitle={block.subtitle}
                 cornerHeadline={block.cornerHeadline}
-                videoSrc={block.video?.asset?.url}
-                videoMimeType={block.video?.asset?.mimeType}
-                mobileVideoSrc={block.mobileVideo?.asset?.url}
+                videoSrc={videoSrc}
+                mobileVideoSrc={muxMp4Url(block.mobileVideoPlaybackId)}
                 buttonLabel={block.buttonLabel}
                 buttonLink={block.buttonLink}
               />
             );
+          }
           case "servicesListSection":
             return <ServicesListSection key={block._key} {...block} />;
           case "servicesAccordionSection":
