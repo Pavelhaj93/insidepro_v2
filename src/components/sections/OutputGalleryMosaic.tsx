@@ -4,7 +4,7 @@ import { useState } from "react";
 import { urlFor } from "@/sanity/lib/image";
 import { SanityImage } from "@/components/ui/SanityImage";
 import { SectionMarkerHeading } from "@/components/sections/SectionMarkerHeading";
-import { PhotoLightbox } from "@/components/ui/PhotoLightbox";
+import { PhotoLightbox, preloadLightboxImage } from "@/components/ui/PhotoLightbox";
 
 type SanityImage = { asset: { _ref: string }; lqip?: string };
 
@@ -21,7 +21,7 @@ type Props = {
    * left unset and the grid renders as an unlabeled "more from this
    * project" bonus gallery instead. */
   marker?: string;
-  /** Heading shown next to `marker` — defaults to "Výsledek" (the project
+  /** Heading shown next to `marker` — defaults to "Výstupy" (the project
    * case-study convention); film case studies pass "Fotogalerie" instead. */
   heading?: string;
 };
@@ -47,6 +47,15 @@ function isTileWide(index: number) {
 // matching what a narrow tile stretched against a 4:3 wide row-mate would
 // have worked out to), so it still reads as a narrow "portrait" tile at lg
 // instead of a squat landscape crop.
+// Every tile is object-cover, so a landscape photo fills the tile's *height*
+// and renders wider than the tile itself — ~1.125x a wide tile's width at lg
+// (and the same for a narrow tile, whose height matches its wide row-mate).
+// At lg the content box is 100vw minus pl-48/pr-24 (288px), capped by
+// max-w-7xl, so tiles need ~0.75 of it; md is a plain 2-column 4:3 grid.
+// The old "50vw" undershot the wide tiles on 1x screens (upscaled ~12%).
+const TILE_SIZES =
+  "(min-width: 1568px) 960px, (min-width: 1024px) calc(75vw - 216px), (min-width: 768px) 56vw, 100vw";
+
 function tileAspectClass(index: number, total: number) {
   if (isTileWide(index)) return "lg:col-span-2 aspect-4/3";
   const isTrailingSolo = index === total - 1 && total % 2 === 1;
@@ -67,7 +76,7 @@ export function OutputGalleryMosaic({
   title,
   startIndex = 0,
   marker,
-  heading = "Výsledek",
+  heading = "Výstupy",
 }: Props) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
@@ -83,13 +92,18 @@ export function OutputGalleryMosaic({
               key={index}
               type="button"
               onClick={() => setOpenIndex(index)}
+              onPointerEnter={(e) => e.pointerType === "mouse" && preloadLightboxImage(image)}
+              onFocus={() => preloadLightboxImage(image)}
               aria-label={`Zobrazit fotku ${index + 1} z ${images.length} na celou obrazovku`}
               className={`group relative block overflow-hidden rounded-4xl bg-brand-dark text-left cursor-pointer ${tileAspectClass(index, images.length)}`}
             >
               <SanityImage
                 src={urlFor(image).url()}
                 alt={`${title} — ${startIndex + index + 1}`}
-                sizes="(min-width: 768px) 50vw, 100vw"
+                sizes={TILE_SIZES}
+                // q90: at the loader's default q80 Sanity's AVIF smears dark
+                // gradients/bokeh into visible blocks on these showcase shots.
+                quality={90}
                 className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
                 blurDataURL={image.lqip}
               />

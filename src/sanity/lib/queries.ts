@@ -80,7 +80,7 @@ const blocksProjection = groq`
     // in sync with FALLBACK_QUERY in src/app/reference/page.tsx.
     allLabel,
     _type == "referenceWorksSection" => {
-      "categories": categories[]-> { _id, title, "slug": slug.current, order, "videoUrl": video.asset->url },
+      "categories": categories[]-> { _id, title, "slug": slug.current, order, "videoUrl": coalesce(featuredVideo->file.asset->url, video.asset->url), "videoPoster": featuredVideo->poster.asset->url },
       "projects": select(
         count(projects) > 0 => projects[]-> {
           ${referenceItemFields}
@@ -175,6 +175,7 @@ export const pagesQuery = groq`*[_type == "page" && isPublished == true && isHom
 // `page` document with that same slug — reuses the same `blocksProjection`
 // the generic page-builder pipeline uses, so the two never drift apart.
 export const referencePageQuery = groq`*[_type == "page" && slug.current == "reference"][0] {
+  seoTitle, seoDescription,
   ${blocksProjection}
 }`;
 

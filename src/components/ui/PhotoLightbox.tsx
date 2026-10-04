@@ -1,13 +1,53 @@
 "use client";
 
 import { useEffect } from "react";
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { sanityImageLoader, urlFor } from "@/sanity/lib/image";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 type SanityImage = { asset: { _ref: string }; lqip?: string };
+
+// The photo frame is `max-w-4xl` (896px) inside the overlay's `p-6`, so it
+// never renders wider than that — a plain "90vw" made retina screens fetch
+// the 3840px variant of 7000px+ originals, which Sanity's CDN often has to
+// generate on the spot (1-2s before the first byte on a cache miss).
+const LIGHTBOX_SIZES = "(min-width: 944px) 896px, calc(100vw - 48px)";
+// Same reasoning as OutputGalleryMosaic: q80 AVIF visibly blocks up dark
+// gradients on full-size photos. Shared by the <Image> and the preloader so
+// both resolve to the same cached URL.
+const LIGHTBOX_QUALITY = 90;
+
+function lightboxImageProps(image: SanityImage, alt: string) {
+  return getImageProps({
+    src: urlFor(image).url(),
+    loader: sanityImageLoader,
+    alt,
+    fill: true,
+    sizes: LIGHTBOX_SIZES,
+    quality: LIGHTBOX_QUALITY,
+  }).props;
+}
+
+const preloaded = new Set<string>();
+
+/**
+ * Warms the browser cache with the exact srcset candidate the lightbox will
+ * pick for this photo (same loader + sizes, so same URL) — called on hover
+ * over a thumbnail and for the neighbours of the open photo, so opening or
+ * paging rarely waits on the network. Nothing is fetched on page load.
+ */
+export function preloadLightboxImage(image: SanityImage) {
+  const key = image.asset._ref;
+  if (typeof window === "undefined" || preloaded.has(key)) return;
+  preloaded.add(key);
+  const { src, srcSet, sizes } = lightboxImageProps(image, "");
+  const img = new window.Image();
+  if (sizes) img.sizes = sizes;
+  if (srcSet) img.srcset = srcSet;
+  img.src = src;
+}
 
 type Props = {
   images: SanityImage[];
@@ -44,6 +84,13 @@ function LightboxDialog({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [index, images, onClose, onNavigate]);
+
+  // Neighbours are the likeliest next photos (arrow keys / chevrons).
+  useEffect(() => {
+    if (images.length < 2) return;
+    preloadLightboxImage(images[(index + 1) % images.length]);
+    preloadLightboxImage(images[(index - 1 + images.length) % images.length]);
+  }, [index, images]);
 
   const image = images[index];
 
@@ -94,7 +141,9 @@ function LightboxDialog({
           loader={sanityImageLoader}
           alt={`${title} — ${index + 1}`}
           fill
-          sizes="90vw"
+          sizes={LIGHTBOX_SIZES}
+          quality={LIGHTBOX_QUALITY}
+          loading="eager"
           className="object-contain"
           placeholder={image.lqip ? "blur" : "empty"}
           blurDataURL={image.lqip}

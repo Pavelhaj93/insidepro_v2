@@ -105,7 +105,7 @@ export default async function CaseStudyPage({ params }: Props) {
   // Chapter numbering after the 01/02 text sections stays sequential even
   // when a project has no behind-the-scenes photos and/or no result video —
   // each optional section only claims a number if it actually renders, so a
-  // project missing "Jak to vznikalo" jumps straight to "02 Výsledek"
+  // project missing "Behind the scenes" jumps straight to "02 Výstupy"
   // instead of leaving a gap at "02" or hardcoding "03"/"04".
   const hasBehindTheScenes = !isFilm && (item.behindTheScenesGallery?.length ?? 0) > 0;
   const resultVideos = isFilm
@@ -142,17 +142,18 @@ export default async function CaseStudyPage({ params }: Props) {
   const hasFilmTrailer = isFilm && Boolean(item.trailerVideo?.file?.asset?.url);
   const hasFilmGallery = isFilm && (item.gallery?.length ?? 0) > 0;
 
-  // Sequential chapter numbering (01 O filmu / 02 Trailer / 03 Jak to
-  // vznikalo) that skips whichever of the three doesn't render, same
+  // Sequential chapter numbering (01 O filmu / 02 Behind the scenes /
+  // 03 Trailer) that skips whichever of the three doesn't render, same
   // principle as the project page's body/behind-the-scenes/result markers.
+  // The trailer closes the page, below the gallery.
   let filmChapterCount = 0;
   const synopsisMarker = hasFilmSynopsis
     ? String(++filmChapterCount).padStart(2, "0")
     : undefined;
-  const trailerMarker = hasFilmTrailer
+  const galleryMarker = hasFilmGallery
     ? String(++filmChapterCount).padStart(2, "0")
     : undefined;
-  const galleryMarker = hasFilmGallery
+  const trailerMarker = hasFilmTrailer
     ? String(++filmChapterCount).padStart(2, "0")
     : undefined;
 
@@ -279,7 +280,7 @@ export default async function CaseStudyPage({ params }: Props) {
       {hasResultVideo && (
         <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pb-16 md:pb-24">
           <div className="mx-auto max-w-7xl">
-            <SectionMarkerHeading marker={resultMarker} heading="Výsledek" />
+            <SectionMarkerHeading marker={resultMarker} heading="Výstupy" />
             <div className="flex flex-col gap-6 md:gap-8">
               {resultVideos.map((video, index) => (
                 <video
@@ -294,6 +295,24 @@ export default async function CaseStudyPage({ params }: Props) {
             </div>
           </div>
         </section>
+      )}
+
+      {isFilm ? (
+        hasFilmGallery && (
+          <OutputGalleryMosaic
+            images={item.gallery}
+            title={item.title}
+            heading="Behind the scenes"
+            marker={galleryMarker}
+          />
+        )
+      ) : (
+        <OutputGalleryMosaic
+          images={leftoverGallery}
+          title={item.title}
+          startIndex={bodySections.length}
+          marker={!hasResultVideo && showResultSection ? resultMarker : undefined}
+        />
       )}
 
       {hasFilmTrailer && (
@@ -313,24 +332,6 @@ export default async function CaseStudyPage({ params }: Props) {
             />
           </div>
         </section>
-      )}
-
-      {isFilm ? (
-        hasFilmGallery && (
-          <OutputGalleryMosaic
-            images={item.gallery}
-            title={item.title}
-            heading="Jak to vznikalo"
-            marker={galleryMarker}
-          />
-        )
-      ) : (
-        <OutputGalleryMosaic
-          images={leftoverGallery}
-          title={item.title}
-          startIndex={bodySections.length}
-          marker={!hasResultVideo && showResultSection ? resultMarker : undefined}
-        />
       )}
 
       {adjacentProjects && (

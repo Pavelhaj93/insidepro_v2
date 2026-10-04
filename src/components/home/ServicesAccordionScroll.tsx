@@ -174,7 +174,10 @@ export function ServicesAccordionScroll({ label, heading, items = [] }: Props) {
                       transition={{ duration: reduceMotion ? 0 : 0.3 }}
                       className="overflow-hidden"
                     >
-                      <div className="grid grid-cols-1 gap-6 pb-7 pl-0 sm:pl-9 lg:grid-cols-2 lg:gap-10 lg:pb-9 lg:pl-12">
+                      {/* pt-1: headroom for the Badge hover lift (-translate-y-0.5),
+                          which the overflow-hidden wrapper would otherwise clip
+                          on the first row of keywords. */}
+                      <div className="grid grid-cols-1 gap-6 pt-1 pb-7 pl-0 sm:pl-9 lg:grid-cols-2 lg:gap-10 lg:pb-9 lg:pl-12">
                         {service.description && (
                           <div
                             className={`${manrope.className} max-w-2xl text-base leading-6 text-brand-light/70 sm:text-lg sm:leading-7 lg:text-xl lg:leading-8`}

@@ -14,12 +14,21 @@ export const category = defineType({
       description: 'Tab order on the Reference page (lower = first)',
     }),
     defineField({
-      name: 'video',
+      name: 'featuredVideo',
       title: 'Video',
+      type: 'reference',
+      to: [{ type: 'video' }],
+      description:
+        'For categories with no projects of their own (e.g. Showreel) — pick a video from the Video library; selecting this category on the Reference page then shows it full-width (with its poster) instead of the project grid.',
+    }),
+    defineField({
+      name: 'video',
+      title: 'Video file (legacy)',
       type: 'file',
       options: { accept: 'video/*' },
       description:
-        'For categories with no projects of their own (e.g. Showreel) — when set, selecting this category on the Reference page shows this video full-width instead of the project grid.',
+        'Deprecated — superseded by "Video" above, which picks from the Video library instead of a one-off upload. Still used as a fallback while "Video" is empty; clear it once "Video" is set.',
+      hidden: ({ document }) => !document?.video,
     }),
   ],
   orderings: [{ title: 'Tab order', name: 'orderAsc', by: [{ field: 'order', direction: 'asc' }] }],

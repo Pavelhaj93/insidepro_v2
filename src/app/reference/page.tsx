@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { groq } from "next-sanity";
 import { client } from "@/sanity/lib/client";
 import { referencePageQuery, referenceItemFields } from "@/sanity/lib/queries";
@@ -9,7 +10,7 @@ import { ReferenceWorksSection } from "@/components/sections/ReferenceWorksSecti
 // set up. Mirrors blocksProjection's referenceWorksSection branch in
 // src/sanity/lib/queries.ts exactly (keep both in sync).
 const FALLBACK_QUERY = groq`{
-  "categories": *[_type == "category"] { _id, title, "slug": slug.current, order, "videoUrl": video.asset->url },
+  "categories": *[_type == "category"] { _id, title, "slug": slug.current, order, "videoUrl": coalesce(featuredVideo->file.asset->url, video.asset->url), "videoPoster": featuredVideo->poster.asset->url },
   "projects": *[_type in ["project", "film"]] | order(publishedAt desc) {
     ${referenceItemFields}
   }
@@ -18,6 +19,14 @@ const FALLBACK_QUERY = groq`{
 type Props = {
   searchParams: Promise<{ category?: string }>;
 };
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await client.fetch(referencePageQuery);
+  return {
+    title: page?.seoTitle ?? "Reference | insidePRO",
+    description: page?.seoDescription ?? undefined,
+  };
+}
 
 /**
  * Showcase reference/works page — the `VerticalSidebar` nav comes from the
