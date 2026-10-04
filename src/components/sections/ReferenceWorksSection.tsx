@@ -22,6 +22,8 @@ type Category = {
   videoPlaybackId?: string;
   /** Poster image URL of the referenced Video library document, if it has one. */
   videoPoster?: string;
+  /** Frame picked via "Set thumbnail" in Studio, used when there's no poster image. */
+  videoThumbTime?: number;
 };
 
 type Project = {
@@ -206,6 +208,7 @@ export function ReferenceWorksSection({
                 ? urlFor(activeCategory.videoPoster).width(1920).url()
                 : undefined
             }
+            thumbnailTime={activeCategory.videoThumbTime}
           />
         ) : (
           <>

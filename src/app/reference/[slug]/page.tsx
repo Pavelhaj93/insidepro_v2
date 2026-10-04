@@ -29,6 +29,7 @@ type SanityImageT = { asset: { _ref: string }; lqip?: string };
 
 type VideoField = {
   playbackId?: string;
+  thumbTime?: number;
   poster?: SanityImageT;
 };
 
@@ -292,6 +293,7 @@ export default async function CaseStudyPage({ params }: Props) {
                   playbackId={video.playbackId}
                   title={item.title}
                   poster={video.poster ? urlFor(video.poster).width(1920).url() : undefined}
+                  thumbnailTime={video.thumbTime}
                 />
               ))}
             </div>
@@ -329,6 +331,7 @@ export default async function CaseStudyPage({ params }: Props) {
                   ? urlFor(item.trailerVideo.poster).width(1920).url()
                   : undefined
               }
+              thumbnailTime={item.trailerVideo?.thumbTime}
             />
           </div>
         </section>

@@ -10,7 +10,7 @@ import { ReferenceWorksSection } from "@/components/sections/ReferenceWorksSecti
 // set up. Mirrors blocksProjection's referenceWorksSection branch in
 // src/sanity/lib/queries.ts exactly (keep both in sync).
 const FALLBACK_QUERY = groq`{
-  "categories": *[_type == "category"] { _id, title, "slug": slug.current, order, "videoPlaybackId": featuredVideo->muxVideo.asset->playbackId, "videoPoster": featuredVideo->poster.asset->url },
+  "categories": *[_type == "category"] { _id, title, "slug": slug.current, order, "videoPlaybackId": featuredVideo->muxVideo.asset->playbackId, "videoThumbTime": featuredVideo->muxVideo.asset->thumbTime, "videoPoster": featuredVideo->poster.asset->url },
   "projects": *[_type in ["project", "film"]] | order(publishedAt desc) {
     ${referenceItemFields}
   }
