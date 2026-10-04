@@ -53,6 +53,10 @@ contact form. All page content is a Sanity page builder (`page.blocks`).
 - Studio: `SANITY_STUDIO_PROJECT_ID`, `SANITY_STUDIO_DATASET`, `SANITY_STUDIO_PREVIEW_ORIGIN` (all have defaults)
 
 ## Gotchas / conventions
+- `next build` type-checks `studio/` too (root tsconfig includes `**/*.ts`), but Vercel installs only the
+  root `package.json`. Every package `studio/sanity.config.ts` / schemas import must therefore also be a
+  root dependency (`sanity`, `@sanity/vision`, `sanity-plugin-mux-input`) — a local build passes anyway
+  because `studio/node_modules` exists on disk.
 - Schemas live ONLY in `studio/src/schemaTypes/` (old `src/sanity/schemaTypes/` was removed as dead code;
   the README is outdated — it still says Next 15 and Studio at `/studio`).
 - Pages are live only when `isPublished == true` (filtered in GROQ). Unset boolean looks "off" in Studio
