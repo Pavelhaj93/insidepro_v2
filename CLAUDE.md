@@ -30,7 +30,8 @@ contact form. All page content is a Sanity page builder (`page.blocks`).
 ## Commands
 - `npm run dev` — Next (localhost:3000) + Studio (`sanity dev`) in parallel (npm-run-all)
 - `npm run build` / `npm start` / `npm run lint`
-- `npm run studio:build`, `npm run studio:deploy` (Sanity-hosted Studio)
+- `npm run studio:build`, `npm run studio:deploy` (Sanity-hosted Studio at `https://insidepro-v2.sanity.studio`,
+  `deployment.appId` pinned in `studio/sanity.cli.ts` so it deploys without prompting)
 - Typegen: `cd studio && npx sanity schema extract && npm run typegen` (outputs `studio/sanity.types.ts`)
 - One-off scripts: `node --env-file=.env.local scripts/<name>.mjs`
 - Content migrations: `cd studio && npx sanity migration run <name>`
