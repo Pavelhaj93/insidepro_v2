@@ -13,10 +13,17 @@ export default defineConfig({
   dataset: process.env.SANITY_STUDIO_DATASET || 'production',
   plugins: [
     presentationTool({
+      // `sanity dev` previews localhost, the deployed Studio previews production;
+      // either can be switched to the other from the Presentation URL bar.
       previewUrl: {
-        origin: process.env.SANITY_STUDIO_PREVIEW_ORIGIN || 'http://localhost:3000',
+        initial:
+          process.env.SANITY_STUDIO_PREVIEW_ORIGIN ||
+          (process.env.NODE_ENV === 'development'
+            ? 'http://localhost:3000'
+            : 'https://www.insidepro.cz'),
         previewMode: { enable: '/api/draft-mode/enable' },
       },
+      allowOrigins: ['http://localhost:*', 'https://www.insidepro.cz'],
     }),
     structureTool({ structure }),
     visionTool(),

@@ -19,8 +19,8 @@ function escapeHtml(value: string) {
 }
 
 /**
- * Backs the "Číslované kroky" contact form (`ContactFormSection.tsx`) — the
- * winning design of the three contact-form POC variants. Sends via Resend
+ * Backs the "Timecode / Střih" contact form (`ContactFormSection.tsx`), which
+ * replaced the original POC-winning "Číslované kroky" design. Sends via Resend
  * to the same address shown in the site footer (`footer.email` in Sanity),
  * so there's one source of truth for "where inquiries go" instead of a
  * second, easy-to-forget env var. Requires RESEND_API_KEY to be set;
