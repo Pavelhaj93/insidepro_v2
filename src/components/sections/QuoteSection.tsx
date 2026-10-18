@@ -1,5 +1,4 @@
 import QuoteMarkIcon from "../../../public/svg/quote_marks.svg";
-import { manrope } from "@/lib/fonts";
 import { Reveal } from "@/components/motion/Reveal";
 
 type Props = {
@@ -45,14 +44,14 @@ export function QuoteSection({
           <div>
             {quoteBoldText && (
               <p
-                className={`${manrope.className} font-extrabold text-xl leading-normal text-gray-900`}
+                className={`font-body font-extrabold text-xl leading-normal text-gray-900`}
               >
                 {quoteBoldText}
               </p>
             )}
             {quoteRegularText && (
               <p
-                className={`${manrope.className} font-normal text-xl leading-normal text-gray-900 ${quoteBoldText ? "mt-1" : ""}`}
+                className={`font-body font-normal text-xl leading-normal text-gray-900 ${quoteBoldText ? "mt-1" : ""}`}
               >
                 {quoteRegularText}
               </p>

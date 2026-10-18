@@ -37,6 +37,8 @@ type Props = {
    * actually matches what's on screen.
    */
   sizes?: string;
+  /** Above-the-fold card that's the page's LCP candidate — preloads its image with high fetch priority. */
+  priority?: boolean;
 };
 
 function hasAsset(
@@ -53,6 +55,7 @@ export function ProjectCard({
   project,
   aspectClassName = "aspect-4/3",
   sizes = "(min-width: 768px) 50vw, 100vw",
+  priority = false,
 }: Props) {
   const isLinkable =
     project._type === "film"
@@ -73,6 +76,8 @@ export function ProjectCard({
           src={urlFor(image).url()}
           alt={project.title}
           sizes={sizes}
+          priority={priority}
+          fetchPriority={priority ? "high" : undefined}
           className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
           blurDataURL={image.lqip}
         />

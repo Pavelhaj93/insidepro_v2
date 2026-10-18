@@ -3,7 +3,6 @@ import {
   type PortableTextBlock,
   type PortableTextComponents,
 } from "next-sanity";
-import { manrope } from "@/lib/fonts";
 import { Reveal } from "@/components/motion/Reveal";
 
 type Props = {
@@ -57,7 +56,7 @@ export function InfoBoxSection({ headline, boxTitle, boxDescription }: Props) {
           )}
           {boxDescription && (
             <p
-              className={`${manrope.className} font-normal text-lg leading-relaxed tracking-normal text-brand-light whitespace-pre-line max-w-4xl`}
+              className={`font-body font-normal text-lg leading-relaxed tracking-normal text-brand-light whitespace-pre-line max-w-4xl`}
             >
               {boxDescription}
             </p>

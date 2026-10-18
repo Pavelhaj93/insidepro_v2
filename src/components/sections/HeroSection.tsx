@@ -6,8 +6,9 @@ import { ParallaxBackgroundImage } from "@/components/motion/ParallaxBackgroundI
 import { HeroBackgroundVideo } from "@/components/motion/HeroBackgroundVideo";
 import { PageIntroCurtain } from "@/components/motion/PageIntroCurtain";
 import { HeroHeadline } from "./HeroHeadline";
-import { client } from "@/sanity/lib/client";
-import { muxMp4Url } from "@/sanity/lib/mux";
+import type { ComponentProps } from "react";
+import { fetchSanity } from "@/sanity/lib/live";
+import { muxMobileMp4Url, muxMp4Url } from "@/sanity/lib/mux";
 import { settingsQuery } from "@/sanity/lib/queries";
 
 type Props = {
@@ -15,6 +16,7 @@ type Props = {
   backgroundImageMobile?: { asset: { _ref: string }; lqip?: string };
   backgroundVideoPlaybackId?: string;
   backgroundVideoMobilePlaybackId?: string;
+  backgroundVideoMobileRenditions?: string[] | null;
   headline?: PortableTextBlock[];
   subtitle?: string;
   showScrollIndicator?: boolean;
@@ -26,6 +28,7 @@ export async function HeroSection({
   backgroundImageMobile,
   backgroundVideoPlaybackId,
   backgroundVideoMobilePlaybackId,
+  backgroundVideoMobileRenditions,
   headline,
   subtitle,
   showScrollIndicator = true,
@@ -35,7 +38,11 @@ export async function HeroSection({
   const hasVideo = Boolean(videoSrc);
 
   const socialLinks = showSocialIcons
-    ? ((await client.fetch(settingsQuery))?.socialLinks ?? null)
+    ? ((
+        await fetchSanity<{
+          socialLinks?: ComponentProps<typeof SocialLinks>["links"] | null;
+        } | null>({ query: settingsQuery })
+      )?.socialLinks ?? null)
     : null;
 
   return (
@@ -68,7 +75,10 @@ export async function HeroSection({
       {videoSrc && (
         <HeroBackgroundVideo
           src={videoSrc}
-          mobileSrc={muxMp4Url(backgroundVideoMobilePlaybackId)}
+          mobileSrc={muxMobileMp4Url(
+            backgroundVideoMobilePlaybackId,
+            backgroundVideoMobileRenditions,
+          )}
         />
       )}
 

@@ -89,7 +89,7 @@ export function VerticalSidebar({ socialLinks, logo }: Props) {
 
         <Link
           href="/"
-          aria-label="insidePRO — domů"
+          aria-label="insidePRO Creative studio — domů"
           className="flex flex-1 items-center justify-center"
         >
           <div className="flex -rotate-90 flex-col items-center whitespace-nowrap">

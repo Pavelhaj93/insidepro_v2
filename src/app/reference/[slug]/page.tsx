@@ -5,8 +5,8 @@ import {
   type PortableTextBlock,
   type PortableTextComponents,
 } from "next-sanity";
-import { client } from "@/sanity/lib/client";
-import { referenceDetailQuery } from "@/sanity/lib/queries";
+import { fetchSanity } from "@/sanity/lib/live";
+import { referenceDetailQuery, referenceSlugsQuery } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { SanityImage } from "@/components/ui/SanityImage";
 import { MuxVideoPlayer } from "@/components/media/MuxVideoPlayer";
@@ -82,13 +82,20 @@ const synopsisComponents: PortableTextComponents = {
   },
 };
 
+// Prerendered at build; slugs added later still render on demand
+// (dynamicParams defaults to true) and are cached from then on.
+export async function generateStaticParams() {
+  return fetchSanity<{ slug: string }[]>({
+    query: referenceSlugsQuery,
+    perspective: "published",
+    stega: false,
+  });
+}
+
 export default async function CaseStudyPage({ params }: Props) {
   const { slug } = await params;
-  const [item, orderedProjects]: [
-    ReferenceItem | null,
-    Awaited<ReturnType<typeof getOrderedReferenceProjects>>,
-  ] = await Promise.all([
-    client.fetch(referenceDetailQuery, { slug }),
+  const [item, orderedProjects] = await Promise.all([
+    fetchSanity<ReferenceItem | null>({ query: referenceDetailQuery, params: { slug } }),
     getOrderedReferenceProjects(),
   ]);
 
@@ -172,6 +179,7 @@ export default async function CaseStudyPage({ params }: Props) {
             sizes="100vw"
             className="object-cover object-center lg:object-[center_30%]"
             priority
+            fetchPriority="high"
             blurDataURL={item.coverImage.lqip}
           />
         )}

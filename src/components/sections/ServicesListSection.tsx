@@ -4,7 +4,6 @@ import {
   type PortableTextBlock,
   type PortableTextComponents,
 } from "next-sanity";
-import { manrope } from "@/lib/fonts";
 import { ArrowRightIcon } from "@/components/icons/ArrowRight";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 
@@ -41,7 +40,7 @@ const descriptionComponents: PortableTextComponents = {
   block: {
     normal: ({ children }) => (
       <p
-        className={`${manrope.className} font-normal text-xl leading-snug tracking-normal text-white mb-4 last:mb-0`}
+        className={`font-body font-normal text-xl leading-snug tracking-normal text-white mb-4 last:mb-0`}
       >
         {children}
       </p>

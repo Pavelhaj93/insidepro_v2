@@ -61,9 +61,9 @@ export function HomeCtaFooter({
   const borderClass = invert
     ? "border-brand-light/15"
     : "border-brand-black/15";
-  const labelClass = invert ? "text-brand-light/50" : "text-brand-black/50";
+  const labelClass = invert ? "text-brand-light/60" : "text-brand-black/60";
   const linkClass = invert ? "text-brand-light" : "text-brand-black";
-  const legalClass = invert ? "text-brand-light/40" : "text-brand-black/40";
+  const legalClass = invert ? "text-brand-light/60" : "text-brand-black/60";
 
   return (
     <footer

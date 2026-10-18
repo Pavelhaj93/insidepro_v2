@@ -41,7 +41,7 @@ const FIELDS = [
 
 /**
  * "Číslované kroky" contact form — the picked design of three POC variants
- * (see src/components/sections/contact-form-poc/), promoted to a real
+ * (POC removed 2026-10-18, see git history), promoted to a real
  * page-builder block wired to POST /api/contact (Resend). `id="kontakt"` is
  * the fixed anchor SplitVideoReveal's CTA button (and anything else) links
  * to — only one instance of this block should exist per page.

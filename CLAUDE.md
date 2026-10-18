@@ -11,17 +11,17 @@ contact form. All page content is a Sanity page builder (`page.blocks`).
 - Next.js 16.2.9 (App Router, Turbopack), React 19.2.4, TypeScript 5
 - Sanity 6.1 (Studio in `studio/`, own package.json), next-sanity 13, @sanity/client 7
 - Tailwind CSS 4 (`src/app/globals.css`), shadcn (`components.json`, style `base-nova`, @base-ui/react, lucide)
-- Motion: framer-motion 12, lenis (smooth scroll), embla-carousel, ogl (WebGL shaders/displacement)
+- Motion: framer-motion 12, lenis (smooth scroll), embla-carousel
 - Resend (contact form email), @svgr/webpack (SVG imports as components via Turbopack rule)
 - Vercel Analytics (`@vercel/analytics`, `<Analytics />` mounted in root layout)
 
 ## Layout
 - `src/app/` — routes: `/` (homepage = page with `isHomepage == true`), `/[slug]` (generic pages),
   `/reference` (works grid, `?category=` filter), `/reference/[slug]` (case study for `project` or `film`),
-  `/api/contact` (Resend), `/api/draft-mode/{enable,disable}`, `robots.ts`, `sitemap.ts`
-- `src/app/poc/*`, `src/app/reference/[slug]/poc` — design POCs (variant switchers); disallowed in robots.txt
+  `/api/contact` (Resend), `/api/revalidate` (Sanity webhook), `/api/draft-mode/{enable,disable}`,
+  `robots.ts`, `sitemap.ts`. All page routes are static (prerendered, cached until invalidated)
 - `src/components/SectionRenderer.tsx` — maps Sanity block `_type` to `components/sections/*`
-- `src/components/{home,motion,webgl,sections,ui,layout,icons}`, `src/hooks/` (scroll/parallax/reduced-motion)
+- `src/components/{home,motion,sections,ui,layout,media,icons}`, `src/hooks/` (scroll/parallax/reduced-motion)
 - `src/sanity/lib/` — `client.ts`, `live.ts` (defineLive), `image.ts` (urlFor), `queries.ts`
 - `studio/` — `sanity.config.ts`, `structure.ts`, `src/schemaTypes/`, `migrations/`, `scripts/` (seeds),
   generated `schema.json` + `sanity.types.ts`
@@ -50,7 +50,8 @@ contact form. All page content is a Sanity page builder (`page.blocks`).
 ## Env vars (names only)
 - Next: `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `SANITY_API_READ_TOKEN`,
   `NEXT_PUBLIC_BASE_URL`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL` (optional)
-- Scripts: `SANITY_API_WRITE_TOKEN`; `MUX_TOKEN_ID`, `MUX_TOKEN_SECRET` (`scripts/migrate-videos-to-mux.mjs`)
+- `SANITY_REVALIDATE_SECRET` — shared with the Sanity webhook that calls `/api/revalidate` (Vercel env)
+- Scripts: `SANITY_API_WRITE_TOKEN`; `MUX_TOKEN_ID`, `MUX_TOKEN_SECRET` (`scripts/*mux*.mjs`)
 - Studio: `SANITY_STUDIO_PROJECT_ID`, `SANITY_STUDIO_DATASET`, `SANITY_STUDIO_PREVIEW_ORIGIN` (all have defaults)
 
 ## Gotchas / conventions
@@ -62,10 +63,18 @@ contact form. All page content is a Sanity page builder (`page.blocks`).
   the README is outdated — it still says Next 15 and Studio at `/studio`).
 - Pages are live only when `isPublished == true` (filtered in GROQ). Unset boolean looks "off" in Studio
   but was previously served — keep the filter in `pageBySlugQuery`/`pagesQuery`; hidden pages 404 + noindex.
-- Queries use `groq` tagged templates (not `defineQuery`) and the frontend does not import generated types;
-  new queries should use `defineQuery`. `blocksProjection` is shared by homepage, pages and `/reference`.
-- Data fetching uses `client.fetch` with `revalidate = 60` (sitemap 3600); `useCdn` only in production.
-- `live.ts` passes `SANITY_API_READ_TOKEN` as `browserToken` too — be aware it reaches the browser.
+- Queries use `groq` tagged templates (not `defineQuery`) and there are no query result types (no query
+  TypeGen); new queries should use `defineQuery`. `blocksProjection` is shared by homepage, pages and `/reference`.
+- Pages fetch via `fetchSanity<T>()` (`sanity/lib/live.ts`, wraps `sanityFetch`; `T` derived from the props the
+  data feeds). Cached with no time limit (`revalidate: false` + Sanity sync tags), invalidated two ways:
+  `<SanityLive>` in visitors' browsers (needs CORS origin `https://www.insidepro.cz`, set) and the Sanity
+  webhook → `/api/revalidate` (purges the whole site; covers publishes while nobody is online). Without the
+  webhook a missed live event leaves pages stale until the next deploy. In `generateStaticParams` pass
+  `perspective: 'published', stega: false` (no request scope for `draftMode()`). Exceptions on `client.fetch`:
+  `sitemap.ts` (revalidate 3600) and `/api/contact` (always fresh).
+- `live.ts` `browserToken` is only sent to the browser in draft mode (next-sanity 13 `defineLive`).
+- Don't read `searchParams` in `/reference` — it makes the route dynamic (no CDN cache); the category filter is
+  client state only (the old `?category=` sidebar links are gone).
 - Contact form sends to `footer.email` from Sanity (single source of truth); fails closed (500) without
   `RESEND_API_KEY` or `footer.email`.
 - Project cards use `cardImage` (fallback `coverImage`); `gallery` is case-study only.
@@ -77,6 +86,13 @@ contact form. All page content is a Sanity page builder (`page.blocks`).
   the Mux migration is verified in production.
 - `FilmShowcaseSection` deliberately does not link the `beyond-tomorrow` related project.
 - Next View Transitions are turned off (scroll reset handled by `ScrollResetOnNavigate`).
-- Respect `useReducedMotion` / `useWebGLSupport` when adding motion or WebGL.
+- Respect `useReducedMotion` when adding motion.
+- Fonts: 2 self-hosted WOFF2 families (Zalando Sans Expanded = display, Atkinson Hyperlegible Next = body,
+  `font-body`); Manrope was removed. Not preloaded on purpose — it delayed FCP/LCP on slow mobile.
+- Mobile loop videos use `muxMobileMp4Url()`: 720p.mp4 when the asset has it, else highest.mp4. Mux can't hold
+  720p next to "highest", so mobile-only assets are swapped by `scripts/mux-mobile-720p.mjs` (run after new
+  mobile uploads). `SplitVideoReveal` shows a poster (Studio `posterImage` or Mux first frame) under the video.
+- `next/image` `priority` in Next 16 only preloads; pass `fetchPriority="high"` (`SanityImage`) on the LCP image only.
+- Empty image slots in galleries are filtered in GROQ (`gallery[defined(asset)]`) — `urlFor()` throws on them.
 - Remote images allowed: `cdn.sanity.io`, `images.unsplash.com`; image qualities `[75, 85, 90]`.
 - Branches: `main` (default) and `feature/POC-v2` (active work, ahead of main).

@@ -1,18 +1,19 @@
 import { SectionRenderer } from "@/components/SectionRenderer";
-import { client } from "@/sanity/lib/client";
+import type { ComponentProps } from "react";
+import { fetchSanity } from "@/sanity/lib/live";
 import { homepageQuery, settingsQuery } from "@/sanity/lib/queries";
 
-export const revalidate = 60;
+type RendererProps = ComponentProps<typeof SectionRenderer>;
 
 export default async function HomePage() {
   const [page, settings] = await Promise.all([
-    client.fetch(homepageQuery),
-    client.fetch(settingsQuery),
+    fetchSanity<{ blocks: RendererProps["blocks"] } | null>({ query: homepageQuery }),
+    fetchSanity<RendererProps["settings"]>({ query: settingsQuery }),
   ]);
 
   return (
     <main className="bg-brand-black text-brand-light">
-      <SectionRenderer blocks={page?.blocks} settings={settings} />
+      <SectionRenderer blocks={page?.blocks ?? []} settings={settings} />
     </main>
   );
 }

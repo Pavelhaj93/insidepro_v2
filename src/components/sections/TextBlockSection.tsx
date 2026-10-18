@@ -3,7 +3,6 @@ import {
   type PortableTextBlock,
   type PortableTextComponents,
 } from "next-sanity";
-import { manrope } from "@/lib/fonts";
 import { Reveal } from "@/components/motion/Reveal";
 
 type Props = {
@@ -16,7 +15,7 @@ const components: PortableTextComponents = {
   block: {
     normal: ({ children }) => (
       <p
-        className={`${manrope.className} font-normal text-lg leading-relaxed tracking-normal text-brand-light mb-6 last:mb-0`}
+        className={`font-body font-normal text-lg leading-relaxed tracking-normal text-brand-light mb-6 last:mb-0`}
       >
         {children}
       </p>

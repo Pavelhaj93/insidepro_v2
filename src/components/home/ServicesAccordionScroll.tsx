@@ -7,7 +7,6 @@ import {
   type PortableTextBlock,
   type PortableTextComponents,
 } from "next-sanity";
-import { manrope } from "@/lib/fonts";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Badge } from "@/components/ui/Badge";
 
@@ -127,7 +126,7 @@ export function ServicesAccordionScroll({ label, heading, items = [] }: Props) {
                   className="flex w-full items-center justify-between gap-4 py-10 sm:gap-6 md:py-14"
                 >
                   <span className="flex items-baseline gap-3 min-w-0 md:gap-5">
-                    <span className="font-display font-bold text-base text-brand-gold-light shrink-0 sm:text-lg">
+                    <span className="font-display font-bold text-base text-brand-bronze shrink-0 sm:text-lg">
                       {service.number}
                     </span>
                     <span className="flex flex-col gap-y-1 min-w-0 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-4">
@@ -180,7 +179,7 @@ export function ServicesAccordionScroll({ label, heading, items = [] }: Props) {
                       <div className="grid grid-cols-1 gap-6 pt-1 pb-7 pl-0 sm:pl-9 lg:grid-cols-2 lg:gap-10 lg:pb-9 lg:pl-12">
                         {service.description && (
                           <div
-                            className={`${manrope.className} max-w-2xl text-base leading-6 text-brand-light/70 sm:text-lg sm:leading-7 lg:text-xl lg:leading-8`}
+                            className={`font-body max-w-2xl text-base leading-6 text-brand-light/70 sm:text-lg sm:leading-7 lg:text-xl lg:leading-8`}
                           >
                             <PortableText
                               value={service.description}

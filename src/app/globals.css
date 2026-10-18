@@ -1,12 +1,14 @@
 @import "tailwindcss";
 
 /* ─── Fonts ─────────────────────────────────────────────────────────────────
-   Variable fonts from public/fonts/
+   Variable fonts from public/fonts/ (WOFF2). Deliberately not preloaded:
+   with font-display: swap text paints in the fallback right away, and a
+   preload measurably delayed FCP/LCP on slow mobile (Lighthouse, 2026-10-18).
    ─────────────────────────────────────────────────────────────────────────── */
 @font-face {
   font-family: "ZalandoSansExpanded";
-  src: url("/fonts/ZalandoSansExpanded-VariableFont_wght.ttf")
-    format("truetype");
+  src: url("/fonts/ZalandoSansExpanded-VariableFont_wght.woff2")
+    format("woff2");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -14,8 +16,8 @@
 
 @font-face {
   font-family: "ZalandoSansExpanded";
-  src: url("/fonts/ZalandoSansExpanded-Italic-VariableFont_wght.ttf")
-    format("truetype");
+  src: url("/fonts/ZalandoSansExpanded-Italic-VariableFont_wght.woff2")
+    format("woff2");
   font-weight: 100 900;
   font-style: italic;
   font-display: swap;
@@ -23,8 +25,8 @@
 
 @font-face {
   font-family: "AtkinsonHyperlegibleNext";
-  src: url("/fonts/AtkinsonHyperlegibleNext-VariableFont_wght.ttf")
-    format("truetype");
+  src: url("/fonts/AtkinsonHyperlegibleNext-VariableFont_wght.woff2")
+    format("woff2");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -32,8 +34,8 @@
 
 @font-face {
   font-family: "AtkinsonHyperlegibleNext";
-  src: url("/fonts/AtkinsonHyperlegibleNext-Italic-VariableFont_wght.ttf")
-    format("truetype");
+  src: url("/fonts/AtkinsonHyperlegibleNext-Italic-VariableFont_wght.woff2")
+    format("woff2");
   font-weight: 100 900;
   font-style: italic;
   font-display: swap;

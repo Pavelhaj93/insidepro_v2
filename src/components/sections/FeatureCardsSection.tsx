@@ -3,7 +3,6 @@ import {
   type PortableTextBlock,
   type PortableTextComponents,
 } from "next-sanity";
-import { manrope } from "@/lib/fonts";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 
 type FeatureBullet = {
@@ -66,7 +65,7 @@ export function FeatureCardsSection({ heading, cards = [] }: Props) {
                   <li key={bullet._key} className="flex items-start gap-3">
                     <span className="mt-2.5 h-1 w-1 rounded-full bg-brand-gold shrink-0" />
                     <span
-                      className={`${manrope.className} font-normal text-base leading-relaxed tracking-normal text-brand-light`}
+                      className={`font-body font-normal text-base leading-relaxed tracking-normal text-brand-light`}
                     >
                       {bullet.text && (
                         <PortableText

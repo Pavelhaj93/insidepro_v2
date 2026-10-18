@@ -23,7 +23,12 @@ import { WhoWeAreSection } from "@/components/home/WhoWeAreSection";
 import { ClientShowcaseHorizontal } from "@/components/home/ClientShowcaseHorizontal";
 import { LogoCarousel } from "@/components/home/LogoCarousel";
 import { TeamShowcaseSection } from "@/components/home/TeamShowcaseSection";
-import { muxMp4Url } from "@/sanity/lib/mux";
+import { muxMobileMp4Url, muxMp4Url, muxThumbnailUrl } from "@/sanity/lib/mux";
+import { urlFor } from "@/sanity/lib/image";
+
+// Full-bleed poster widths (desktop clip vs portrait mobile clip).
+const POSTER_WIDTHS = [960, 1440, 1920];
+const MOBILE_POSTER_WIDTHS = [480, 720, 1080];
 
 type SectionRendererProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,6 +48,21 @@ export function SectionRenderer({ blocks, settings }: SectionRendererProps) {
           case "splitVideoRevealSection": {
             const videoSrc = muxMp4Url(block.videoPlaybackId);
             if (!videoSrc) return null;
+            // Poster under the video so slow connections (and reduced
+            // motion, where the video never renders) don't see black: the
+            // Studio poster image if set, else each clip's first frame.
+            const posterSrcSet = block.posterImage?.asset
+              ? POSTER_WIDTHS.map(
+                  (w) => `${urlFor(block.posterImage).width(w).auto("format").url()} ${w}w`,
+                ).join(", ")
+              : POSTER_WIDTHS.map(
+                  (w) => `${muxThumbnailUrl(block.videoPlaybackId, w)} ${w}w`,
+                ).join(", ");
+            const mobilePosterSrcSet = block.mobileVideoPlaybackId
+              ? MOBILE_POSTER_WIDTHS.map(
+                  (w) => `${muxThumbnailUrl(block.mobileVideoPlaybackId, w)} ${w}w`,
+                ).join(", ")
+              : undefined;
             return (
               <SplitVideoReveal
                 key={block._key}
@@ -51,7 +71,12 @@ export function SectionRenderer({ blocks, settings }: SectionRendererProps) {
                 subtitle={block.subtitle}
                 cornerHeadline={block.cornerHeadline}
                 videoSrc={videoSrc}
-                mobileVideoSrc={muxMp4Url(block.mobileVideoPlaybackId)}
+                mobileVideoSrc={muxMobileMp4Url(
+                  block.mobileVideoPlaybackId,
+                  block.mobileVideoRenditions,
+                )}
+                posterSrcSet={posterSrcSet}
+                mobilePosterSrcSet={mobilePosterSrcSet}
                 buttonLabel={block.buttonLabel}
                 buttonLink={block.buttonLink}
               />
