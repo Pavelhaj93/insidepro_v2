@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import { draftMode } from "next/headers";
-import { HeaderWrapper } from "@/components/layout/HeaderWrapper";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { VerticalSidebar } from "@/components/home/VerticalSidebar";
 import { HomeCtaFooter } from "@/components/home/HomeCtaFooter";
-import { client } from "@/sanity/lib/client";
 import { footerQuery, settingsQuery } from "@/sanity/lib/queries";
-import { SanityLive } from "@/sanity/lib/live";
+import type { ComponentProps } from "react";
+import { SanityLive, fetchSanity } from "@/sanity/lib/live";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { CustomCursor } from "@/components/motion/CustomCursor";
 import { Analytics } from "@vercel/analytics/next";
@@ -18,6 +17,17 @@ export const metadata: Metadata = {
     "Kreativní a marketingová produkce s více než 18 lety zkušeností.",
 };
 
+type FooterProps = ComponentProps<typeof HomeCtaFooter>;
+type SettingsData = {
+  socialLinks?: ComponentProps<typeof VerticalSidebar>["socialLinks"];
+  logo?: ComponentProps<typeof VerticalSidebar>["logo"];
+  logoText?: FooterProps["logoText"];
+} | null;
+type FooterData = Pick<
+  FooterProps,
+  "headingLine1" | "headingLine2" | "email" | "phone" | "copyrightText" | "legalText"
+> | null;
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -25,8 +35,8 @@ export default async function RootLayout({
 }>) {
   const isDraftMode = (await draftMode()).isEnabled;
   const [settings, footer] = await Promise.all([
-    client.fetch(settingsQuery),
-    client.fetch(footerQuery),
+    fetchSanity<SettingsData>({ query: settingsQuery }),
+    fetchSanity<FooterData>({ query: footerQuery }),
   ]);
 
   return (
@@ -38,7 +48,6 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col bg-brand-black text-brand-light">
         <div className="grain-overlay" aria-hidden="true" />
         <SmoothScrollProvider>
-          {/* <HeaderWrapper /> */}
           <VerticalSidebar
             socialLinks={settings?.socialLinks ?? null}
             logo={settings?.logo ?? null}

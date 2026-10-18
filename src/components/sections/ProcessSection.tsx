@@ -1,4 +1,3 @@
-import { manrope } from "@/lib/fonts";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 
 type ProcessStep = {
@@ -42,7 +41,7 @@ export function ProcessSection({ label, steps = [] }: Props) {
               </h3>
               {step.description && (
                 <p
-                  className={`${manrope.className} font-normal text-lg leading-7 tracking-normal text-brand-light pt-4`}
+                  className={`font-body font-normal text-lg leading-7 tracking-normal text-brand-light pt-4`}
                 >
                   {step.descriptionHighlight
                     ? (() => {
@@ -53,7 +52,7 @@ export function ProcessSection({ label, steps = [] }: Props) {
                           <>
                             {parts[0]}
                             <span
-                              className={`${manrope.className} font-medium text-lg leading-relaxed tracking-normal text-brand-gold`}
+                              className={`font-body font-medium text-lg leading-relaxed tracking-normal text-brand-gold`}
                             >
                               {step.descriptionHighlight}
                             </span>

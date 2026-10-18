@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { manrope } from "@/lib/fonts";
 import { ArrowRightIcon } from "@/components/icons/ArrowRight";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 import {
@@ -47,7 +46,7 @@ export function TeamShowcaseSection({
     >
       <div className="max-w-7xl mx-auto">
         <p
-          className={`font-body text-sm tracking-widest uppercase mb-4 ${invert ? "text-brand-black/50" : "text-brand-gold"}`}
+          className={`font-body text-sm tracking-widest uppercase mb-4 ${invert ? "text-brand-black/60" : "text-brand-gold"}`}
         >
           {eyebrow}
         </p>
@@ -72,13 +71,13 @@ export function TeamShowcaseSection({
         {(outroText || outroHighlight) && (
           <Reveal className="max-w-3xl mx-auto mt-20">
             <p
-              className={`${manrope.className} font-normal text-lg leading-relaxed tracking-normal text-center ${invert ? "text-brand-black" : "text-brand-light"}`}
+              className={`font-body font-normal text-lg leading-relaxed tracking-normal text-center ${invert ? "text-brand-black" : "text-brand-light"}`}
             >
               {outroText}
               {outroHighlight && (
                 <>
                   {" "}
-                  <span className={invert ? "text-brand-black/50" : "text-brand-gold"}>
+                  <span className={invert ? "text-brand-black/60" : "text-brand-gold"}>
                     {outroHighlight}
                   </span>
                 </>

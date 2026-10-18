@@ -78,7 +78,7 @@ function MemberLabel({ member, invert }: { member: TeamMember; invert: boolean }
       </h3>
       {member.role && (
         <p
-          className={`font-body text-[0.625rem] sm:text-xs uppercase tracking-wide mt-1 sm:mt-1.5 ${invert ? "text-brand-black/50" : "text-brand-gold"}`}
+          className={`font-body text-[0.625rem] sm:text-xs uppercase tracking-wide mt-1 sm:mt-1.5 ${invert ? "text-brand-black/60" : "text-brand-gold"}`}
         >
           {member.role}
         </p>

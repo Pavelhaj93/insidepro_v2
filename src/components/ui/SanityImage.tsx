@@ -9,6 +9,12 @@ type Props = {
   sizes: string;
   quality?: number;
   priority?: boolean;
+  /**
+   * Next 16's `priority` only adds a preload, without `fetchpriority=high` —
+   * pass "high" on the page's LCP image (not on below-the-fold `priority`
+   * images, which would then compete with it).
+   */
+  fetchPriority?: "high" | "low" | "auto";
   className?: string;
   /** LQIP base64 string from `asset->metadata.lqip` — shows a blurred preview while the real image loads. */
   blurDataURL?: string;
@@ -27,6 +33,7 @@ export function SanityImage({
   sizes,
   quality,
   priority,
+  fetchPriority,
   className = "object-cover object-center",
   blurDataURL,
 }: Props) {
@@ -39,6 +46,7 @@ export function SanityImage({
       sizes={sizes}
       quality={quality}
       priority={priority}
+      fetchPriority={fetchPriority}
       className={className}
       placeholder={blurDataURL ? "blur" : "empty"}
       blurDataURL={blurDataURL}

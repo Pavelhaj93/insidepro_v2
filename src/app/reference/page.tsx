@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { groq } from "next-sanity";
-import { client } from "@/sanity/lib/client";
+import type { ComponentProps } from "react";
+import { fetchSanity } from "@/sanity/lib/live";
 import { referencePageQuery, referenceItemFields } from "@/sanity/lib/queries";
 import { ReferenceWorksSection } from "@/components/sections/ReferenceWorksSection";
 
@@ -16,12 +17,16 @@ const FALLBACK_QUERY = groq`{
   }
 }`;
 
-type Props = {
-  searchParams: Promise<{ category?: string }>;
-};
+type WorksProps = ComponentProps<typeof ReferenceWorksSection>;
+type WorksBlock = { _type: string } & Pick<WorksProps, "heading" | "allLabel" | "categories" | "projects">;
+type ReferencePageData = {
+  seoTitle?: string;
+  seoDescription?: string;
+  blocks?: WorksBlock[];
+} | null;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await client.fetch(referencePageQuery);
+  const page = await fetchSanity<ReferencePageData>({ query: referencePageQuery, stega: false });
   return {
     title: page?.seoTitle ?? "Reference | insidePRO",
     description: page?.seoDescription ?? undefined,
@@ -41,19 +46,16 @@ export async function generateMetadata(): Promise<Metadata> {
  * `[slug]` pipeline. Falls back to every category/project when no such page
  * exists yet, so the route is never empty out of the box.
  *
- * `?category=<slug>` (used by the VerticalSidebar's Branding/Marketing/
- * Produkce/Weby links) preselects that category's filter tab.
+ * Deliberately doesn't read `searchParams`: that alone would make the route
+ * dynamic (no CDN cache). The category filter is client-side state only.
  */
-export default async function ReferencePage({ searchParams }: Props) {
-  const { category } = await searchParams;
+export default async function ReferencePage() {
   const [page, fallback] = await Promise.all([
-    client.fetch(referencePageQuery),
-    client.fetch(FALLBACK_QUERY),
+    fetchSanity<ReferencePageData>({ query: referencePageQuery }),
+    fetchSanity<Pick<WorksProps, "categories" | "projects"> | null>({ query: FALLBACK_QUERY }),
   ]);
 
-  const block = page?.blocks?.find(
-    (b: { _type: string }) => b._type === "referenceWorksSection",
-  );
+  const block = page?.blocks?.find((b) => b._type === "referenceWorksSection");
   const hasBlockContent = Boolean(block?.categories?.length);
 
   return (
@@ -61,9 +63,8 @@ export default async function ReferencePage({ searchParams }: Props) {
       <ReferenceWorksSection
         heading={block?.heading}
         allLabel={block?.allLabel}
-        categories={hasBlockContent ? block.categories : fallback?.categories}
-        projects={hasBlockContent ? block.projects : fallback?.projects}
-        initialCategorySlug={category}
+        categories={hasBlockContent ? block?.categories : fallback?.categories}
+        projects={hasBlockContent ? block?.projects : fallback?.projects}
       />
     </main>
   );

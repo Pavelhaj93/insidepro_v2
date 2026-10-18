@@ -1,4 +1,4 @@
-import { groq } from "next-sanity";
+import { defineQuery, groq } from "next-sanity";
 
 // Appended to a bare image field's projection to pull its LQIP blur-up
 // placeholder alongside everything `urlFor()` needs (asset ref, hotspot,
@@ -42,6 +42,7 @@ const blocksProjection = groq`
     backgroundImageMobile { ${lqip} },
     "backgroundVideoPlaybackId": backgroundMuxVideo.asset->playbackId,
     "backgroundVideoMobilePlaybackId": backgroundMuxVideoMobile.asset->playbackId,
+    "backgroundVideoMobileRenditions": backgroundMuxVideoMobile.asset->data.static_renditions.files[status == "ready"].name,
     headline,
     subtitle,
     showScrollIndicator,
@@ -51,6 +52,7 @@ const blocksProjection = groq`
     cornerHeadline,
     "videoPlaybackId": muxVideo.asset->playbackId,
     "mobileVideoPlaybackId": mobileMuxVideo.asset->playbackId,
+    "mobileVideoRenditions": mobileMuxVideo.asset->data.static_renditions.files[status == "ready"].name,
     posterImage,
     // servicesListSection / servicesAccordionSection
     label,
@@ -181,14 +183,6 @@ export const referencePageQuery = groq`*[_type == "page" && slug.current == "ref
 
 // ─── Projects ─────────────────────────────────────────────────────────────────
 
-export const projectsQuery = groq`*[_type == "project"] | order(publishedAt desc) {
-  _id, title, client, slug, coverImage, category, excerpt, publishedAt
-}`;
-
-export const projectBySlugQuery = groq`*[_type == "project" && slug.current == $slug][0] {
-  _id, title, client, slug, coverImage, category, excerpt, body, publishedAt
-}`;
-
 // ─── Reference project ordering (case-study prev/next nav) ──────────────────
 // Lean counterpart to blocksProjection's referenceWorksSection branch above —
 // same curated-projects-else-category-tagged-projects cascade, but only the
@@ -220,19 +214,11 @@ export const allProjectsOrderQuery = groq`*[_type in ["project", "film"]] | orde
 
 // ─── Team ─────────────────────────────────────────────────────────────────────
 
-export const teamMembersQuery = groq`*[_type == "teamMember"] | order(order asc) {
-  _id, name, role, email, phone, photo
-}`;
-
 // ─── Films ───────────────────────────────────────────────────────────────────
 
-export const filmsQuery = groq`*[_type == "film"] | order(publishedAt desc) {
-  _id, title, slug, coverImage, cardImage, description, director, genre, country, production, coproducer, partners, status,
-  yearOfProduction, synopsis, gallery, trailerVideo,
-  "categories": categories[]-> { _id, title, "slug": slug.current }
-}`;
-
 // ─── Reference detail (case-study page, project OR film by slug) ────────────
+
+export const referenceSlugsQuery = defineQuery(`*[_type in ["project", "film"] && defined(slug.current)] { "slug": slug.current }`);
 
 export const referenceDetailQuery = groq`*[(_type == "project" || _type == "film") && slug.current == $slug][0] {
   _type,
@@ -245,8 +231,9 @@ export const referenceDetailQuery = groq`*[(_type == "project" || _type == "film
   "categories": categories[]->title,
   excerpt,
   body,
-  gallery[] { ${lqip} },
-  behindTheScenesGallery[] { ${lqip} },
+  // Empty image slots left in Studio (no asset) would crash urlFor() and 500 the page.
+  gallery[defined(asset)] { ${lqip} },
+  behindTheScenesGallery[defined(asset)] { ${lqip} },
   projectVideos[]-> { "playbackId": muxVideo.asset->playbackId, "thumbTime": muxVideo.asset->thumbTime, poster },
   // film-only fields (undefined on "project" docs)
   description,
@@ -264,10 +251,3 @@ export const referenceDetailQuery = groq`*[(_type == "project" || _type == "film
 
 // ─── Legacy (kept for compatibility) ─────────────────────────────────────────
 
-export const postsQuery = groq`*[_type == "post"] | order(publishedAt desc) {
-  _id, title, slug, excerpt, mainImage, publishedAt
-}`;
-
-export const postBySlugQuery = groq`*[_type == "post" && slug.current == $slug][0] {
-  _id, title, slug, excerpt, mainImage, publishedAt, body
-}`;

@@ -47,8 +47,6 @@ type Props = {
   allLabel?: string;
   projects?: Project[];
   categories?: Category[];
-  /** Category slug to preselect on mount, e.g. from `/reference?category=branding`. */
-  initialCategorySlug?: string;
 };
 
 function PlayIcon() {
@@ -71,13 +69,8 @@ export function ReferenceWorksSection({
   allLabel = "Vše",
   projects = [],
   categories = [],
-  initialCategorySlug,
 }: Props) {
-  const [activeId, setActiveId] = useState<string | null>(
-    () =>
-      categories.find((category) => category.slug === initialCategorySlug)
-        ?._id ?? null,
-  );
+  const [activeId, setActiveId] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
 
   // A category can be "used" either by tagging at least one project, or by
@@ -151,6 +144,10 @@ export function ReferenceWorksSection({
       ? "(min-width: 1024px) 66vw, (min-width: 768px) 50vw, 100vw"
       : "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw";
 
+  // The first row (one card on mobile, wide + narrow from md) is above the
+  // fold on the initial unfiltered view — its images are the LCP candidates.
+  const isPriorityCard = (index: number) => activeId === null && index < 2;
+
   return (
     <section className="pl-6 sm:pl-24 lg:pl-48 pr-6 md:pr-10 lg:pr-24 pt-36 md:pt-44 pb-24">
       <div className="mx-auto max-w-7xl">
@@ -220,6 +217,7 @@ export function ReferenceWorksSection({
                       project={project}
                       aspectClassName={projectAspectClass(index)}
                       sizes={projectSizes(index)}
+                      priority={isPriorityCard(index)}
                     />
                   </div>
                 ))}
@@ -229,7 +227,9 @@ export function ReferenceWorksSection({
                 layout
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
               >
-                <AnimatePresence mode="popLayout">
+                {/* initial={false}: cards render visible in the server HTML;
+                    the enter animation only plays on filter changes. */}
+                <AnimatePresence mode="popLayout" initial={false}>
                   {visibleProjects.map((project, index) => (
                     <motion.div
                       key={project._id}
@@ -244,6 +244,7 @@ export function ReferenceWorksSection({
                         project={project}
                         aspectClassName={projectAspectClass(index)}
                         sizes={projectSizes(index)}
+                        priority={isPriorityCard(index)}
                       />
                     </motion.div>
                   ))}

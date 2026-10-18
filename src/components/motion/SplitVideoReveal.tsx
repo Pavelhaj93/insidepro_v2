@@ -23,6 +23,10 @@ type SplitVideoRevealProps = {
   videoSrc: string;
   videoMimeType?: string;
   mobileVideoSrc?: string;
+  /** `srcset` for the poster shown under the video until it can play. */
+  posterSrcSet?: string;
+  /** Portrait poster `srcset` for the mobile clip (≤767px), mirroring `mobileVideoSrc`. */
+  mobilePosterSrcSet?: string;
   buttonLabel?: string;
   buttonLink?: string;
   /** Scroll distance (vh) over which the panel/corner slide apart. */
@@ -44,6 +48,33 @@ const headlineComponents: PortableTextComponents = {
     em: ({ children }) => <em className="italic">{children}</em>,
   },
 };
+
+/**
+ * Sits under `HeroBackgroundVideo` (which is transparent until its first
+ * frame arrives). Same `media` split as the video's `<source>`s, so mobile
+ * only downloads the portrait poster. Low fetch priority on purpose: it still
+ * starts early, but the CSS, fonts and headline (the homepage's LCP element)
+ * go first — at higher priority it measurably delayed FCP on slow mobile.
+ */
+function VideoPoster({ srcSet, mobileSrcSet }: { srcSet?: string; mobileSrcSet?: string }) {
+  if (!srcSet) return null;
+  return (
+    <picture>
+      {mobileSrcSet && (
+        <source media="(max-width: 767px)" srcSet={mobileSrcSet} sizes="100vw" />
+      )}
+      <img
+        srcSet={srcSet}
+        sizes="100vw"
+        alt=""
+        aria-hidden
+        fetchPriority="low"
+        decoding="async"
+        className="absolute inset-0 h-full w-full object-cover object-center"
+      />
+    </picture>
+  );
+}
 
 // How much further (in vw) the heading travels than the rest of the panel
 // during the reveal — on narrower/tablet widths the heading text is wide
@@ -78,6 +109,8 @@ export function SplitVideoReveal({
   videoSrc,
   videoMimeType,
   mobileVideoSrc,
+  posterSrcSet,
+  mobilePosterSrcSet,
   buttonLabel,
   buttonLink,
   revealVh = 150,
@@ -173,6 +206,7 @@ export function SplitVideoReveal({
     return (
       <section className={`relative bg-black ${className ?? ""}`}>
         <div className="relative h-svh w-full overflow-hidden">
+          <VideoPoster srcSet={posterSrcSet} mobileSrcSet={mobilePosterSrcSet} />
           <HeroBackgroundVideo
             src={videoSrc}
             mimeType={videoMimeType}
@@ -236,6 +270,7 @@ export function SplitVideoReveal({
       style={{ height: `${totalVh}vh` }}
     >
       <div className="sticky top-0 h-svh w-full overflow-hidden">
+        <VideoPoster srcSet={posterSrcSet} mobileSrcSet={mobilePosterSrcSet} />
         <HeroBackgroundVideo
           src={videoSrc}
           mimeType={videoMimeType}

@@ -1,4 +1,4 @@
-import { client } from "@/sanity/lib/client";
+import { fetchSanity } from "@/sanity/lib/live";
 import {
   referenceWorksOrderQuery,
   allProjectsOrderQuery,
@@ -29,8 +29,8 @@ type ReferenceWorksOrderResult = {
  */
 export async function getOrderedReferenceProjects(): Promise<OrderedProject[]> {
   const [page, allProjects] = await Promise.all([
-    client.fetch<ReferenceWorksOrderResult>(referenceWorksOrderQuery),
-    client.fetch<OrderedProject[]>(allProjectsOrderQuery),
+    fetchSanity<ReferenceWorksOrderResult>({ query: referenceWorksOrderQuery }),
+    fetchSanity<OrderedProject[]>({ query: allProjectsOrderQuery }),
   ]);
 
   const hasBlockContent = Boolean(page?.blocks?.hasCategories);
