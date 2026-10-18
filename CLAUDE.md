@@ -37,7 +37,8 @@ contact form. All page content is a Sanity page builder (`page.blocks`).
 
 ## Sanity
 - projectId `4mvdpq34`, dataset `production`, apiVersion `2024-01-01`
-- Studio title "insidePRO"; plugins: presentationTool (preview origin `SANITY_STUDIO_PREVIEW_ORIGIN`,
+- Studio title "insidePRO"; plugins: presentationTool (initial preview = `SANITY_STUDIO_PREVIEW_ORIGIN`, else
+  localhost under `sanity dev` / `https://www.insidepro.cz` in the deployed build; `allowOrigins` permits both;
   draft mode `/api/draft-mode/enable`), structureTool, visionTool, muxInput (`sanity-plugin-mux-input`;
   its Mux token lives in the dataset doc `secrets.mux`, entered via Studio → Videos → Configure plugin)
 - Singletons `settings`, `footer` (fixed IDs, no duplicate/delete, hidden from "create new")
@@ -76,7 +77,8 @@ contact form. All page content is a Sanity page builder (`page.blocks`).
 - Don't read `searchParams` in `/reference` — it makes the route dynamic (no CDN cache); the category filter is
   client state only (the old `?category=` sidebar links are gone).
 - Contact form sends to `footer.email` from Sanity (single source of truth); fails closed (500) without
-  `RESEND_API_KEY` or `footer.email`.
+  `RESEND_API_KEY` or `footer.email`. Design "Timecode / Střih" (`ContactFormSection`): edit-timeline clips per
+  field, timecode derived from typed chars, submit = "render". `id="kontakt"` is the anchor CTAs link to — one per page.
 - Project cards use `cardImage` (fallback `coverImage`); `gallery` is case-study only.
 - Video is hosted on Mux, not the Sanity CDN (Sanity bandwidth quota). Fields are `mux.video`
   (`video.muxVideo`, `heroSection.backgroundMuxVideo(Mobile)`, `splitVideoRevealSection.muxVideo` /
@@ -95,4 +97,4 @@ contact form. All page content is a Sanity page builder (`page.blocks`).
 - `next/image` `priority` in Next 16 only preloads; pass `fetchPriority="high"` (`SanityImage`) on the LCP image only.
 - Empty image slots in galleries are filtered in GROQ (`gallery[defined(asset)]`) — `urlFor()` throws on them.
 - Remote images allowed: `cdn.sanity.io`, `images.unsplash.com`; image qualities `[75, 85, 90]`.
-- Branches: `main` (default) and `feature/POC-v2` (active work, ahead of main).
+- Branches: `main` (default, deploys to production); work goes on `feature/*` / `fix/*` / `perf/*` branches merged via PR.

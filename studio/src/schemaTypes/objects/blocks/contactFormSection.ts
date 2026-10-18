@@ -9,21 +9,20 @@ export const contactFormSection = defineType({
       name: "headingLine1",
       title: "Heading Line 1",
       type: "string",
-      initialValue: "Máte projekt?",
+      initialValue: "Řekněte nám",
     }),
     defineField({
       name: "headingLine2",
       title: "Heading Line 2",
       type: "string",
-      initialValue: "Pojďme na to",
+      initialValue: "o svém projektu",
     }),
     defineField({
       name: "introText",
       title: "Intro Text",
       type: "text",
       rows: 3,
-      initialValue:
-        "Vyplňte tři kroky níž a ozveme se vám do dvou pracovních dnů.",
+      initialValue: "Pár řádků stačí. Ozveme se vám do dvou pracovních dnů.",
     }),
     defineField({
       name: "successMessage",

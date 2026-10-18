@@ -126,7 +126,7 @@ export function SplitVideoReveal({
   const lenis = useLenis();
 
   // The CTA button's `buttonLink` is typically an in-page anchor (e.g.
-  // "#home-cta-footer") — a plain native anchor jump gets fought by Lenis
+  // "#kontakt", the ContactFormSection) — a plain native anchor jump gets fought by Lenis
   // (see scrollToAnchor's own comment), so anchor links are intercepted and
   // routed through Lenis instead. A full URL/path is left alone as a normal
   // link.
