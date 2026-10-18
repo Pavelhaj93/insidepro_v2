@@ -13,6 +13,7 @@ contact form. All page content is a Sanity page builder (`page.blocks`).
 - Tailwind CSS 4 (`src/app/globals.css`), shadcn (`components.json`, style `base-nova`, @base-ui/react, lucide)
 - Motion: framer-motion 12, lenis (smooth scroll), embla-carousel, ogl (WebGL shaders/displacement)
 - Resend (contact form email), @svgr/webpack (SVG imports as components via Turbopack rule)
+- Vercel Analytics (`@vercel/analytics`, `<Analytics />` mounted in root layout)
 
 ## Layout
 - `src/app/` — routes: `/` (homepage = page with `isHomepage == true`), `/[slug]` (generic pages),

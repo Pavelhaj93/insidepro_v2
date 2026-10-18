@@ -9,6 +9,7 @@ import { footerQuery, settingsQuery } from "@/sanity/lib/queries";
 import { SanityLive } from "@/sanity/lib/live";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { CustomCursor } from "@/components/motion/CustomCursor";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -58,6 +59,7 @@ export default async function RootLayout({
         <SanityLive />
         {isDraftMode && <VisualEditing />}
         <CustomCursor />
+        <Analytics />
       </body>
     </html>
   );
