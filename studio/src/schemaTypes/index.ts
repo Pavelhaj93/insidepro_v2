@@ -9,6 +9,8 @@ import { footer } from './documents/footer'
 import { brandLogo } from './documents/brandLogo'
 import { category } from './documents/category'
 import { video } from './documents/video'
+import { nsSettings } from './documents/nsSettings'
+import { nsPage } from './documents/nsPage'
 
 // Block objects
 import { heroSection } from './objects/blocks/heroSection'
@@ -40,6 +42,10 @@ import { serviceItem } from './objects/shared/serviceItem'
 import { processStep } from './objects/shared/processStep'
 import { clientItem } from './objects/shared/clientItem'
 import { featureCard } from './objects/shared/featureCard'
+
+// Non Shoots (nonshoots.com, separate Next app reading this dataset)
+import { nsVideoGrid } from './objects/nonshoots/nsVideoGrid'
+import { nsPhotoGallery } from './objects/nonshoots/nsPhotoGallery'
 
 export const schemaTypes = [
   // Documents
@@ -82,4 +88,9 @@ export const schemaTypes = [
   processStep,
   clientItem,
   featureCard,
+  // Non Shoots
+  nsSettings,
+  nsPage,
+  nsVideoGrid,
+  nsPhotoGallery,
 ]

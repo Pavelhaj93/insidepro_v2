@@ -21,6 +21,194 @@ type ArrayOf<T> = Array<
 >;
 
 // Source: schema.json
+export type SanityImageAssetReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+};
+
+export type NsPhotoGallery = {
+  _type: "nsPhotoGallery";
+  heading?: string;
+  images?: Array<{
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+    _key: string;
+  }>;
+};
+
+export type VideoReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "video";
+};
+
+export type NsVideoGrid = {
+  _type: "nsVideoGrid";
+  heading?: string;
+  videos?: Array<
+    {
+      _key: string;
+    } & VideoReference
+  >;
+};
+
+export type NsPageReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "nsPage";
+};
+
+export type FilmReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "film";
+};
+
+export type NsSettings = {
+  _id: string;
+  _type: "nsSettings";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  heroImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  logo?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  tagline?: string;
+  navItems?: Array<{
+    label?: string;
+    section?: "about" | "showreel" | "films" | "commercial" | "contact";
+    page?: NsPageReference;
+    _type: "nsNavItem";
+    _key: string;
+  }>;
+  introHeadline?: string;
+  portrait?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  aboutHeading?: string;
+  about?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  supportedBy?: string;
+  showreelVideo?: VideoReference;
+  filmsHeading?: string;
+  films?: Array<{
+    film?: FilmReference;
+    format?: string;
+    locations?: string;
+    director?: string;
+    production?: string;
+    coproduction?: string;
+    supportedBy?: string;
+    _type: "nsFilmItem";
+    _key: string;
+  }>;
+  commercialHeading?: string;
+  commercialVideos?: Array<{
+    video?: VideoReference;
+    title?: string;
+    client?: string;
+    _type: "nsCommercialItem";
+    _key: string;
+  }>;
+  contactHeading?: string;
+  contactSubheading?: string;
+  email?: string;
+  phone?: string;
+  socialLinks?: {
+    instagram?: string;
+    linkedin?: string;
+    facebook?: string;
+    vimeo?: string;
+  };
+  metaTitle?: string;
+  metaDescription?: string;
+  ogImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+};
+
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
+};
+
+export type NsPage = {
+  _id: string;
+  _type: "nsPage";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  intro?: string;
+  sections?: Array<
+    | ({
+        _key: string;
+      } & NsVideoGrid)
+    | ({
+        _key: string;
+      } & NsPhotoGallery)
+  >;
+  metaDescription?: string;
+};
+
+export type Slug = {
+  _type: "slug";
+  current?: string;
+  source?: string;
+};
+
 export type FeatureCard = {
   _type: "featureCard";
   title?: string;
@@ -42,13 +230,6 @@ export type FeatureCard = {
     _type: "bullet";
     _key: string;
   }>;
-};
-
-export type SanityImageAssetReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
 };
 
 export type ClientItem = {
@@ -245,13 +426,6 @@ export type ClientsSection = {
         _key: string;
       } & ProjectReference)
   >;
-};
-
-export type FilmReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "film";
 };
 
 export type FilmShowcaseSection = {
@@ -578,13 +752,6 @@ export type HeroSection = {
   showSocialIcons?: boolean;
 };
 
-export type VideoReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "video";
-};
-
 export type Category = {
   _id: string;
   _type: "category";
@@ -602,12 +769,6 @@ export type Category = {
   };
 };
 
-export type Slug = {
-  _type: "slug";
-  current?: string;
-  source?: string;
-};
-
 export type BrandLogo = {
   _id: string;
   _type: "brandLogo";
@@ -623,22 +784,6 @@ export type BrandLogo = {
     _type: "image";
   };
   url?: string;
-};
-
-export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
-};
-
-export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
-  x?: number;
-  y?: number;
-  height?: number;
-  width?: number;
 };
 
 export type Footer = {
@@ -1229,8 +1374,18 @@ export type Geopoint = {
 };
 
 export type AllSanitySchemaTypes =
-  | FeatureCard
   | SanityImageAssetReference
+  | NsPhotoGallery
+  | VideoReference
+  | NsVideoGrid
+  | NsPageReference
+  | FilmReference
+  | NsSettings
+  | SanityImageCrop
+  | SanityImageHotspot
+  | NsPage
+  | Slug
+  | FeatureCard
   | ClientItem
   | ProcessStep
   | ServiceItem
@@ -1245,7 +1400,6 @@ export type AllSanitySchemaTypes =
   | ImageSection
   | ProjectReference
   | ClientsSection
-  | FilmReference
   | FilmShowcaseSection
   | TeamMemberReference
   | TeamSection
@@ -1263,12 +1417,8 @@ export type AllSanitySchemaTypes =
   | SanityFileAssetReference
   | SplitVideoRevealSection
   | HeroSection
-  | VideoReference
   | Category
-  | Slug
   | BrandLogo
-  | SanityImageCrop
-  | SanityImageHotspot
   | Footer
   | Film
   | TeamMember
