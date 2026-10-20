@@ -40,7 +40,7 @@ contact form. All page content is a Sanity page builder (`page.blocks`).
 - projectId `4mvdpq34`, dataset `production`, apiVersion `2024-01-01`
 - Studio title "insidePRO"; plugins: presentationTool (initial preview = `SANITY_STUDIO_PREVIEW_ORIGIN`, else
   localhost under `sanity dev` / `https://www.insidepro.cz` in the deployed build; `allowOrigins` permits both;
-  draft mode `/api/draft-mode/enable`), structureTool, visionTool, muxInput (`sanity-plugin-mux-input`;
+  draft mode `/api/draft-mode/enable`, `resolve` in `studio/src/presentation/resolve.ts` maps routes ↔ documents), structureTool, visionTool, muxInput (`sanity-plugin-mux-input`;
   its Mux token lives in the dataset doc `secrets.mux`, entered via Studio → Videos → Configure plugin)
 - Singletons `settings`, `footer` (fixed IDs, no duplicate/delete, hidden from "create new")
 - Documents: `page`, `project`, `film`, `teamMember`, `brandLogo`, `category`, `video`, `post`, `settings`, `footer`
@@ -54,6 +54,7 @@ contact form. All page content is a Sanity page builder (`page.blocks`).
   `NEXT_PUBLIC_BASE_URL`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL` (optional)
 - `SANITY_REVALIDATE_SECRET` — shared with the Sanity webhook that calls `/api/revalidate` (Vercel env)
 - Scripts: `SANITY_API_WRITE_TOKEN`; `MUX_TOKEN_ID`, `MUX_TOKEN_SECRET` (`scripts/*mux*.mjs`)
+- `NEXT_PUBLIC_SANITY_STUDIO_URL` (optional, stega `studioUrl`; defaults to the hosted Studio)
 - Studio: `SANITY_STUDIO_PROJECT_ID`, `SANITY_STUDIO_DATASET`, `SANITY_STUDIO_PREVIEW_ORIGIN` (all have defaults)
 
 ## Gotchas / conventions
@@ -75,6 +76,11 @@ contact form. All page content is a Sanity page builder (`page.blocks`).
   `perspective: 'published', stega: false` (no request scope for `draftMode()`). Exceptions on `client.fetch`:
   `sitemap.ts` (revalidate 3600) and `/api/contact` (always fresh).
 - `live.ts` `browserToken` is only sent to the browser in draft mode (next-sanity 13 `defineLive`).
+- Visual Editing overlays need stega, which `defineLive` turns on only in draft mode and only because `client.ts` sets
+  `stega.studioUrl`. Its custom `filter` skips `accentColor`, `width` and `mux.videoAsset` docs (on top of the default
+  filter: `layout`, `slug`, `*Id`, URLs, `email`, `status`, `variant`…). Any new CMS string the code compares, splits,
+  measures or puts into CSS/URLs must be skipped there (`STEGA_SKIP_FIELDS`) or passed through `stegaClean` — stega
+  is an invisible suffix, so splitting on `stegaClean(needle)` keeps overlays on the haystack.
 - Don't read `searchParams` in `/reference` — it makes the route dynamic (no CDN cache); the category filter is
   client state only (the old `?category=` sidebar links are gone).
 - Contact form sends to `footer.email` from Sanity (single source of truth); fails closed (500) without

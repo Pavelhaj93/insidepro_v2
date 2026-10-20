@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { stegaClean } from "next-sanity";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 // Characters that read as "empty" at extreme zoom — never anchor the zoom
@@ -123,7 +124,9 @@ export function ZoomTextTransition({
   // transform-origin to one specific glyph near the middle so the zoom is
   // always directed into solid ink.
   const anchorIndex = useMemo(
-    () => anchorIndexProp ?? findAnchorIndex(headline),
+    // Measured on the clean text: draft-mode stega markers are appended to
+    // the end, so indices still line up with `headline` itself.
+    () => anchorIndexProp ?? findAnchorIndex(stegaClean(headline)),
     [headline, anchorIndexProp],
   );
   const before = headline.slice(0, anchorIndex);

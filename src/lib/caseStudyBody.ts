@@ -3,6 +3,8 @@
 // paragraph, sometimes followed by a bold credit line, all as plain spans rather than
 // dedicated fields. This walks that raw content and splits it back into sections.
 
+import { stegaClean } from "next-sanity";
+
 type RawSpan = { _type: "span"; text?: string; marks?: string[] };
 type RawBlock = { _type: string; children?: RawSpan[] };
 
@@ -37,7 +39,8 @@ export function parseCaseStudySections(
     current.paragraphs = textBuffer
       .split("\n")
       .map((line) => line.trim())
-      .filter(Boolean);
+      // A line can hold nothing but a draft-mode stega marker.
+      .filter((line) => stegaClean(line).trim());
     textBuffer = "";
   };
 
@@ -45,10 +48,13 @@ export function parseCaseStudySections(
     const text = span.text ?? "";
     const isBold = span.marks?.includes("strong") ?? false;
     const trimmed = text.trim();
+    // Draft-mode stega markers are zero-width chars that `trim()` keeps, so the
+    // marker check cleans first (headings keep theirs for click-to-edit).
+    const marker = stegaClean(text).trim();
 
-    if (!isBold && MARKER_PATTERN.test(trimmed)) {
+    if (!isBold && MARKER_PATTERN.test(marker)) {
       flushParagraphs();
-      current = { marker: trimmed, heading: "", paragraphs: [] };
+      current = { marker, heading: "", paragraphs: [] };
       sections.push(current);
       continue;
     }
