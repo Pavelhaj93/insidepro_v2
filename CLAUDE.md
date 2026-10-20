@@ -42,7 +42,12 @@ contact form. All page content is a Sanity page builder (`page.blocks`).
   localhost under `sanity dev` / `https://www.insidepro.cz` in the deployed build; `allowOrigins` permits both;
   draft mode `/api/draft-mode/enable`), structureTool, visionTool, muxInput (`sanity-plugin-mux-input`;
   its Mux token lives in the dataset doc `secrets.mux`, entered via Studio → Videos → Configure plugin)
-- Singletons `settings`, `footer` (fixed IDs, no duplicate/delete, hidden from "create new")
+- Singletons `settings`, `footer`, `nsSettings` (fixed IDs, no duplicate/delete, hidden from "create new";
+  guarded via `SINGLETON_TYPES` in `studio/structure.ts`)
+- Non Shoots: `nsSettings`, `nsPage` (+ objects `nsVideoGrid`, `nsPhotoGallery`) feed the separate `../nonshoots`
+  app (nonshoots.com), grouped under "Non Shoots (nonshoots.com)" in the structure. That app also queries
+  `film` / `video` fields — check `../nonshoots/src/sanity/lib/queries.ts` before renaming/removing them, then
+  `npm run schema:pull && npm run typegen` there.
 - Documents: `page`, `project`, `film`, `teamMember`, `brandLogo`, `category`, `video`, `post`, `settings`, `footer`
 - Blocks: hero, splitVideoReveal, servicesList, servicesAccordion, whoWeAre, zoomText, featuredWorks,
   referenceWorks, cta, quote, process, twoColumn, team, filmShowcase, clients, image, infoBox,
