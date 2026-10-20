@@ -90,7 +90,7 @@ contact form. All page content is a Sanity page builder (`page.blocks`).
   client state only (the old `?category=` sidebar links are gone).
 - Contact form sends to `footer.email` from Sanity (single source of truth); fails closed (500) without
   `RESEND_API_KEY` or `footer.email`. Design "Timecode / Střih" (`ContactFormSection`): edit-timeline clips per
-  field, timecode derived from typed chars, submit = "render". `id="kontakt"` is the anchor CTAs link to — one per page.
+  field, timecode derived from typed chars; plain "Odeslat zprávu" submit (no render wording). Side padding matches `HomeCtaFooter`. `id="kontakt"` is the anchor CTAs link to — one per page.
 - Project cards use `cardImage` (fallback `coverImage`); `gallery` is case-study only.
 - Video is hosted on Mux, not the Sanity CDN (Sanity bandwidth quota). Fields are `mux.video`
   (`video.muxVideo`, `heroSection.backgroundMuxVideo(Mobile)`, `splitVideoRevealSection.muxVideo` /
