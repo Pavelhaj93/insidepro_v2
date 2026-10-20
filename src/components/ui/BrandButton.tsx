@@ -10,6 +10,8 @@ type Props = {
   href?: string;
   onClick?: MouseEventHandler<HTMLElement>;
   type?: "button" | "submit";
+  /** Buttons only (ignored with `href`). */
+  disabled?: boolean;
   variant?: Variant;
   className?: string;
 };
@@ -37,10 +39,11 @@ export function BrandButton({
   href,
   onClick,
   type = "button",
+  disabled = false,
   variant = "gold",
   className = "",
 }: Props) {
-  const classes = `inline-block rounded-full font-body text-sm tracking-widest uppercase px-8 py-4 border transition-colors ${VARIANT_CLASSES[variant]} ${className}`;
+  const classes = `inline-block rounded-full font-body text-sm tracking-widest uppercase px-8 py-4 border transition-colors disabled:cursor-wait disabled:opacity-60 ${VARIANT_CLASSES[variant]} ${className}`;
 
   if (href) {
     return (
@@ -57,6 +60,7 @@ export function BrandButton({
   return (
     <button
       type={type}
+      disabled={disabled}
       onClick={onClick as MouseEventHandler<HTMLButtonElement>}
       className={classes}
     >

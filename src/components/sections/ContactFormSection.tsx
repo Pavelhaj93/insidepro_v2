@@ -1,13 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  AnimatePresence,
-  animate,
-  motion,
-  useMotionValue,
-  useTransform,
-} from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Reveal } from "@/components/motion/Reveal";
 import { MagneticButton } from "@/components/motion/MagneticButton";
 import { BrandButton } from "@/components/ui/BrandButton";
@@ -94,7 +88,8 @@ const INPUT_CLASSES =
  * "Timecode / Střih" contact form — the form is an edit timeline: each field
  * is a clip that fills gold as it's completed, a playhead tracks overall
  * progress and the timecode advances with every typed character (derived,
- * no running clock). Submitting "renders" the cut, success is the export.
+ * no running clock). Submitting is a plain "Odeslat zprávu" button — the
+ * render/export wording and progress bar were dropped 2026-10-20 (Pavel).
  * Replaced the "Číslované kroky" design 2026-10-18; still a page-builder
  * block wired to POST /api/contact (Resend). `id="kontakt"` is the fixed
  * anchor SplitVideoReveal's CTA button (and anything else) links to — only
@@ -113,10 +108,6 @@ export function ContactFormSection({
     email: "",
     message: "",
   });
-
-  const renderProgress = useMotionValue(0);
-  const renderScale = useTransform(renderProgress, (v) => v / 100);
-  const renderPercent = useTransform(renderProgress, (v) => `${Math.round(v)} %`);
 
   const done = status === "success";
   const progress = done
@@ -151,12 +142,6 @@ export function ContactFormSection({
     }
 
     setStatus("submitting");
-    renderProgress.set(0);
-    // Eases toward 90 % while the request is in flight; the last stretch
-    // only plays once the server confirms, so the bar never lies.
-    const pending = reduceMotion
-      ? null
-      : animate(renderProgress, 90, { duration: 2.4, ease: EASE_OUT_EXPO });
 
     try {
       const res = await fetch("/api/contact", {
@@ -165,14 +150,8 @@ export function ContactFormSection({
         body: JSON.stringify(values),
       });
       if (!res.ok) throw new Error("Request failed");
-      pending?.stop();
-      if (!reduceMotion) {
-        await animate(renderProgress, 100, { duration: 0.4, ease: "easeOut" });
-      }
       setStatus("success");
     } catch {
-      pending?.stop();
-      renderProgress.set(0);
       setStatus("error");
     }
   }
@@ -180,9 +159,10 @@ export function ContactFormSection({
   return (
     <section
       id="kontakt"
-      className="bg-brand-black px-6 py-24 sm:px-12 md:py-32"
+      className="bg-brand-black pl-6 pr-6 py-24 sm:pl-24 md:pr-10 md:py-32 lg:pl-48 lg:pr-24"
     >
-      <div className="mx-auto max-w-6xl">
+      {/* Same side padding + max width as HomeCtaFooter right below it. */}
+      <div className="mx-auto max-w-7xl">
         {/* Edit timeline — purely decorative, the form below carries the meaning. */}
         <Reveal className="mb-16 md:mb-20">
           <div aria-hidden="true">
@@ -287,7 +267,7 @@ export function ContactFormSection({
                   className="flex h-full flex-col justify-center gap-3"
                 >
                   <span className="font-body text-sm tracking-widest uppercase text-brand-gold">
-                    Exportováno ✓
+                    Odesláno ✓
                   </span>
                   <h3 className="font-display font-black uppercase text-2xl text-brand-light sm:text-3xl">
                     Děkujeme za zprávu
@@ -355,45 +335,20 @@ export function ContactFormSection({
 
                   {status === "error" && (
                     <p className="font-body text-sm text-red-400">
-                      Render selhal. Zkuste to prosím znovu, nebo nám napište
-                      přímo na e-mail.
+                      Zprávu se nepodařilo odeslat. Zkuste to prosím znovu, nebo
+                      nám napište přímo na e-mail.
                     </p>
                   )}
 
-                  {status === "submitting" ? (
-                    <div className="mt-2 flex min-h-13.5 flex-col justify-center gap-3">
-                      {reduceMotion ? (
-                        <span className="font-body text-sm tracking-widest uppercase text-brand-gold">
-                          Odesílám…
-                        </span>
-                      ) : (
-                        <>
-                          <div className="flex items-baseline justify-between font-body text-xs tracking-widest uppercase text-brand-light/60">
-                            <span>Rendering</span>
-                            <motion.span className="text-brand-gold tabular-nums">
-                              {renderPercent}
-                            </motion.span>
-                          </div>
-                          <div className="h-px bg-brand-light/15">
-                            <motion.div
-                              className="h-full origin-left bg-brand-gold"
-                              style={{ scaleX: renderScale }}
-                            />
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  ) : (
-                    <MagneticButton className="mt-2 self-start">
-                      <BrandButton type="submit" variant="gold">
-                        Renderovat
-                        <span
-                          aria-hidden="true"
-                          className="ml-3 inline-block h-2 w-2 rounded-full bg-current align-middle"
-                        />
-                      </BrandButton>
-                    </MagneticButton>
-                  )}
+                  <MagneticButton className="mt-2 self-start">
+                    <BrandButton
+                      type="submit"
+                      variant="gold"
+                      disabled={status === "submitting"}
+                    >
+                      {status === "submitting" ? "Odesílám…" : "Odeslat zprávu"}
+                    </BrandButton>
+                  </MagneticButton>
                 </motion.form>
               )}
             </AnimatePresence>
