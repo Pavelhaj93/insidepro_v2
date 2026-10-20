@@ -1,3 +1,4 @@
+import { stegaClean } from "next-sanity";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 
 type ProcessStep = {
@@ -46,7 +47,7 @@ export function ProcessSection({ label, steps = [] }: Props) {
                   {step.descriptionHighlight
                     ? (() => {
                         const parts = step.description.split(
-                          step.descriptionHighlight,
+                          stegaClean(step.descriptionHighlight),
                         );
                         return (
                           <>

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { stegaClean } from "next-sanity";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { sanityImageLoader, urlFor } from "@/sanity/lib/image";
@@ -149,7 +150,7 @@ export function HomeCtaFooter({
               )}
               {phone && (
                 <a
-                  href={`tel:${phone.replace(/\s+/g, "")}`}
+                  href={`tel:${stegaClean(phone).replace(/\s+/g, "")}`}
                   className={`font-display font-bold text-lg uppercase ${linkClass} hover:text-brand-gold transition-colors`}
                 >
                   {phone}

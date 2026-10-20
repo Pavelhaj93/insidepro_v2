@@ -4,6 +4,7 @@ import { visionTool } from '@sanity/vision'
 import { presentationTool } from 'sanity/presentation'
 import { muxInput } from 'sanity-plugin-mux-input'
 import { schemaTypes } from './src/schemaTypes'
+import { resolve } from './src/presentation/resolve'
 import { structure, SINGLETON_TYPES } from './structure'
 
 export default defineConfig({
@@ -13,6 +14,7 @@ export default defineConfig({
   dataset: process.env.SANITY_STUDIO_DATASET || 'production',
   plugins: [
     presentationTool({
+      resolve,
       // `sanity dev` previews localhost, the deployed Studio previews production;
       // either can be switched to the other from the Presentation URL bar.
       previewUrl: {

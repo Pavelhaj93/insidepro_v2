@@ -1,4 +1,5 @@
 import QuoteMarkIcon from "../../../public/svg/quote_marks.svg";
+import { stegaClean } from "next-sanity";
 import { Reveal } from "@/components/motion/Reveal";
 
 type Props = {
@@ -14,8 +15,10 @@ export function QuoteSection({
   quoteBoldText,
   quoteRegularText,
 }: Props) {
+  // Split on the clean italic: in draft mode both strings end with stega
+  // markers, which would never match inside the headline.
   const parts = largeHeadlineItalic
-    ? largeHeadline.split(largeHeadlineItalic)
+    ? largeHeadline.split(stegaClean(largeHeadlineItalic))
     : null;
   const hasQuote = quoteBoldText || quoteRegularText;
 
