@@ -24,8 +24,18 @@ export const nsSettings = defineType({
       type: 'image',
       group: 'hero',
       options: { hotspot: true },
-      description: 'Velká fotka přes celou šířku nahoře na stránce. Logo Non Shoots se zobrazí přes ni.',
+      description:
+        'Velká fotka přes celou šířku nahoře na stránce. Logo Non Shoots se zobrazí přes ni. První fotka ve střídání.',
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'heroSlides',
+      title: 'Další úvodní fotky',
+      type: 'array',
+      group: 'hero',
+      description:
+        'Střídají se s úvodní fotkou každé 3 vteřiny, v tomto pořadí. Úvodní fotka je vždy první.',
+      of: [defineArrayMember({ type: 'image', options: { hotspot: true } })],
     }),
     defineField({
       name: 'logo',
