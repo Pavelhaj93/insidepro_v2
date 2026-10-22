@@ -96,7 +96,8 @@ export type NsSettings = {
   tagline?: string;
   navItems?: Array<{
     label?: string;
-    section?: "about" | "showreel" | "films" | "commercial" | "contact";
+    section?:
+      "about" | "showreel" | "films" | "commercial" | "photos" | "contact";
     page?: NsPageReference;
     _type: "nsNavItem";
     _key: string;
@@ -144,6 +145,16 @@ export type NsSettings = {
     title?: string;
     client?: string;
     _type: "nsCommercialItem";
+    _key: string;
+  }>;
+  photosHeading?: string;
+  photos?: Array<{
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
     _key: string;
   }>;
   contactHeading?: string;

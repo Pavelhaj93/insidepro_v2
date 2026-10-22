@@ -12,6 +12,7 @@ export const nsSettings = defineType({
     { name: 'showreel', title: 'Showreel' },
     { name: 'films', title: 'Filmy' },
     { name: 'commercial', title: 'Komerční práce' },
+    { name: 'photos', title: 'Fotky' },
     { name: 'contact', title: 'Kontakt' },
     { name: 'seo', title: 'SEO' },
   ],
@@ -65,6 +66,7 @@ export const nsSettings = defineType({
                   { title: 'Showreel', value: 'showreel' },
                   { title: 'Filmy', value: 'films' },
                   { title: 'Komerční práce', value: 'commercial' },
+                  { title: 'Fotky', value: 'photos' },
                   { title: 'Kontakt', value: 'contact' },
                 ],
               },
@@ -255,6 +257,38 @@ export const nsSettings = defineType({
               media,
             }),
           },
+        }),
+      ],
+    }),
+
+    // Photos
+    defineField({
+      name: 'photosHeading',
+      title: 'Nadpis sekce',
+      type: 'string',
+      group: 'photos',
+      initialValue: 'Photo',
+    }),
+    defineField({
+      name: 'photos',
+      title: 'Fotky',
+      type: 'array',
+      group: 'photos',
+      description:
+        'Galerie ve dvou sloupcích pod komerčními videi. Libovolný počet, pořadí změníte přetažením, nahrát jde víc fotek najednou. Fotky se neořezávají — zobrazí se v původním poměru stran.',
+      options: { layout: 'grid' },
+      of: [
+        defineArrayMember({
+          type: 'image',
+          options: { hotspot: true },
+          fields: [
+            defineField({
+              name: 'alt',
+              title: 'Popis fotky',
+              type: 'string',
+              description: 'Krátký popis pro nevidomé a vyhledávače, např. „Natáčení v Ekvádoru“.',
+            }),
+          ],
         }),
       ],
     }),
